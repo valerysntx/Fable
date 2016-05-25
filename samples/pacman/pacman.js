@@ -279,11 +279,11 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     }();
   };
 
-  var route_home = exports.route_home = (numbers = maze.map(function (line) {
+  var route_home = exports.route_home = (numbers = Array.from(_fableCore.Seq.map(function (line) {
     return Int32Array.from(_fableCore.Seq.map(function (c) {
       return isWall(c) ? 999 : -1;
     }, line.split("")));
-  }), canFill = function (tupledArg) {
+  }, maze)), canFill = function (tupledArg) {
     var x, y;
     return x = tupledArg[0], y = tupledArg[1], (((y >= 0 ? y < numbers.length - 1 : false) ? x >= 0 : false) ? x < numbers[y].length - 1 : false) ? numbers[y][x] === -1 : false;
   }, fill = function (tupledArg) {
@@ -339,7 +339,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var Keyboard = exports.Keyboard = function ($exports) {
-    var keysPressed = $exports.keysPressed = new Set();
+    var keysPressed = (Object.defineProperty($exports, 'keysPressed', {
+      get: function () {
+        return keysPressed;
+      },
+      set: function (x) {
+        return keysPressed = x;
+      }
+    }), new Set());
 
     var reset = $exports.reset = function () {
       keysPressed = new Set();
@@ -365,10 +372,10 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var init = $exports.init = function () {
       window.addEventListener('keydown', function (e) {
         return update(e, true);
-      });
+      }, null);
       window.addEventListener('keyup', function (e) {
         return update(e, false);
-      });
+      }, null);
     };
 
     return $exports;
@@ -378,15 +385,15 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var patternInput = $exports.patternInput = [createImage(Images.pu1), createImage(Images.pu2)];
     var pu2 = $exports.pu2 = patternInput[1];
     var pu1 = patternInput[0];
-    var patternInput = $exports.patternInput = [createImage(Images.pd1), createImage(Images.pd2)];
-    var pd2 = $exports.pd2 = patternInput[1];
-    var pd1 = patternInput[0];
-    var patternInput = $exports.patternInput = [createImage(Images.pl1), createImage(Images.pl2)];
-    var pl2 = $exports.pl2 = patternInput[1];
-    var pl1 = patternInput[0];
-    var patternInput = $exports.patternInput = [createImage(Images.pr1), createImage(Images.pr2)];
-    var pr2 = $exports.pr2 = patternInput[1];
-    var pr1 = patternInput[0];
+    var patternInput_1 = $exports.patternInput = [createImage(Images.pd1), createImage(Images.pd2)];
+    var pd2 = $exports.pd2 = patternInput_1[1];
+    var pd1 = patternInput_1[0];
+    var patternInput_2 = $exports.patternInput = [createImage(Images.pl1), createImage(Images.pl2)];
+    var pl2 = $exports.pl2 = patternInput_2[1];
+    var pl1 = patternInput_2[0];
+    var patternInput_3 = $exports.patternInput = [createImage(Images.pr1), createImage(Images.pr2)];
+    var pr2 = $exports.pr2 = patternInput_3[1];
+    var pr1 = patternInput_3[0];
     var lastp = {
       contents: pr1
     };
@@ -422,11 +429,11 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var patternInput = [createImage(Images.blue), createImage(Images.eyed)];
     var eyed = patternInput[1];
     var blue = patternInput[0];
-    var pills = maze.map(function (line) {
+    var pills = Array.from(_fableCore.Seq.map(function (line) {
       return line.split("").map(function (c) {
         return c;
       });
-    });
+    }, maze));
     var dotsLeft = {
       contents: countDots()
     };

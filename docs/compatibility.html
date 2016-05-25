@@ -106,12 +106,13 @@ string instance methods.</p>
 <p>You can use the <code>Regex</code> class in the same way as .NET, but the regex will always
 behave as if passed <code>RegexOptions.ECMAScript</code> flag (e.g., no negative look-behind
 or named groups).</p>
-<h2><a name="DateTime" class="anchor" href="#DateTime">DateTime</a></h2>
+<h2><a name="Date-amp-Time" class="anchor" href="#Date-amp-Time">Date &amp; Time</a></h2>
 <p>You can use <code>DateTime</code> and <code>TimeSpan</code> with the same semantics as in .NET.
 <code>TimeSpan</code> will just be the number of milliseconds in JS, and <code>DateTime</code> will
-compile down to native JS <code>Date</code> with a <code>kind</code> property attached.</p>
+compile down to native JS <code>Date</code> with a <code>kind</code> property attached. It's also
+possible to use <code>Timer</code>s from the <code>System.Timers</code> namespace.</p>
 <h2><a name="Tuples" class="anchor" href="#Tuples">Tuples</a></h2>
-<p>Tuples compile to native arrays. Desestructuring, <code>fst</code>, <code>snd</code>... works normally.</p>
+<p>Tuples compile to native arrays. Destructuring, <code>fst</code>, <code>snd</code>... works normally.</p>
 <h2><a name="Records" class="anchor" href="#Records">Records</a></h2>
 <p>Records are compiled as <a href="http://babeljs.io/docs/learn-es2015/#classes">ES2015 classes</a>
 and they can be used with pattern matching (type information is available in runtime).
@@ -138,9 +139,9 @@ for performance. Adding and removing will create new objects. <code>System.Colle
 and allows mutable operations. Same for <code>System.Collections.Generic.HashSet</code>.</p>
 <h2><a name="Async" class="anchor" href="#Async">Async</a></h2>
 <p><code>async</code> computation expressions work as expected. However, <code>RunSynchronously</code> is not available and,
-as JS is single-threaded, <code>Start</code> and <code>StartImmediate</code> will have the same effect.
-Methods to convert to and from <a href="http://babeljs.io/docs/learn-es2015/#promises">JavaScript Promises</a>
-should be simple to do and are planned for the core library.</p>
+as JS is single-threaded, <code>Start</code> and <code>StartImmediate</code> will have the same effect (likewise, <code>Async.Parallel</code>
+won't spawn background threads on its own). When opening <code>Fable.Core</code> you'll have access to <code>Async.AwaitPromise</code>
+and <code>Async.StartAsPromise</code> extensions for easy interaction with <a href="http://babeljs.io/docs/learn-es2015/#promises">JavaScript Promises</a>.</p>
 <h2><a name="Custom-computation-expression" class="anchor" href="#Custom-computation-expression">Custom computation expression</a></h2>
 <p>It's possible to define custom computation expressions normally.</p>
 <h2><a name="Pattern-matching" class="anchor" href="#Pattern-matching">Pattern matching</a></h2>
@@ -183,7 +184,7 @@ more than one argument to JS code, please wrap it in a delegate first (e.g.,
 <code>Func&lt;_,_,_&gt;(fun x y -&gt; x + y)</code>). If the signature of the method expects a
 delegate, this will be done automatically by the compiler.</p>
 <h2><a name="Event-and-Observable" class="anchor" href="#Event-and-Observable">Event and Observable</a></h2>
-<p>Events are not implemented yet, please use <a href="https://github.com/fsprojects/Fable/blob/master/src/tests/ObservableTests.fs">Observable</a> instead.</p>
+<p>Both [Events]((<a href="https://github.com/fsprojects/Fable/blob/master/src/tests/EventTests.fs)">https://github.com/fsprojects/Fable/blob/master/src/tests/EventTests.fs)</a> and <a href="https://github.com/fsprojects/Fable/blob/master/src/tests/ObservableTests.fs">Observable</a> are supported.</p>
 <h2><a name="Object-Expressions" class="anchor" href="#Object-Expressions">Object Expressions</a></h2>
 <p>Object expressions are compatible for the most general cases.</p>
 <h2><a name="Units-of-measure" class="anchor" href="#Units-of-measure">Units of measure</a></h2>

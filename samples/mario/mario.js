@@ -17,7 +17,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var Keyboard = exports.Keyboard = function ($exports) {
-    var keysPressed = $exports.keysPressed = new Set();
+    var keysPressed = (Object.defineProperty($exports, 'keysPressed', {
+      get: function () {
+        return keysPressed;
+      },
+      set: function (x) {
+        return keysPressed = x;
+      }
+    }), new Set());
 
     var code = $exports.code = function (x) {
       return keysPressed.has(x) ? 1 : 0;
@@ -43,10 +50,10 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var init = $exports.init = function () {
       document.addEventListener('keydown', function (e) {
         return update(e, true);
-      });
+      }, null);
       document.addEventListener('keyup', function (e) {
         return update(e, false);
-      });
+      }, null);
     };
 
     return $exports;

@@ -31,6 +31,7 @@
     </script>
     
   <title>Super Fable Mario - F# |> BABEL</title>
+  
   <script src="../scripts/core.min.js"></script>
   <script src="../scripts/require.js"></script>
   <meta name="description" content="Mario clone using HTML5 canvas">
@@ -104,7 +105,7 @@ no boundaries!</p></p>
       <script>
         requirejs.config({
           baseUrl: '.',
-          paths: { 'fable-core': '../scripts/fable-core.min' }
+          paths: { 'fable-core': '../scripts/fable-core.min',  }
         });
         requirejs(["mario"]);
       </script>

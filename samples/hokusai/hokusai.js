@@ -168,6 +168,6 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     return function (arg00) {
       _fableCore.Async.startImmediate(arg00);
     }(render()), null;
-  });
+  }, null);
 });
 //# sourceMappingURL=hokusai.js.map

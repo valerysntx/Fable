@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Alfonso Garcia-Caro">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,300,600,700|Roboto+Mono' rel='stylesheet' type='text/css'>
+    <link href="//fsprojects.github.io/Fable/content/custom.css" rel='stylesheet' type='text/css'>
+    <script src="//fsprojects.github.io/Fable/content/tips.js"></script>
+    <link rel="stylesheet" type="text/css" href="//fsprojects.github.io/Fable/content/snippets.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <script language="javascript" type="text/javascript">
+      function init() {
+          try {
+            websocket = new WebSocket("ws://"+window.location.host+"/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+          } catch(e) { /* For local development only */ }
+      }
+      window.addEventListener("load", init, false);
+    </script>
+    
+  <title>D3 world tour - F# |> BABEL</title>
+  
+  <script src="https://d3js.org/queue.v1.min.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>
+  
+  <script src="../scripts/core.min.js"></script>
+  <script src="../scripts/require.js"></script>
+  <meta name="description" content="Looping through countries of the world">
+
+</head>
+<body>
+
+  <div class="fb-navbar">
+  <div class="container">
+  <nav class="navbar navbar-default">
+    <div class="navbar-wrapper">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="//fsprojects.github.io/Fable">Fable</a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class=""><a href="//fsprojects.github.io/Fable">home</a></li>
+          <li class="active"><a href="//fsprojects.github.io/Fable/samples.html">samples</a></li>
+          <li class=""><a href="//fsprojects.github.io/Fable/docs.html">docs</a></li>
+          <li><a href="https://github.com/fsprojects/Fable">source</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  </div>
+  </div>
+
+  <div class="fb-content-wrapper">
+  
+<div class="fb-heading">
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>D3 world tour</h1>
+      <p>Looping through countries of the world</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="container fb-content">
+  <div class="row">
+    <div class="col-md-1 col-lg-2"></div>
+    <div class="col-sm-12 col-md-10 col-lg-8">
+      <p><p> This demo is a Fable port of <a href="http://bl.ocks.org/mbostock/4183330">Mike Bostock's World Tour</a>
+D3 demo. It uses the D3 library to create a visualization that loops through all countries of
+the world and shows them on the globe one by one.
+You can find the <a href="https://github.com/fsprojects/Fable/blob/master/samples/browser/d3map/d3map.fsx">full source code on GitHub</a>.</p>
+<p>On the technical side, the demo shows some of the more interesting aspects of
+calling JavaScript libraries from Fable. You'll learn how to define mapping for
+global objects, how to use functions and the <code>?</code> operator.</p></p>
+    </div>
+    <div class="col-md-1 col-lg-2"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div style="height:500px; width:500px; margin:10px auto 10px auto;">
+        
+  <p style="position:absolute;top:290px;color:black;font-size:16px;font-weight:700;width:500px;text-align:center;" class="country-name">Using D3 and TopoJSON</p>
+  <canvas align="center" id="canvas" width="500" height="500"></canvas>
+  
+      </div>
+      <script>
+        requirejs.config({
+          baseUrl: '.',
+          paths: { 'fable-core': '../scripts/fable-core.min', 'd3':'https://d3js.org/d3.v3.min' }
+        });
+        requirejs(["d3map"]);
+      </script>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-1 col-lg-2"></div>
+    <div class="col-sm-12 col-md-10 col-lg-8">
+      <h2><a name="JavaScript-helpers-and-imports" class="anchor" href="#JavaScript-helpers-and-imports">JavaScript helpers and imports</a></h2>
+<p>Fable comes with <a href="https://github.com/fsprojects/Fable/tree/master/import/d3">an F# mapping for the D3 library</a>,
+which defines all the types and functions for D3 that we'll need in this example. In addition to
+D3, this demo uses <a href="https://github.com/d3/d3-queue">d3-queue</a> and <a href="https://github.com/mbostock/topojson">topojson</a>.
+We'll write the mappings for those two inline</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">System</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">Fable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="i">Core</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs2', 4)" onmouseover="showTip(event, 'fs2', 4)" class="i">Fable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="i">Import</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs2', 6)" onmouseover="showTip(event, 'fs2', 6)" class="i">Fable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="i">Import</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs5', 8)" onmouseover="showTip(event, 'fs5', 8)" class="i">Browser</span>
+
+<span class="c">/// Represents the operations of the &#39;queue&#39; object</span>
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs6', 9)" onmouseover="showTip(event, 'fs6', 9)" class="t">IQueue</span> <span class="o">=</span>
+    <span class="k">abstract</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="f">defer</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="t">obj</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="t">obj</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs6', 13)" onmouseover="showTip(event, 'fs6', 13)" class="t">IQueue</span>
+    <span class="k">abstract</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs9', 14)" onmouseover="showTip(event, 'fs9', 14)" class="f">await</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs8', 15)" onmouseover="showTip(event, 'fs8', 15)" class="t">obj</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs10', 16)" onmouseover="showTip(event, 'fs10', 16)" class="t">unit</span>
+
+<span class="c">/// Represents the API exposed by Topo JSON</span>
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs11', 17)" onmouseover="showTip(event, 'fs11', 17)" class="t">ITopojson</span> <span class="o">=</span>
+    <span class="k">abstract</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs12', 18)" onmouseover="showTip(event, 'fs12', 18)" class="f">feature</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs8', 19)" onmouseover="showTip(event, 'fs8', 19)" class="t">obj</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs8', 20)" onmouseover="showTip(event, 'fs8', 20)" class="t">obj</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="t">obj</span>
+    <span class="k">abstract</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs13', 22)" onmouseover="showTip(event, 'fs13', 22)" class="f">mesh</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="t">obj</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs8', 24)" onmouseover="showTip(event, 'fs8', 24)" class="t">obj</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs8', 25)" onmouseover="showTip(event, 'fs8', 25)" class="t">obj</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs8', 26)" onmouseover="showTip(event, 'fs8', 26)" class="t">obj</span>
+
+<span class="c">// Globally imported JS libs (loaded with &lt;script&gt; tag)</span>
+<span class="k">let</span> [&lt;<span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="t">Global</span>&gt;] <span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="f">queue</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 29)" onmouseover="showTip(event, 'fs10', 29)" class="t">unit</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs6', 30)" onmouseover="showTip(event, 'fs6', 30)" class="t">IQueue</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs16', 31)" onmouseover="showTip(event, 'fs16', 31)" class="f">failwith</span> <span class="s">&quot;JS only&quot;</span>
+<span class="k">let</span> [&lt;<span onmouseout="hideTip(event, 'fs14', 32)" onmouseover="showTip(event, 'fs14', 32)" class="t">Global</span>&gt;] <span onmouseout="hideTip(event, 'fs17', 33)" onmouseover="showTip(event, 'fs17', 33)" class="i">topojson</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs11', 34)" onmouseover="showTip(event, 'fs11', 34)" class="t">ITopojson</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs16', 35)" onmouseover="showTip(event, 'fs16', 35)" class="f">failwith</span> <span class="s">&quot;JS only&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>The <code>Global</code> attrobute on the two values specifies that those are imported globally available
+values. Fable does not generate any JavaScript code for them - it simply maps any call to
+<code>topojson.feature(..)</code> etc. to a corresponding JavaScript call.</p>
+<p>In addition to the library imports, we also define the following helpers that wrap an F#
+function into the <code>Func&lt;...&gt;</code> type. This creates a function value that is compatible with
+JavaScript. This is needed because F# uses curried representation of functions and so,
+for example, <code>fun a b -&gt; a + b</code> would correspond to <code>function(a){ return function(b) { return a + b; }}</code>
+in JavaScript. The <code>Func&lt;...&gt;</code> delegate avoids the issue:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="k">inline</span> <span onmouseout="hideTip(event, 'fs18', 36)" onmouseover="showTip(event, 'fs18', 36)" class="f">f1</span> (<span onmouseout="hideTip(event, 'fs19', 37)" onmouseover="showTip(event, 'fs19', 37)" class="f">f</span><span class="o">:</span> <span class="o">&#39;</span><span class="i">a</span><span class="k">-&gt;</span><span class="o">&#39;</span><span class="i">b</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 38)" onmouseover="showTip(event, 'fs20', 38)" class="t">Func</span><span class="o">&lt;</span>_,_<span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs19', 39)" onmouseover="showTip(event, 'fs19', 39)" class="f">f</span>
+<span class="k">let</span> <span class="k">inline</span> <span onmouseout="hideTip(event, 'fs21', 40)" onmouseover="showTip(event, 'fs21', 40)" class="f">f2</span> (<span onmouseout="hideTip(event, 'fs22', 41)" onmouseover="showTip(event, 'fs22', 41)" class="f">f</span><span class="o">:</span> <span class="o">&#39;</span><span class="i">a</span><span class="k">-&gt;</span><span class="o">&#39;</span><span class="i">b</span><span class="k">-&gt;</span><span class="o">&#39;</span><span class="i">c</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 42)" onmouseover="showTip(event, 'fs20', 42)" class="t">Func</span><span class="o">&lt;</span>_,_,_<span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs22', 43)" onmouseover="showTip(event, 'fs22', 43)" class="f">f</span>
+<span class="k">let</span> <span class="k">inline</span> <span onmouseout="hideTip(event, 'fs23', 44)" onmouseover="showTip(event, 'fs23', 44)" class="f">f3</span> (<span onmouseout="hideTip(event, 'fs24', 45)" onmouseover="showTip(event, 'fs24', 45)" class="f">f</span><span class="o">:</span> <span class="o">&#39;</span><span class="i">a</span><span class="k">-&gt;</span><span class="o">&#39;</span><span class="i">b</span><span class="k">-&gt;</span><span class="o">&#39;</span><span class="i">c</span><span class="k">-&gt;</span><span class="o">&#39;</span><span class="i">d</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 46)" onmouseover="showTip(event, 'fs20', 46)" class="t">Func</span><span class="o">&lt;</span>_,_,_,_<span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs24', 47)" onmouseover="showTip(event, 'fs24', 47)" class="f">f</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Setting-up-the-canvas-and-projection" class="anchor" href="#Setting-up-the-canvas-and-projection">Setting up the canvas and projection</a></h2>
+<p>We will be using D3 together with HTML5 canvas, so the first step is to get the context object
+and set the size of the canvas to 500x500:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 48)" onmouseover="showTip(event, 'fs25', 48)" class="i">width</span>, <span onmouseout="hideTip(event, 'fs26', 49)" onmouseover="showTip(event, 'fs26', 49)" class="i">height</span> <span class="o">=</span> <span class="n">500.</span>, <span class="n">500.</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 50)" onmouseover="showTip(event, 'fs27', 50)" class="i">canvas</span> <span class="o">=</span>  <span onmouseout="hideTip(event, 'fs28', 51)" onmouseover="showTip(event, 'fs28', 51)" class="i">document</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs29', 52)" onmouseover="showTip(event, 'fs29', 52)" class="f">getElementsByTagName_canvas</span>()<span class="o">.</span>[<span class="n">0</span>]
+<span onmouseout="hideTip(event, 'fs27', 53)" onmouseover="showTip(event, 'fs27', 53)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 54)" onmouseover="showTip(event, 'fs30', 54)" class="i">width</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs25', 55)" onmouseover="showTip(event, 'fs25', 55)" class="i">width</span>
+<span onmouseout="hideTip(event, 'fs27', 56)" onmouseover="showTip(event, 'fs27', 56)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 57)" onmouseover="showTip(event, 'fs31', 57)" class="i">height</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs26', 58)" onmouseover="showTip(event, 'fs26', 58)" class="i">height</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 59)" onmouseover="showTip(event, 'fs32', 59)" class="i">ctx</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs27', 60)" onmouseover="showTip(event, 'fs27', 60)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 61)" onmouseover="showTip(event, 'fs33', 61)" class="f">getContext_2d</span>()
+</code></pre></td>
+</tr>
+</table>
+<p>Next, we setup the D3 orthographic projection for the globe. The <code>projection</code> object will be
+used later for rotating the globe. The <code>path</code> value is used for transforming paths that we
+want to render to match with the projection.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs34', 62)" onmouseover="showTip(event, 'fs34', 62)" class="i">projection</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs35', 63)" onmouseover="showTip(event, 'fs35', 63)" class="t">D3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 64)" onmouseover="showTip(event, 'fs36', 64)" class="i">geo</span>
+    <span class="o">.</span><span class="f">orthographic</span>()
+    <span class="o">.</span><span class="f">translate</span>((<span onmouseout="hideTip(event, 'fs25', 65)" onmouseover="showTip(event, 'fs25', 65)" class="i">width</span> <span class="o">/</span> <span class="n">2.</span>, <span onmouseout="hideTip(event, 'fs26', 66)" onmouseover="showTip(event, 'fs26', 66)" class="i">height</span> <span class="o">/</span> <span class="n">2.</span>))
+    <span class="o">.</span><span class="f">scale</span>(<span onmouseout="hideTip(event, 'fs25', 67)" onmouseover="showTip(event, 'fs25', 67)" class="i">width</span> <span class="o">/</span> <span class="n">2.</span> <span class="o">-</span> <span class="n">20.</span>)
+    <span class="o">.</span><span class="f">clipAngle</span>(<span class="n">90.</span>)
+    <span class="o">.</span><span class="f">precision</span>(<span class="n">0.6</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 68)" onmouseover="showTip(event, 'fs37', 68)" class="i">path</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs35', 69)" onmouseover="showTip(event, 'fs35', 69)" class="t">D3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 70)" onmouseover="showTip(event, 'fs36', 70)" class="i">geo</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 71)" onmouseover="showTip(event, 'fs37', 71)" class="f">path</span>()
+    <span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 72)" onmouseover="showTip(event, 'fs34', 72)" class="f">projection</span>(<span onmouseout="hideTip(event, 'fs38', 73)" onmouseover="showTip(event, 'fs38', 73)" class="f">unbox</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs35', 74)" onmouseover="showTip(event, 'fs35', 74)" class="t">D3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs39', 75)" onmouseover="showTip(event, 'fs39', 75)" class="t">Geo</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 76)" onmouseover="showTip(event, 'fs40', 76)" class="t">Transform</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs34', 77)" onmouseover="showTip(event, 'fs34', 77)" class="i">projection</span>)
+    <span class="o">.</span><span class="f">context</span>(<span onmouseout="hideTip(event, 'fs32', 78)" onmouseover="showTip(event, 'fs32', 78)" class="i">ctx</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs41', 79)" onmouseover="showTip(event, 'fs41', 79)" class="i">title</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs42', 80)" onmouseover="showTip(event, 'fs42', 80)" class="i">d3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs43', 81)" onmouseover="showTip(event, 'fs43', 81)" class="f">select</span>(<span class="s">&quot;.country-name&quot;</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>Finally, the <code>title</code> value is the HTML element in the middle of the globe that shows the
+current country name. This is just an ordinary HTML element and we will set its body text
+during the animation.</p>
+<h2><a name="Generating-the-visualization" class="anchor" href="#Generating-the-visualization">Generating the visualization</a></h2>
+<p>The main part of the code is defined inside a <code>dataLoaded</code> function. This gets called
+after D3 loads the country names and locations. The structure of the code looks as follows:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs44', 82)" onmouseover="showTip(event, 'fs44', 82)" class="f">dataLoaded</span> <span onmouseout="hideTip(event, 'fs45', 83)" onmouseover="showTip(event, 'fs45', 83)" class="i">world</span> <span onmouseout="hideTip(event, 'fs46', 84)" onmouseover="showTip(event, 'fs46', 84)" class="i">names</span> <span class="o">=</span>
+  <span class="c">// (more definitions and setup)</span>
+
+  <span class="c">// Generate next transition</span>
+  <span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs47', 85)" onmouseover="showTip(event, 'fs47', 85)" class="f">transition</span> (<span onmouseout="hideTip(event, 'fs48', 86)" onmouseover="showTip(event, 'fs48', 86)" class="i">i</span>) <span class="o">=</span>
+    <span class="c">// (...)</span>
+
+  <span class="c">// Start the first transition</span>
+  <span onmouseout="hideTip(event, 'fs47', 87)" onmouseover="showTip(event, 'fs47', 87)" class="f">transition</span> (<span class="n">0</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>The <code>dataLoaded</code> function will be called by D3 with a <code>world</code> value loaded from the
+<a href="https://github.com/fsprojects/Fable/blob/master/samples/browser/d3map/data/world-110m.json">world-110m.json</a>
+file that represents individual country areas; <code>names</code> loads country names from
+<a href="https://github.com/fsprojects/Fable/blob/master/samples/browser/d3/data/world-country-names.tsv">world-country-names.tsv</a>.</p>
+<p>After some setup, the code defines a recursive <code>transition</code> function, which performs one transition
+and then calls itself to setup the next transition step. In each step, it increments the index of
+the current country, which is stored in <code>i</code>. The <code>transtion 0</code> call then starts the animation.</p>
+<h3><a name="Preparing-the-data" class="anchor" href="#Preparing-the-data">Preparing the data</a></h3>
+<p>Once the data is loaded, we need to do some pre-processing. First, we create a number of
+D3 objects that are used to render the map - this includes <code>globe</code> for the border around
+the globe, <code>landFeatures</code> (for filling land) and <code>borders</code> for rendering borders between
+couuntries. We also find all countries for which we have both name and map:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">  <span class="c">// Create globe object (to render the border)</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs51', 91)" onmouseover="showTip(event, 'fs51', 91)" class="i">globe</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs52', 92)" onmouseover="showTip(event, 'fs52', 92)" class="f">createObj</span> [ <span class="s">&quot;type&quot;</span> <span class="o">==&gt;</span> <span class="s">&quot;Sphere&quot;</span> ]
+  <span class="c">// Create land feature (fill the world)</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs53', 93)" onmouseover="showTip(event, 'fs53', 93)" class="i">landFeature</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs17', 94)" onmouseover="showTip(event, 'fs17', 94)" class="i">topojson</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 95)" onmouseover="showTip(event, 'fs54', 95)" class="f">feature</span>(<span onmouseout="hideTip(event, 'fs45', 96)" onmouseover="showTip(event, 'fs45', 96)" class="i">world</span>, <span onmouseout="hideTip(event, 'fs45', 97)" onmouseover="showTip(event, 'fs45', 97)" class="i">world</span><span class="o">?</span><span class="i">objects</span><span class="o">?</span><span class="i">``land``</span>)
+
+  <span class="c">// Used to render country borders, specify filter to</span>
+  <span class="c">// prune overlapping borders (shared by 2 countries)</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs55', 98)" onmouseover="showTip(event, 'fs55', 98)" class="i">borders</span> <span class="o">=</span>
+    <span onmouseout="hideTip(event, 'fs17', 99)" onmouseover="showTip(event, 'fs17', 99)" class="i">topojson</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs56', 100)" onmouseover="showTip(event, 'fs56', 100)" class="f">mesh</span>(<span onmouseout="hideTip(event, 'fs45', 101)" onmouseover="showTip(event, 'fs45', 101)" class="i">world</span>,
+      <span onmouseout="hideTip(event, 'fs45', 102)" onmouseover="showTip(event, 'fs45', 102)" class="i">world</span><span class="o">?</span><span class="i">objects</span><span class="o">?</span><span class="i">countries</span>, <span onmouseout="hideTip(event, 'fs21', 103)" onmouseover="showTip(event, 'fs21', 103)" class="f">f2</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs57', 104)" onmouseover="showTip(event, 'fs57', 104)" class="i">x</span> <span onmouseout="hideTip(event, 'fs58', 105)" onmouseover="showTip(event, 'fs58', 105)" class="i">y</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs57', 106)" onmouseover="showTip(event, 'fs57', 106)" class="i">x</span> <span class="o">&lt;&gt;</span> <span onmouseout="hideTip(event, 'fs58', 107)" onmouseover="showTip(event, 'fs58', 107)" class="i">y</span>))
+
+  <span class="c">// Get countries for which we have a name and set</span>
+  <span class="c">// their name property using the `?` operator</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs59', 108)" onmouseover="showTip(event, 'fs59', 108)" class="i">countries</span> <span class="o">=</span>
+    <span onmouseout="hideTip(event, 'fs17', 109)" onmouseover="showTip(event, 'fs17', 109)" class="i">topojson</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 110)" onmouseover="showTip(event, 'fs54', 110)" class="f">feature</span>(<span onmouseout="hideTip(event, 'fs45', 111)" onmouseover="showTip(event, 'fs45', 111)" class="i">world</span>, <span onmouseout="hideTip(event, 'fs45', 112)" onmouseover="showTip(event, 'fs45', 112)" class="i">world</span><span class="o">?</span><span class="i">objects</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs59', 113)" onmouseover="showTip(event, 'fs59', 113)" class="i">countries</span>)<span class="o">?</span><span class="i">features</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs38', 114)" onmouseover="showTip(event, 'fs38', 114)" class="f">unbox</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs8', 115)" onmouseover="showTip(event, 'fs8', 115)" class="t">obj</span>[]<span class="o">&gt;</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs60', 116)" onmouseover="showTip(event, 'fs60', 116)" class="t">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs61', 117)" onmouseover="showTip(event, 'fs61', 117)" class="f">filter</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs62', 118)" onmouseover="showTip(event, 'fs62', 118)" class="i">d</span> <span class="k">-&gt;</span>
+        <span onmouseout="hideTip(event, 'fs50', 119)" onmouseover="showTip(event, 'fs50', 119)" class="i">names</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs63', 120)" onmouseover="showTip(event, 'fs63', 120)" class="t">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs64', 121)" onmouseover="showTip(event, 'fs64', 121)" class="f">exists</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs65', 122)" onmouseover="showTip(event, 'fs65', 122)" class="i">n</span> <span class="k">-&gt;</span>
+          <span class="k">if</span> (<span onmouseout="hideTip(event, 'fs66', 123)" onmouseover="showTip(event, 'fs66', 123)" class="f">string</span> <span onmouseout="hideTip(event, 'fs62', 124)" onmouseover="showTip(event, 'fs62', 124)" class="i">d</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs67', 125)" onmouseover="showTip(event, 'fs67', 125)" class="i">id</span>) <span class="o">=</span> (<span onmouseout="hideTip(event, 'fs66', 126)" onmouseover="showTip(event, 'fs66', 126)" class="f">string</span> <span onmouseout="hideTip(event, 'fs65', 127)" onmouseover="showTip(event, 'fs65', 127)" class="i">n</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs67', 128)" onmouseover="showTip(event, 'fs67', 128)" class="i">id</span>)
+          <span class="k">then</span> <span onmouseout="hideTip(event, 'fs62', 129)" onmouseover="showTip(event, 'fs62', 129)" class="i">d</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs68', 130)" onmouseover="showTip(event, 'fs68', 130)" class="i">name</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs65', 131)" onmouseover="showTip(event, 'fs65', 131)" class="i">n</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs68', 132)" onmouseover="showTip(event, 'fs68', 132)" class="i">name</span>; <span class="k">true</span>
+          <span class="k">else</span> <span class="k">false</span>))
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs60', 133)" onmouseover="showTip(event, 'fs60', 133)" class="t">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs69', 134)" onmouseover="showTip(event, 'fs69', 134)" class="f">sortWith</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs70', 135)" onmouseover="showTip(event, 'fs70', 135)" class="i">a</span> <span onmouseout="hideTip(event, 'fs71', 136)" onmouseover="showTip(event, 'fs71', 136)" class="i">b</span> <span class="k">-&gt;</span>
+          <span onmouseout="hideTip(event, 'fs72', 137)" onmouseover="showTip(event, 'fs72', 137)" class="f">compare</span> (<span onmouseout="hideTip(event, 'fs66', 138)" onmouseover="showTip(event, 'fs66', 138)" class="f">string</span> <span onmouseout="hideTip(event, 'fs70', 139)" onmouseover="showTip(event, 'fs70', 139)" class="i">a</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs68', 140)" onmouseover="showTip(event, 'fs68', 140)" class="i">name</span>) (<span onmouseout="hideTip(event, 'fs66', 141)" onmouseover="showTip(event, 'fs66', 141)" class="f">string</span> <span onmouseout="hideTip(event, 'fs71', 142)" onmouseover="showTip(event, 'fs71', 142)" class="i">b</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs68', 143)" onmouseover="showTip(event, 'fs68', 143)" class="i">name</span>))
+</code></pre></td>
+</tr>
+</table>
+<h3><a name="Rendering-the-map" class="anchor" href="#Rendering-the-map">Rendering the map</a></h3>
+<p>Now we have all we need to render the map! Given a selected country <code>country</code> and a
+rotation <code>angle</code>, the following function renders the map:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">  <span class="c">/// Helper that draws or fills a line</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs73', 144)" onmouseover="showTip(event, 'fs73', 144)" class="f">draw</span> <span onmouseout="hideTip(event, 'fs74', 145)" onmouseover="showTip(event, 'fs74', 145)" class="i">color</span> <span onmouseout="hideTip(event, 'fs75', 146)" onmouseover="showTip(event, 'fs75', 146)" class="i">width</span> <span onmouseout="hideTip(event, 'fs76', 147)" onmouseover="showTip(event, 'fs76', 147)" class="i">line</span> <span onmouseout="hideTip(event, 'fs77', 148)" onmouseover="showTip(event, 'fs77', 148)" class="i">fill</span> <span class="o">=</span>
+    <span class="k">if</span> <span onmouseout="hideTip(event, 'fs77', 149)" onmouseover="showTip(event, 'fs77', 149)" class="i">fill</span> <span class="k">then</span> <span onmouseout="hideTip(event, 'fs32', 150)" onmouseover="showTip(event, 'fs32', 150)" class="i">ctx</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs78', 151)" onmouseover="showTip(event, 'fs78', 151)" class="i">fillStyle</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs79', 152)" onmouseover="showTip(event, 'fs79', 152)" class="t">U3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs80', 153)" onmouseover="showTip(event, 'fs80', 153)" class="p">Case1</span> <span onmouseout="hideTip(event, 'fs74', 154)" onmouseover="showTip(event, 'fs74', 154)" class="i">color</span>
+    <span class="k">else</span> <span onmouseout="hideTip(event, 'fs32', 155)" onmouseover="showTip(event, 'fs32', 155)" class="i">ctx</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs81', 156)" onmouseover="showTip(event, 'fs81', 156)" class="i">strokeStyle</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs79', 157)" onmouseover="showTip(event, 'fs79', 157)" class="t">U3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs80', 158)" onmouseover="showTip(event, 'fs80', 158)" class="p">Case1</span> <span onmouseout="hideTip(event, 'fs74', 159)" onmouseover="showTip(event, 'fs74', 159)" class="i">color</span>
+    <span onmouseout="hideTip(event, 'fs32', 160)" onmouseover="showTip(event, 'fs32', 160)" class="i">ctx</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs82', 161)" onmouseover="showTip(event, 'fs82', 161)" class="i">lineWidth</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs75', 162)" onmouseover="showTip(event, 'fs75', 162)" class="i">width</span>
+    <span onmouseout="hideTip(event, 'fs32', 163)" onmouseover="showTip(event, 'fs32', 163)" class="i">ctx</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs83', 164)" onmouseover="showTip(event, 'fs83', 164)" class="f">beginPath</span>()
+    <span onmouseout="hideTip(event, 'fs37', 165)" onmouseover="showTip(event, 'fs37', 165)" class="i">path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs84', 166)" onmouseover="showTip(event, 'fs84', 166)" class="f">Invoke</span>(<span onmouseout="hideTip(event, 'fs76', 167)" onmouseover="showTip(event, 'fs76', 167)" class="i">line</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs85', 168)" onmouseover="showTip(event, 'fs85', 168)" class="f">ignore</span>
+    <span class="k">if</span> <span onmouseout="hideTip(event, 'fs77', 169)" onmouseover="showTip(event, 'fs77', 169)" class="i">fill</span> <span class="k">then</span> <span onmouseout="hideTip(event, 'fs32', 170)" onmouseover="showTip(event, 'fs32', 170)" class="i">ctx</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs86', 171)" onmouseover="showTip(event, 'fs86', 171)" class="f">fill</span>() <span class="k">else</span> <span onmouseout="hideTip(event, 'fs32', 172)" onmouseover="showTip(event, 'fs32', 172)" class="i">ctx</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs87', 173)" onmouseover="showTip(event, 'fs87', 173)" class="f">stroke</span>()
+
+  <span class="c">/// Render background, current country, borders &amp; globe</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs88', 174)" onmouseover="showTip(event, 'fs88', 174)" class="f">render</span> <span onmouseout="hideTip(event, 'fs89', 175)" onmouseover="showTip(event, 'fs89', 175)" class="i">country</span> <span onmouseout="hideTip(event, 'fs90', 176)" onmouseover="showTip(event, 'fs90', 176)" class="i">angle</span> <span class="o">=</span>
+      <span onmouseout="hideTip(event, 'fs34', 177)" onmouseover="showTip(event, 'fs34', 177)" class="i">projection</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs91', 178)" onmouseover="showTip(event, 'fs91', 178)" class="f">rotate</span>(<span onmouseout="hideTip(event, 'fs38', 179)" onmouseover="showTip(event, 'fs38', 179)" class="f">unbox</span> <span onmouseout="hideTip(event, 'fs90', 180)" onmouseover="showTip(event, 'fs90', 180)" class="i">angle</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs85', 181)" onmouseover="showTip(event, 'fs85', 181)" class="f">ignore</span>
+      <span onmouseout="hideTip(event, 'fs32', 182)" onmouseover="showTip(event, 'fs32', 182)" class="i">ctx</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs92', 183)" onmouseover="showTip(event, 'fs92', 183)" class="f">clearRect</span>(<span class="n">0.</span>, <span class="n">0.</span>, <span onmouseout="hideTip(event, 'fs25', 184)" onmouseover="showTip(event, 'fs25', 184)" class="i">width</span>, <span onmouseout="hideTip(event, 'fs26', 185)" onmouseover="showTip(event, 'fs26', 185)" class="i">height</span>)
+      <span onmouseout="hideTip(event, 'fs73', 186)" onmouseover="showTip(event, 'fs73', 186)" class="f">draw</span> <span class="s">&quot;#ACA2AD&quot;</span> <span class="n">0.0</span> <span onmouseout="hideTip(event, 'fs53', 187)" onmouseover="showTip(event, 'fs53', 187)" class="i">landFeature</span> <span class="k">true</span>
+      <span onmouseout="hideTip(event, 'fs73', 188)" onmouseover="showTip(event, 'fs73', 188)" class="f">draw</span> <span class="s">&quot;#9E4078&quot;</span> <span class="n">0.0</span> <span onmouseout="hideTip(event, 'fs89', 189)" onmouseover="showTip(event, 'fs89', 189)" class="i">country</span> <span class="k">true</span>
+      <span onmouseout="hideTip(event, 'fs73', 190)" onmouseover="showTip(event, 'fs73', 190)" class="f">draw</span> <span class="s">&quot;#EAF1F7&quot;</span> <span class="n">0.5</span> <span onmouseout="hideTip(event, 'fs55', 191)" onmouseover="showTip(event, 'fs55', 191)" class="i">borders</span> <span class="k">false</span>
+      <span onmouseout="hideTip(event, 'fs73', 192)" onmouseover="showTip(event, 'fs73', 192)" class="f">draw</span> <span class="s">&quot;#726B72&quot;</span> <span class="n">2.0</span> <span onmouseout="hideTip(event, 'fs51', 193)" onmouseover="showTip(event, 'fs51', 193)" class="i">globe</span> <span class="k">false</span>
+      <span onmouseout="hideTip(event, 'fs93', 194)" onmouseover="showTip(event, 'fs93', 194)" class="f">box</span> ()
+</code></pre></td>
+</tr>
+</table>
+<h3><a name="Creating-the-transition" class="anchor" href="#Creating-the-transition">Creating the transition</a></h3>
+<p>Perhaps the most interesting part of the demo is the next one. Here, we use D3
+to create the animated transition. This is done by calling <code>d3.transition()</code> and
+then setting up a number of parameters:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">  <span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs94', 195)" onmouseover="showTip(event, 'fs94', 195)" class="f">transition</span> <span onmouseout="hideTip(event, 'fs48', 196)" onmouseover="showTip(event, 'fs48', 196)" class="i">i</span> <span class="o">=</span>
+    <span onmouseout="hideTip(event, 'fs42', 197)" onmouseover="showTip(event, 'fs42', 197)" class="i">d3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs95', 198)" onmouseover="showTip(event, 'fs95', 198)" class="f">transition</span>()
+      <span class="o">.</span><span class="f">duration</span>(<span class="n">1250.</span>)
+      <span class="o">.</span><span class="f">each</span>(<span class="s">&quot;start&quot;</span>, <span onmouseout="hideTip(event, 'fs21', 199)" onmouseover="showTip(event, 'fs21', 199)" class="f">f2</span> (<span class="k">fun</span> _ _ <span class="k">-&gt;</span>
+        <span class="c">// Set the text of the HTML element</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs96', 200)" onmouseover="showTip(event, 'fs96', 200)" class="i">name</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs38', 201)" onmouseover="showTip(event, 'fs38', 201)" class="f">unbox</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs35', 202)" onmouseover="showTip(event, 'fs35', 202)" class="t">D3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs97', 203)" onmouseover="showTip(event, 'fs97', 203)" class="t">Primitive</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs59', 204)" onmouseover="showTip(event, 'fs59', 204)" class="i">countries</span><span class="o">.</span>[<span onmouseout="hideTip(event, 'fs48', 205)" onmouseover="showTip(event, 'fs48', 205)" class="i">i</span>]<span class="o">?</span><span onmouseout="hideTip(event, 'fs96', 206)" onmouseover="showTip(event, 'fs96', 206)" class="i">name</span>
+        <span onmouseout="hideTip(event, 'fs41', 207)" onmouseover="showTip(event, 'fs41', 207)" class="i">title</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs98', 208)" onmouseover="showTip(event, 'fs98', 208)" class="f">text</span>(<span onmouseout="hideTip(event, 'fs96', 209)" onmouseover="showTip(event, 'fs96', 209)" class="i">name</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs93', 210)" onmouseover="showTip(event, 'fs93', 210)" class="f">box</span> ))
+      <span class="o">.</span><span class="f">tween</span>(<span class="s">&quot;rotate&quot;</span>, <span onmouseout="hideTip(event, 'fs18', 211)" onmouseover="showTip(event, 'fs18', 211)" class="f">f1</span> (<span class="k">fun</span> _ <span class="k">-&gt;</span>
+        <span class="c">// Interopolate the rotation &amp; return function</span>
+        <span class="c">// that renders everything at a given time &#39;t&#39;</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs99', 212)" onmouseover="showTip(event, 'fs99', 212)" class="i">p1</span>, <span onmouseout="hideTip(event, 'fs100', 213)" onmouseover="showTip(event, 'fs100', 213)" class="i">p2</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs35', 214)" onmouseover="showTip(event, 'fs35', 214)" class="t">D3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 215)" onmouseover="showTip(event, 'fs36', 215)" class="i">geo</span><span class="o">.</span><span class="f">centroid</span>(<span onmouseout="hideTip(event, 'fs59', 216)" onmouseover="showTip(event, 'fs59', 216)" class="i">countries</span><span class="o">.</span>[<span onmouseout="hideTip(event, 'fs48', 217)" onmouseover="showTip(event, 'fs48', 217)" class="i">i</span>])
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs101', 218)" onmouseover="showTip(event, 'fs101', 218)" class="i">r</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs42', 219)" onmouseover="showTip(event, 'fs42', 219)" class="i">d3</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs102', 220)" onmouseover="showTip(event, 'fs102', 220)" class="f">interpolate</span>(<span onmouseout="hideTip(event, 'fs34', 221)" onmouseover="showTip(event, 'fs34', 221)" class="i">projection</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs91', 222)" onmouseover="showTip(event, 'fs91', 222)" class="f">rotate</span>(), (<span class="o">-</span><span onmouseout="hideTip(event, 'fs99', 223)" onmouseover="showTip(event, 'fs99', 223)" class="i">p1</span>, <span class="o">-</span><span onmouseout="hideTip(event, 'fs100', 224)" onmouseover="showTip(event, 'fs100', 224)" class="i">p2</span>))
+        <span onmouseout="hideTip(event, 'fs18', 225)" onmouseover="showTip(event, 'fs18', 225)" class="f">f1</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs103', 226)" onmouseover="showTip(event, 'fs103', 226)" class="i">t</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs88', 227)" onmouseover="showTip(event, 'fs88', 227)" class="f">render</span> <span onmouseout="hideTip(event, 'fs59', 228)" onmouseover="showTip(event, 'fs59', 228)" class="i">countries</span><span class="o">.</span>[<span onmouseout="hideTip(event, 'fs48', 229)" onmouseover="showTip(event, 'fs48', 229)" class="i">i</span>] (<span onmouseout="hideTip(event, 'fs101', 230)" onmouseover="showTip(event, 'fs101', 230)" class="i">r</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs104', 231)" onmouseover="showTip(event, 'fs104', 231)" class="f">Invoke</span>(<span onmouseout="hideTip(event, 'fs103', 232)" onmouseover="showTip(event, 'fs103', 232)" class="i">t</span>))) ))
+      <span class="o">.</span><span onmouseout="hideTip(event, 'fs94', 233)" onmouseover="showTip(event, 'fs94', 233)" class="f">transition</span>()
+      <span class="o">.</span><span class="f">each</span>(<span class="s">&quot;end&quot;</span>, <span onmouseout="hideTip(event, 'fs21', 234)" onmouseover="showTip(event, 'fs21', 234)" class="f">f2</span> (<span class="k">fun</span> _ _ <span class="k">-&gt;</span>
+        <span class="c">// At the end, start the transition again!</span>
+        <span onmouseout="hideTip(event, 'fs94', 235)" onmouseover="showTip(event, 'fs94', 235)" class="f">transition</span> ((<span onmouseout="hideTip(event, 'fs48', 236)" onmouseover="showTip(event, 'fs48', 236)" class="i">i</span> <span class="o">+</span> <span class="n">1</span>) <span class="o">%</span> <span onmouseout="hideTip(event, 'fs59', 237)" onmouseover="showTip(event, 'fs59', 237)" class="i">countries</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs105', 238)" onmouseover="showTip(event, 'fs105', 238)" class="i">Length</span>) )) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs93', 239)" onmouseover="showTip(event, 'fs93', 239)" class="f">box</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Loading-the-data" class="anchor" href="#Loading-the-data">Loading the data</a></h2>
+<p>The last thing that we need to do in order to put everything together is to trigger the loading
+of data. This is done by calling <code>queue().defer(...)</code>, which specifies that a file should be
+(eventually) loaded. When the loading is done, we check for potential errors and call the
+<code>dataLoaded</code> function, which then starts the first transition.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs15', 241)" onmouseover="showTip(event, 'fs15', 241)" class="f">queue</span>()
+  <span class="c">// Use the dynamic operator here so the F# compiler</span>
+  <span class="c">// doesn&#39;t wrap d3.json/d3.tsv in a lambda</span>
+  <span class="o">.</span><span class="f">defer</span>(<span onmouseout="hideTip(event, 'fs42', 242)" onmouseover="showTip(event, 'fs42', 242)" class="i">d3</span><span class="o">?</span><span class="i">json</span>, <span class="s">&quot;data/world-110m.json&quot;</span>)
+  <span class="o">.</span><span class="f">defer</span>(<span onmouseout="hideTip(event, 'fs42', 243)" onmouseover="showTip(event, 'fs42', 243)" class="i">d3</span><span class="o">?</span><span class="i">tsv</span>, <span class="s">&quot;data/world-country-names.tsv&quot;</span>)
+  <span class="o">.</span><span class="f">await</span>(<span onmouseout="hideTip(event, 'fs23', 244)" onmouseover="showTip(event, 'fs23', 244)" class="f">f3</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs106', 245)" onmouseover="showTip(event, 'fs106', 245)" class="i">error</span> <span onmouseout="hideTip(event, 'fs107', 246)" onmouseover="showTip(event, 'fs107', 246)" class="i">world</span> <span onmouseout="hideTip(event, 'fs108', 247)" onmouseover="showTip(event, 'fs108', 247)" class="i">names</span> <span class="k">-&gt;</span>
+    <span class="k">if</span> <span onmouseout="hideTip(event, 'fs106', 248)" onmouseover="showTip(event, 'fs106', 248)" class="i">error</span> <span class="k">then</span> <span onmouseout="hideTip(event, 'fs106', 249)" onmouseover="showTip(event, 'fs106', 249)" class="i">error</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs38', 250)" onmouseover="showTip(event, 'fs38', 250)" class="f">unbox</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs109', 251)" onmouseover="showTip(event, 'fs109', 251)" class="f">raise</span>
+    <span onmouseout="hideTip(event, 'fs49', 252)" onmouseover="showTip(event, 'fs49', 252)" class="f">dataLoaded</span> <span onmouseout="hideTip(event, 'fs107', 253)" onmouseover="showTip(event, 'fs107', 253)" class="i">world</span> <span onmouseout="hideTip(event, 'fs108', 254)" onmouseover="showTip(event, 'fs108', 254)" class="i">names</span>)
+</code></pre></td>
+</tr>
+</table>
+
+
+<div class="tip" id="fs1">namespace System</div>
+<div class="tip" id="fs2">namespace Fable</div>
+<div class="tip" id="fs3">namespace Fable.Core</div>
+<div class="tip" id="fs4">namespace Fable.Import</div>
+<div class="tip" id="fs5">module Browser<br /><br />from Fable.Import</div>
+<div class="tip" id="fs6">type IQueue =<br />&#160;&#160;interface<br />&#160;&#160;&#160;&#160;abstract member await : obj -&gt; unit<br />&#160;&#160;&#160;&#160;abstract member defer : obj * obj -&gt; IQueue<br />&#160;&#160;end<br /><br />Full name: D3map.IQueue<br /><em><br /><br />&#160;Represents the operations of the &#39;queue&#39; object</em></div>
+<div class="tip" id="fs7">abstract member IQueue.defer : obj * obj -&gt; IQueue<br /><br />Full name: D3map.IQueue.defer</div>
+<div class="tip" id="fs8">type obj = Object<br /><br />Full name: Microsoft.FSharp.Core.obj</div>
+<div class="tip" id="fs9">abstract member IQueue.await : obj -&gt; unit<br /><br />Full name: D3map.IQueue.await</div>
+<div class="tip" id="fs10">type unit = Unit<br /><br />Full name: Microsoft.FSharp.Core.unit</div>
+<div class="tip" id="fs11">type ITopojson =<br />&#160;&#160;interface<br />&#160;&#160;&#160;&#160;abstract member feature : obj * obj -&gt; obj<br />&#160;&#160;&#160;&#160;abstract member mesh : obj * obj * obj -&gt; obj<br />&#160;&#160;end<br /><br />Full name: D3map.ITopojson<br /><em><br /><br />&#160;Represents the API exposed by Topo JSON</em></div>
+<div class="tip" id="fs12">abstract member ITopojson.feature : obj * obj -&gt; obj<br /><br />Full name: D3map.ITopojson.feature</div>
+<div class="tip" id="fs13">abstract member ITopojson.mesh : obj * obj * obj -&gt; obj<br /><br />Full name: D3map.ITopojson.mesh</div>
+<div class="tip" id="fs14">Multiple items<br />type GlobalAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;new : unit -&gt; GlobalAttribute<br /><br />Full name: Fable.Core.GlobalAttribute<br /><br />--------------------<br />new : unit -&gt; GlobalAttribute</div>
+<div class="tip" id="fs15">val queue : (unit -&gt; IQueue)<br /><br />Full name: D3map.queue</div>
+<div class="tip" id="fs16">val failwith : message:string -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.failwith</div>
+<div class="tip" id="fs17">val topojson : ITopojson<br /><br />Full name: D3map.topojson</div>
+<div class="tip" id="fs18">val f1 : f:(&#39;a -&gt; &#39;b) -&gt; Func&lt;&#39;a,&#39;b&gt;<br /><br />Full name: D3map.f1</div>
+<div class="tip" id="fs19">val f : (&#39;a -&gt; &#39;b)</div>
+<div class="tip" id="fs20">Multiple items<br />type Func&lt;&#39;TResult&gt; =<br />&#160;&#160;delegate of unit -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;T14,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 * &#39;T14 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;T14,&#39;T15,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 * &#39;T14 * &#39;T15 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;T14,&#39;T15,&#39;T16,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 * &#39;T14 * &#39;T15 * &#39;T16 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;</div>
+<div class="tip" id="fs21">val f2 : f:(&#39;a -&gt; &#39;b -&gt; &#39;c) -&gt; Func&lt;&#39;a,&#39;b,&#39;c&gt;<br /><br />Full name: D3map.f2</div>
+<div class="tip" id="fs22">val f : (&#39;a -&gt; &#39;b -&gt; &#39;c)</div>
+<div class="tip" id="fs23">val f3 : f:(&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d) -&gt; Func&lt;&#39;a,&#39;b,&#39;c,&#39;d&gt;<br /><br />Full name: D3map.f3</div>
+<div class="tip" id="fs24">val f : (&#39;a -&gt; &#39;b -&gt; &#39;c -&gt; &#39;d)</div>
+<div class="tip" id="fs25">val width : float<br /><br />Full name: D3map.width</div>
+<div class="tip" id="fs26">val height : float<br /><br />Full name: D3map.height</div>
+<div class="tip" id="fs27">val canvas : HTMLCanvasElement<br /><br />Full name: D3map.canvas</div>
+<div class="tip" id="fs28">val document : Document<br /><br />Full name: Fable.Import.Browser.document</div>
+<div class="tip" id="fs29">abstract member Document.getElementsByTagName_canvas : unit -&gt; NodeListOf&lt;HTMLCanvasElement&gt;</div>
+<div class="tip" id="fs30">property HTMLCanvasElement.width: float</div>
+<div class="tip" id="fs31">property HTMLCanvasElement.height: float</div>
+<div class="tip" id="fs32">val ctx : CanvasRenderingContext2D<br /><br />Full name: D3map.ctx</div>
+<div class="tip" id="fs33">abstract member HTMLCanvasElement.getContext_2d : unit -&gt; CanvasRenderingContext2D</div>
+<div class="tip" id="fs34">val projection : D3.Geo.Projection<br /><br />Full name: D3map.projection</div>
+<div class="tip" id="fs35">module D3<br /><br />from Fable.Import</div>
+<div class="tip" id="fs36">val geo : D3.Geo.Globals<br /><br />Full name: Fable.Import.D3.geo</div>
+<div class="tip" id="fs37">val path : D3.Geo.Path<br /><br />Full name: D3map.path</div>
+<div class="tip" id="fs38">val unbox : value:obj -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.unbox</div>
+<div class="tip" id="fs39">module Geo<br /><br />from Fable.Import.D3</div>
+<div class="tip" id="fs40">type Transform =<br />&#160;&#160;interface<br />&#160;&#160;&#160;&#160;abstract member stream : stream:Listener -&gt; Listener<br />&#160;&#160;end<br /><br />Full name: Fable.Import.D3.Geo.Transform</div>
+<div class="tip" id="fs41">val title : D3.Selection&lt;obj&gt;<br /><br />Full name: D3map.title</div>
+<div class="tip" id="fs42">val d3 : D3.Globals<br /><br />Full name: Fable.Import.D3_Extensions.d3</div>
+<div class="tip" id="fs43">member D3.Globals.select : selector:string -&gt; D3.Selection&lt;obj&gt;<br />member D3.Globals.select : node:EventTarget -&gt; D3.Selection&lt;obj&gt;</div>
+<div class="tip" id="fs44">val dataLoaded : world:&#39;a -&gt; names:&#39;b -&gt; &#39;c<br /><br />Full name: dmap.dataLoaded</div>
+<div class="tip" id="fs45">val world : &#39;a</div>
+<div class="tip" id="fs46">val names : &#39;b</div>
+<div class="tip" id="fs47">val transition : (int -&gt; &#39;d)</div>
+<div class="tip" id="fs48">val i : int</div>
+<div class="tip" id="fs49">val dataLoaded : world:&#39;a -&gt; names:seq&lt;&#39;b&gt; -&gt; obj<br /><br />Full name: D3map.dataLoaded</div>
+<div class="tip" id="fs50">val names : seq&lt;&#39;b&gt;</div>
+<div class="tip" id="fs51">val globe : obj</div>
+<div class="tip" id="fs52">val createObj : fields:#seq&lt;string * obj&gt; -&gt; obj<br /><br />Full name: Fable.Core.Operators.createObj</div>
+<div class="tip" id="fs53">val landFeature : obj</div>
+<div class="tip" id="fs54">abstract member ITopojson.feature : obj * obj -&gt; obj</div>
+<div class="tip" id="fs55">val borders : obj</div>
+<div class="tip" id="fs56">abstract member ITopojson.mesh : obj * obj * obj -&gt; obj</div>
+<div class="tip" id="fs57">val x : obj</div>
+<div class="tip" id="fs58">val y : obj</div>
+<div class="tip" id="fs59">val countries : obj []</div>
+<div class="tip" id="fs60">type Array =<br />&#160;&#160;member Clone : unit -&gt; obj<br />&#160;&#160;member CopyTo : array:Array * index:int -&gt; unit + 1 overload<br />&#160;&#160;member GetEnumerator : unit -&gt; IEnumerator<br />&#160;&#160;member GetLength : dimension:int -&gt; int<br />&#160;&#160;member GetLongLength : dimension:int -&gt; int64<br />&#160;&#160;member GetLowerBound : dimension:int -&gt; int<br />&#160;&#160;member GetUpperBound : dimension:int -&gt; int<br />&#160;&#160;member GetValue : [&lt;ParamArray&gt;] indices:int[] -&gt; obj + 7 overloads<br />&#160;&#160;member Initialize : unit -&gt; unit<br />&#160;&#160;member IsFixedSize : bool<br />&#160;&#160;...<br /><br />Full name: System.Array</div>
+<div class="tip" id="fs61">val filter : predicate:(&#39;T -&gt; bool) -&gt; array:&#39;T [] -&gt; &#39;T []<br /><br />Full name: Microsoft.FSharp.Collections.Array.filter</div>
+<div class="tip" id="fs62">val d : obj</div>
+<div class="tip" id="fs63">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs64">val exists : predicate:(&#39;T -&gt; bool) -&gt; source:seq&lt;&#39;T&gt; -&gt; bool<br /><br />Full name: Microsoft.FSharp.Collections.Seq.exists</div>
+<div class="tip" id="fs65">val n : &#39;b</div>
+<div class="tip" id="fs66">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
+<div class="tip" id="fs67">val id : x:&#39;T -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.id</div>
+<div class="tip" id="fs68">val name : string<br /><br />Full name: Fable.Import.Browser.name</div>
+<div class="tip" id="fs69">val sortWith : comparer:(&#39;T -&gt; &#39;T -&gt; int) -&gt; array:&#39;T [] -&gt; &#39;T []<br /><br />Full name: Microsoft.FSharp.Collections.Array.sortWith</div>
+<div class="tip" id="fs70">val a : obj</div>
+<div class="tip" id="fs71">val b : obj</div>
+<div class="tip" id="fs72">val compare : e1:&#39;T -&gt; e2:&#39;T -&gt; int (requires comparison)<br /><br />Full name: Microsoft.FSharp.Core.Operators.compare</div>
+<div class="tip" id="fs73">val draw : (string -&gt; float -&gt; &#39;c -&gt; bool -&gt; unit)<br /><em><br /><br />&#160;Helper that draws or fills a line</em></div>
+<div class="tip" id="fs74">val color : string</div>
+<div class="tip" id="fs75">val width : float</div>
+<div class="tip" id="fs76">val line : &#39;c</div>
+<div class="tip" id="fs77">val fill : bool</div>
+<div class="tip" id="fs78">property CanvasRenderingContext2D.fillStyle: U3&lt;string,CanvasGradient,CanvasPattern&gt;</div>
+<div class="tip" id="fs79">type U3&lt;&#39;a,&#39;b,&#39;c&gt; =<br />&#160;&#160;| Case1 of &#39;a<br />&#160;&#160;| Case2 of &#39;b<br />&#160;&#160;| Case3 of &#39;c<br /><br />Full name: Fable.Core.U3&lt;_,_,_&gt;</div>
+<div class="tip" id="fs80">union case U3.Case1: &#39;a -&gt; U3&lt;&#39;a,&#39;b,&#39;c&gt;</div>
+<div class="tip" id="fs81">property CanvasRenderingContext2D.strokeStyle: U3&lt;string,CanvasGradient,CanvasPattern&gt;</div>
+<div class="tip" id="fs82">property CanvasRenderingContext2D.lineWidth: float</div>
+<div class="tip" id="fs83">abstract member CanvasRenderingContext2D.beginPath : unit -&gt; unit</div>
+<div class="tip" id="fs84">abstract member D3.Geo.Path.Invoke : feature:obj * ?index:float -&gt; string</div>
+<div class="tip" id="fs85">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs86">abstract member CanvasRenderingContext2D.fill : ?fillRule:string -&gt; unit</div>
+<div class="tip" id="fs87">abstract member CanvasRenderingContext2D.stroke : unit -&gt; unit</div>
+<div class="tip" id="fs88">val render : (&#39;c -&gt; &#39;d -&gt; obj)<br /><em><br /><br />&#160;Render background, current country, borders &amp; globe</em></div>
+<div class="tip" id="fs89">val country : &#39;c</div>
+<div class="tip" id="fs90">val angle : &#39;d</div>
+<div class="tip" id="fs91">abstract member D3.Geo.Projection.rotate : unit -&gt; float * float * float<br />abstract member D3.Geo.Projection.rotate : rotation:(float * float * float) -&gt; D3.Geo.Projection</div>
+<div class="tip" id="fs92">abstract member CanvasRenderingContext2D.clearRect : x:float * y:float * w:float * h:float -&gt; unit</div>
+<div class="tip" id="fs93">val box : value:&#39;T -&gt; obj<br /><br />Full name: Microsoft.FSharp.Core.Operators.box</div>
+<div class="tip" id="fs94">val transition : (int -&gt; obj)</div>
+<div class="tip" id="fs95">member D3.Globals.transition : unit -&gt; D3.Transition&lt;obj&gt;</div>
+<div class="tip" id="fs96">val name : D3.Primitive</div>
+<div class="tip" id="fs97">type Primitive = U3&lt;float,string,bool&gt;<br /><br />Full name: Fable.Import.D3.Primitive</div>
+<div class="tip" id="fs98">abstract member D3.Selection.text : unit -&gt; string<br />abstract member D3.Selection.text : value:D3.Primitive -&gt; D3.Selection&lt;&#39;Datum&gt;<br />abstract member D3.Selection.text : value:Func&lt;&#39;Datum,float,float,D3.Primitive&gt; -&gt; D3.Selection&lt;&#39;Datum&gt;</div>
+<div class="tip" id="fs99">val p1 : float</div>
+<div class="tip" id="fs100">val p2 : float</div>
+<div class="tip" id="fs101">val r : Func&lt;float,obj&gt;</div>
+<div class="tip" id="fs102">member D3.Globals.interpolate : a:float * b:float -&gt; Func&lt;float,float&gt;<br />member D3.Globals.interpolate : a:string * b:string -&gt; Func&lt;float,string&gt;<br />member D3.Globals.interpolate : a:U2&lt;string,D3.Color&gt; * b:D3.Color -&gt; Func&lt;float,string&gt;<br />member D3.Globals.interpolate : a:U2&lt;string,D3.Color []&gt; * b:D3.Color [] -&gt; Func&lt;float,string&gt;<br />member D3.Globals.interpolate : a:&#39;Range [] * b:&#39;Output [] -&gt; Func&lt;float,&#39;Output []&gt;<br />member D3.Globals.interpolate : a:&#39;Range [] * b:&#39;Range [] -&gt; Func&lt;float,&#39;Output []&gt;<br />member D3.Globals.interpolate : a:obj * b:obj -&gt; Func&lt;float,obj&gt;</div>
+<div class="tip" id="fs103">val t : float</div>
+<div class="tip" id="fs104">Func.Invoke(arg: float) : obj</div>
+<div class="tip" id="fs105">property Array.Length: int</div>
+<div class="tip" id="fs106">val error : bool</div>
+<div class="tip" id="fs107">val world : obj</div>
+<div class="tip" id="fs108">val names : seq&lt;obj&gt;</div>
+<div class="tip" id="fs109">val raise : exn:Exception -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.raise</div>
+
+    </div>
+    <div class="col-md-1 col-lg-2"></div>
+  </div>
+</div>
+
+  </div>
+
+  <a class="gh-forkme" href="https://github.com/fsprojects/Fable"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+</body>
+</html>
