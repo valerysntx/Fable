@@ -250,11 +250,11 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   }();
 
   var createGhosts = exports.createGhosts = function (context) {
-    return [[Images.redd, [16, 11], [1, 0]], [Images.cyand, [14, 15], [1, 0]], [Images.pinkd, [16, 13], [0, -1]], [Images.oranged, [18, 15], [-1, 0]]].map(function (tupledArg) {
+    return Array.from(_fableCore.Seq.map(function (tupledArg) {
       var data, _arg1, v, y, x;
 
       return data = tupledArg[0], _arg1 = tupledArg[1], v = tupledArg[2], y = _arg1[1], x = _arg1[0], new Ghost(createImage(data), x * 8 - 7, y * 8 - 3, v);
-    });
+    }, [[Images.redd, [16, 11], [1, 0]], [Images.cyand, [14, 15], [1, 0]], [Images.pinkd, [16, 13], [0, -1]], [Images.oranged, [18, 15], [-1, 0]]]));
   };
 
   var flood = exports.flood = function (canFill, fill, x, y) {
@@ -329,9 +329,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       }));
     })), ghost.IsReturning ? (xs = Array.from(_fableCore.Seq.sortBy(function (tuple) {
       return tuple[1];
-    }, directions)), patternInput_2 = xs[0], v = patternInput_2[0], n = patternInput_2[1], n === 0 ? ghost.IsReturning = false : null, v) : (xs = directions.map(function (tuple) {
+    }, directions)), patternInput_2 = xs[0], v = patternInput_2[0], n = patternInput_2[1], n === 0 ? ghost.IsReturning = false : null, v) : (xs = Array.from(_fableCore.Seq.map(function (tuple) {
       return tuple[0];
-    }).filter(function ($var1) {
+    }, directions)).filter(function ($var1) {
       return function (value) {
         return !value;
       }(isBackwards($var1));
@@ -430,9 +430,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var eyed = patternInput[1];
     var blue = patternInput[0];
     var pills = Array.from(_fableCore.Seq.map(function (line) {
-      return line.split("").map(function (c) {
+      return Array.from(_fableCore.Seq.map(function (c) {
         return c;
-      });
+      }, line.split("")));
     }, maze));
     var dotsLeft = {
       contents: countDots()
@@ -488,11 +488,11 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       }, matchValue[0] === -1 ? matchValue[1] === 0 ? canGoLeft(x.contents, y.contents) : $target4() : matchValue[0] === 0 ? matchValue[1] === -1 ? canGoUp(x.contents, y.contents) : matchValue[1] === 1 ? canGoDown(x.contents, y.contents) : $target4() : matchValue[0] === 1 ? matchValue[1] === 0 ? canGoRight(x.contents, y.contents) : $target4() : $target4());
       var availableDirections = Array.from(_fableCore.Seq.sortBy(function (v_) {
         return _fableCore.Util.compareTo(v_, v.contents) === 0;
+      }, Array.from(_fableCore.Seq.map(function (tuple) {
+        return tuple[1];
       }, inputs.filter(function (tuple) {
         return tuple[0];
-      }).map(function (tuple) {
-        return tuple[1];
-      })));
+      })))));
       availableDirections.length > 0 ? v.contents = availableDirections[0] : (inputs.length === 0 ? true : !canGoForward) ? v.contents = [0, 0] : null;
       var patternInput_2 = (tupledArg = [x.contents, y.contents], tupledArg_1 = v.contents, x_1 = tupledArg[0], y_1 = tupledArg[1], dx = tupledArg_1[0], dy = tupledArg_1[1], wrap(x_1, y_1, dx, dy));
       var y_ = patternInput_2[1];

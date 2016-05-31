@@ -31,9 +31,9 @@
     </script>
     
   <title>Super Fable Mario - F# |> BABEL</title>
-  
   <script src="../scripts/core.min.js"></script>
   <script src="../scripts/require.js"></script>
+  
   <meta name="description" content="Mario clone using HTML5 canvas">
 
 </head>
@@ -118,7 +118,7 @@ no boundaries!</p></p>
       <h2><a name="Mario-and-composable-physics" class="anchor" href="#Mario-and-composable-physics">Mario and composable physics</a></h2>
 <p>We keep information about Mario in a single record type with fields that
 represent the current x and y coordinates (<code>x</code> and <code>y</code>), current velocity
-(<code>vx</code> and <code>vy</code>) and the current direction <code>dir</code>. The direction is used to
+(<code>vx</code> and <code>vy</code>) and the current direction (<code>dir</code>). The direction is used to
 pick the correct Mario image when rendering:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
@@ -256,8 +256,8 @@ The <code>Keyboard</code> helper module is discussed below.</p>
 </table>
 <h2><a name="Keyboard-helpers" class="anchor" href="#Keyboard-helpers">Keyboard helpers</a></h2>
 <p>The <code>Keyboard</code> module handles keydown and keyup events of the window and
-exposes them using the <code>arrows</code> property (which is a tuple int*int with -1 if the
-left/up key is pressed, 1 if right/down key is pressed and 0 otherwise).</p>
+exposes them using the <code>arrows</code> property (which is a tuple <code>int*int</code> with <code>-1</code> if the
+left/up key is pressed, <code>1</code> if right/down key is pressed and <code>0</code> otherwise).</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -441,7 +441,7 @@ fill the window, set position of image and create image.</p>
 <div class="tip" id="fs63">val image : HTMLImageElement</div>
 <div class="tip" id="fs64">abstract member Document.getElementsByTagName_img : unit -&gt; NodeListOf&lt;HTMLImageElement&gt;</div>
 <div class="tip" id="fs65">property HTMLImageElement.src: string</div>
-<div class="tip" id="fs66">System.String.IndexOf(value: string) : int<br />System.String.IndexOf(value: char) : int<br />System.String.IndexOf(value: string, comparisonType: System.StringComparison) : int<br />System.String.IndexOf(value: string, startIndex: int) : int<br />System.String.IndexOf(value: char, startIndex: int) : int<br />System.String.IndexOf(value: string, startIndex: int, comparisonType: System.StringComparison) : int<br />System.String.IndexOf(value: string, startIndex: int, count: int) : int<br />System.String.IndexOf(value: char, startIndex: int, count: int) : int<br />System.String.IndexOf(value: string, startIndex: int, count: int, comparisonType: System.StringComparison) : int</div>
+<div class="tip" id="fs66">System.String.IndexOf(value: string) : int<br />System.String.IndexOf(value: char) : int<br />System.String.IndexOf(value: string, comparisonType: System.StringComparison) : int<br />System.String.IndexOf(value: string, startIndex: int) : int<br />System.String.IndexOf(value: char, startIndex: int) : int<br />System.String.IndexOf(value: char, startIndex: int, count: int) : int<br />System.String.IndexOf(value: string, startIndex: int, comparisonType: System.StringComparison) : int<br />System.String.IndexOf(value: string, startIndex: int, count: int) : int<br />System.String.IndexOf(value: string, startIndex: int, count: int, comparisonType: System.StringComparison) : int</div>
 <div class="tip" id="fs67">type Mario =<br />&#160;&#160;{x: float;<br />&#160;&#160;&#160;y: float;<br />&#160;&#160;&#160;vx: float;<br />&#160;&#160;&#160;vy: float;<br />&#160;&#160;&#160;dir: string;}<br /><br />Full name: Mario.Mario</div>
 <div class="tip" id="fs68">Mario.x: float</div>
 <div class="tip" id="fs69">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.float<br /><br />--------------------<br />type float = System.Double<br /><br />Full name: Microsoft.FSharp.Core.float<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float<br /><br />Full name: Microsoft.FSharp.Core.float&lt;_&gt;</div>

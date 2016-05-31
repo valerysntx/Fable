@@ -31,9 +31,9 @@
     </script>
     
   <title>Using Express web framework - F# |> BABEL</title>
-  
   <script src="../scripts/core.min.js"></script>
   <script src="../scripts/require.js"></script>
+  
   <meta name="description" content="Interoperating with JavaScript libraries">
 
 </head>
@@ -188,7 +188,7 @@ to call its methods to specify handlers for routes:</p>
 </table>
 <p>One interesting thing here is that <code>get</code>, <code>put</code> and <code>post</code> can take either a regular expression
 or a string. In JavaScript, you just pass the object to the function. In F#, this is mapped to a simple
-two-case discriminated union, so that yo uget static checking. We'll see how to use these mappings next.</p>
+two-case discriminated union, so that you get static checking. We'll see how to use these mappings next.</p>
 <h2><a name="Calling-Express-bindings" class="anchor" href="#Calling-Express-bindings">Calling Express bindings</a></h2>
 <p>The application itself is now very simple. We call <code>express.Invoke</code> to get an instance of the
 Express server, we specify one sample binding for GET request using <code>app.get</code>, we get a port

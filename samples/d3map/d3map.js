@@ -1,4 +1,4 @@
-define(["exports", "d3", "fable-core"], function (exports, _d, _fableCore) {
+define(["exports", "d3", "topojson", "fable-core", "queue"], function (exports, _d, _topojson, _fableCore, _queue) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
@@ -7,6 +7,16 @@ define(["exports", "d3", "fable-core"], function (exports, _d, _fableCore) {
   exports.dataLoaded = exports.title = exports.path = exports.projection = exports.ctx = exports.canvas = exports.height = exports.width = exports.patternInput = undefined;
 
   var $import1 = _interopRequireWildcard(_d);
+
+  var _topojson2 = _interopRequireDefault(_topojson);
+
+  var _queue2 = _interopRequireDefault(_queue);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
 
   function _interopRequireWildcard(obj) {
     if (obj && obj.__esModule) {
@@ -43,7 +53,7 @@ define(["exports", "d3", "fable-core"], function (exports, _d, _fableCore) {
     var globe, landFeature, borders, countries, draw, render, transition;
     return globe = {
       type: "Sphere"
-    }, landFeature = topojson.feature(world, world.objects.land), borders = topojson.mesh(world, world.objects.countries, function (delegateArg0, delegateArg1) {
+    }, landFeature = _topojson2.default.feature(world, world.objects.land), borders = _topojson2.default.mesh(world, world.objects.countries, function (delegateArg0, delegateArg1) {
       return function (x) {
         return function (y) {
           return x !== y;
@@ -51,7 +61,7 @@ define(["exports", "d3", "fable-core"], function (exports, _d, _fableCore) {
       }(delegateArg0)(delegateArg1);
     }), countries = Array.from(_fableCore.Seq.sortWith(function (a, b) {
       return _fableCore.Util.compareTo(a.name.toString(), b.name.toString());
-    }, topojson.feature(world, world.objects.countries).features.filter(function (d) {
+    }, _topojson2.default.feature(world, world.objects.countries).features.filter(function (d) {
       return _fableCore.Seq.exists(function (n) {
         return d.id.toString() === n.id.toString() ? (d.name = n.name, true) : false;
       }, names);
@@ -100,7 +110,13 @@ define(["exports", "d3", "fable-core"], function (exports, _d, _fableCore) {
     }, transition(0);
   };
 
-  queue().defer($import1.json, "data/world-110m.json").defer($import1.tsv, "data/world-country-names.tsv").await(function (delegateArg0, delegateArg1, delegateArg2) {
+  (0, _queue2.default)().defer(function (delegateArg0, delegateArg1) {
+    return function (url) {
+      return function (callback) {
+        return $import1.json(url, callback);
+      };
+    }(delegateArg0)(delegateArg1);
+  }, "data/world-110m.json").defer($import1.tsv, "data/world-country-names.tsv").await(function (delegateArg0, delegateArg1, delegateArg2) {
     return function (error) {
       return function (world) {
         return function (names) {
