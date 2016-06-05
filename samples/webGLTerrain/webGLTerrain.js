@@ -4,7 +4,7 @@ define(["exports", "three"], function (exports, _three) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    exports.animate = exports.render = exports.camera = exports.controls = exports.renderer = exports.scene = exports.patternInput = exports.init = exports.generateTexture = exports.generateHeight = exports.rand = exports.clock = exports.worldHalfDepth = exports.worldHalfWidth = exports.worldDepth = exports.worldWidth = undefined;
+    exports.animate = exports.render = exports.camera = exports.controls = exports.renderer = exports.scene = exports.init = exports.generateTexture = exports.generateHeight = exports.rand = exports.clock = exports.worldHalfDepth = exports.worldHalfWidth = exports.worldDepth = exports.worldWidth = undefined;
 
     var $import8 = _interopRequireWildcard(_three);
 
@@ -46,7 +46,7 @@ define(["exports", "three"], function (exports, _three) {
             for (var j = 0; j <= 3; j++) {
                 for (var i = 0; i <= size - 1; i++) {
                     var x = i % width;
-                    var y = ~ ~(i / width);
+                    var y = ~ ~ ~ ~(i / width);
                     var noise = perlin.noise(x / quality, y / quality, z) * quality * 1.75;
                     data[i] = data[i] + Math.abs(noise);
                 }
@@ -169,7 +169,7 @@ define(["exports", "three"], function (exports, _three) {
         }();
     };
 
-    var patternInput = exports.patternInput = init();
+    var patternInput = init();
     var scene = exports.scene = patternInput[1];
     var renderer = exports.renderer = patternInput[0];
     var controls = exports.controls = patternInput[3];

@@ -295,7 +295,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
   var fillValue = exports.fillValue = function (x, y, ex, ey) {
     var bx, by;
-    return bx = Math.floor(Math.floor((x + 6 + ex) / 8)), by = Math.floor(Math.floor((y + 6 + ey) / 8)), route_home[by][bx];
+    return bx = Math.floor(Math.floor(~ ~((x + 6 + ex) / 8))), by = Math.floor(Math.floor(~ ~((y + 6 + ey) / 8))), route_home[by][bx];
   };
 
   var fillUp = exports.fillUp = function (x, y) {
@@ -382,16 +382,16 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   }({});
 
   var Pacman = exports.Pacman = function ($exports) {
-    var patternInput = $exports.patternInput = [createImage(Images.pu1), createImage(Images.pu2)];
+    var patternInput = [createImage(Images.pu1), createImage(Images.pu2)];
     var pu2 = $exports.pu2 = patternInput[1];
     var pu1 = patternInput[0];
-    var patternInput_1 = $exports.patternInput = [createImage(Images.pd1), createImage(Images.pd2)];
+    var patternInput_1 = [createImage(Images.pd1), createImage(Images.pd2)];
     var pd2 = $exports.pd2 = patternInput_1[1];
     var pd1 = patternInput_1[0];
-    var patternInput_2 = $exports.patternInput = [createImage(Images.pl1), createImage(Images.pl2)];
+    var patternInput_2 = [createImage(Images.pl1), createImage(Images.pl2)];
     var pl2 = $exports.pl2 = patternInput_2[1];
     var pl1 = patternInput_2[0];
-    var patternInput_3 = $exports.patternInput = [createImage(Images.pr1), createImage(Images.pr2)];
+    var patternInput_3 = [createImage(Images.pr1), createImage(Images.pr2)];
     var pr2 = $exports.pr2 = patternInput_3[1];
     var pr1 = patternInput_3[0];
     var lastp = {
@@ -502,8 +502,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var eatPills = function (unitVar0) {
-      var tx = Math.floor(Math.floor((x.contents + 6) / 8));
-      var ty = Math.floor(Math.floor((y.contents + 6) / 8));
+      var tx = Math.floor(Math.floor(~ ~((x.contents + 6) / 8)));
+      var ty = Math.floor(Math.floor(~ ~((y.contents + 6) / 8)));
       var c = pills[ty][tx];
       c === "." ? (pills[ty][tx] = " ", clearCell(background, tx, ty), score.contents = score.contents + 10, void dotsLeft.contents--, new Audio("./fx/Dot5.wav").play()) : null;
       c === "o" ? (pills[ty][tx] = " ", clearCell(background, tx, ty), bonus.contents = 0, score.contents = score.contents + 50, powerCountdown.contents = 250, void dotsLeft.contents--, new Audio("./fx/Powerup.wav").play()) : null;

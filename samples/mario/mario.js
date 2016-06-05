@@ -4,7 +4,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.mario = exports.update = exports.h = exports.w = exports.patternInput = exports.render = exports.step = exports.walk = exports.physics = exports.gravity = exports.jump = exports.Mario = exports.Win = exports.Keyboard = exports.max = undefined;
+  exports.mario = exports.update = exports.h = exports.w = exports.render = exports.step = exports.walk = exports.physics = exports.gravity = exports.jump = exports.Mario = exports.Win = exports.Keyboard = exports.max = undefined;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -174,7 +174,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   Keyboard.init();
-  var patternInput = exports.patternInput = Win.dimensions();
+  var patternInput = Win.dimensions();
   var w = exports.w = patternInput[0];
   var h = exports.h = patternInput[1];
 

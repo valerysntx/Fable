@@ -4,7 +4,7 @@ define(["exports", "d3", "topojson", "fable-core", "queue"], function (exports, 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.dataLoaded = exports.title = exports.path = exports.projection = exports.ctx = exports.canvas = exports.height = exports.width = exports.patternInput = undefined;
+  exports.dataLoaded = exports.title = exports.path = exports.projection = exports.ctx = exports.canvas = exports.height = exports.width = undefined;
 
   var $import1 = _interopRequireWildcard(_d);
 
@@ -35,7 +35,7 @@ define(["exports", "d3", "topojson", "fable-core", "queue"], function (exports, 
     }
   }
 
-  var patternInput = exports.patternInput = [500, 500];
+  var patternInput = [500, 500];
   var width = exports.width = patternInput[0];
   var height = exports.height = patternInput[1];
   var canvas = exports.canvas = document.getElementsByTagName('canvas')[0];
