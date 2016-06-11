@@ -103,9 +103,9 @@ replace a call to an external source, like the F# core library or .NET BCL.
 We are going to learn how to create a plugin to replace some of these calls.</p>
 <h2><a name="Creating-your-own-plugin" class="anchor" href="#Creating-your-own-plugin">Creating your own plugin</a></h2>
 <p>Fable's goal is to support most of the F# core library and some of the most
-used classes in .NET BCL, like <code>DateTime</code> or <code>Regex</code>. At the moment, it doesn't
-support <code>System.Random</code> so let's write a plugin to fix the situation in case
-we need it for our projects.</p>
+used classes in .NET BCL, like <code>DateTime</code> or <code>Regex</code>. Fable now supports
+<code>System.Random</code> too, but for the sake of practicing let's write a plugin
+as if it wouldn't.</p>
 <p>The simplest way to create a plugin is just to use a F# script file and that's
 what we'll be doing here. Create a file named <code>Fable.Plugins.Random.fsx</code> and
 put a reference to <code>Fable.exe</code> as follows (fix the path according to where
@@ -116,10 +116,12 @@ you place the plugin):</p>
 <span class="l">4: </span>
 <span class="l">5: </span>
 <span class="l">6: </span>
+<span class="l">7: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">namespace</span> <span class="i">Fable</span><span class="o">.</span><span class="i">Plugins</span>
 
-<span class="prep">#r</span> <span class="s">&quot;../../build/fable/bin/Fable.exe&quot;</span>
+<span class="prep">#r</span> <span class="s">&quot;../../build/fable/bin/Fable.AST.dll&quot;</span>
+<span class="prep">#r</span> <span class="s">&quot;../../build/fable/bin/Fable.dll&quot;</span>
 
 <span class="k">open</span> <span class="i">Fable</span><span class="o">.</span><span class="i">AST</span>
 <span class="k">open</span> <span class="i">Fable</span><span class="o">.</span><span class="i">FSharp2Fable</span>

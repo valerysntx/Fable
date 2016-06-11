@@ -4,7 +4,7 @@ define(["exports", "three"], function (exports, _three) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    exports.animate = exports.render = exports.camera = exports.controls = exports.renderer = exports.scene = exports.init = exports.generateTexture = exports.generateHeight = exports.rand = exports.clock = exports.worldHalfDepth = exports.worldHalfWidth = exports.worldDepth = exports.worldWidth = undefined;
+    exports.animate = exports.render = exports.camera = exports.controls = exports.renderer = exports.scene = exports.init = exports.generateTexture = exports.generateHeight = exports.clock = exports.worldHalfDepth = exports.worldHalfWidth = exports.worldDepth = exports.worldWidth = undefined;
 
     var $import8 = _interopRequireWildcard(_three);
 
@@ -31,22 +31,18 @@ define(["exports", "three"], function (exports, _three) {
     var worldHalfDepth = exports.worldHalfDepth = worldDepth / 2;
     var clock = exports.clock = new _three.Clock();
 
-    var rand = exports.rand = function () {
-        return Math.random();
-    };
-
     var generateHeight = exports.generateHeight = function (width, height) {
         return function () {
             var size = width * height;
             var data = new Float64Array(size);
             var perlin = ImprovedNoise();
             var quality = 1;
-            var z = rand() * 100;
+            var z = Math.random() * 100;
 
             for (var j = 0; j <= 3; j++) {
                 for (var i = 0; i <= size - 1; i++) {
                     var x = i % width;
-                    var y = ~ ~ ~ ~(i / width);
+                    var y = ~ ~(i / width);
                     var noise = perlin.noise(x / quality, y / quality, z) * quality * 1.75;
                     data[i] = data[i] + Math.abs(noise);
                 }
@@ -100,7 +96,7 @@ define(["exports", "three"], function (exports, _three) {
             var l_1 = Math.floor(imageData_1.length);
 
             while (i_1 < l_1) {
-                var v = ~ ~(rand() * 5);
+                var v = ~ ~Math.floor(Math.random() * 5);
                 imageData_1[i_1] = imageData_1[i_1] + v;
                 imageData_1[i_1 + 1] = imageData_1[i_1 + 1] + v;
                 imageData_1[i_1 + 2] = imageData_1[i_1 + 2] + v;
