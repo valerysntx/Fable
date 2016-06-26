@@ -97,6 +97,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     this.color = $arg5;
   };
 
+  _fableCore.Util.setInterfaces(Blob.prototype, [], "Ozmo.Blob");
+
   var drawBlob = exports.drawBlob = function (ctx_1, canvas_1, blob) {
     ctx_1.beginPath();
     ctx_1.arc(blob.X, canvas_1.height - (blob.Y + floorHeight + blob.Radius), blob.Radius, 0, 2 * 3.141592653589793, false);

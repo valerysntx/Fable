@@ -113,6 +113,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     this.dir = $arg4;
   };
 
+  _fableCore.Util.setInterfaces(Mario.prototype, [], "Mario.Mario");
+
   var jump = exports.jump = function (_arg1, y, m) {
     var vy;
     return (y > 0 ? m.y === 0 : false) ? (vy = 5, new Mario(m.x, m.y, m.vx, vy, m.dir)) : m;

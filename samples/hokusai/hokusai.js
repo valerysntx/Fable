@@ -59,6 +59,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     return Complex;
   }();
 
+  _fableCore.Util.setInterfaces(Complex.prototype, [], "Hokusai.Complex");
+
   var ComplexModule = exports.ComplexModule = function ($exports) {
     var Pow = $exports.Pow = function (_arg1, power) {
       var r, i, num, num2, num3, num4;

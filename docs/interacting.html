@@ -85,6 +85,8 @@
 <li><a href="#foreign-interfaces">Foreign interfaces</a></li>
 <li><a href="#special-attributes">Special attributes</a></li>
 <li><a href="#calling-f-code-from-javascript">Calling F# code from JavaScript</a></li>
+<li><a href="#json-serialization">JSON serialization</a></li>
+<li><a href="#publishing-a-fable-package">Publishing a Fable package</a></li>
 </ul>
 <h2><a name="Dynamic-programming" class="anchor" href="#Dynamic-programming">Dynamic programming</a></h2>
 <p><a href="https://github.com/fsprojects/Fable/blob/master/import/core/Fable.Core.fs">Fable.Core</a> implements the F# dynamic operators so
@@ -651,6 +653,67 @@ of a F# lambda, the conversion is done automatically for you.</p>
 <p>Note: If you still experience problems make the conversion explicit
 as in the above example.</p>
 </blockquote>
+<h2><a name="JSON-serialization" class="anchor" href="#JSON-serialization">JSON serialization</a></h2>
+<p>It's possible to use <code>JSON.stringify</code> and <code>JSON.parse</code> to serialize objects back
+and forth, particularly with record and union types. Records will serialize as plain
+JS objects and unions will be serialized the same way as with <a href="http://www.newtonsoft.com/json">Json.NET</a>,
+making it easier to interact with a .NET server.</p>
+<p>The only problem is <code>JSON.parse</code> will produce a plain JS object which won't work if
+you need to type test it or access the prototype members. When this is necessary, you
+can use <code>toJson</code> and <code>ofJson</code> functions in <code>Fable.Core.Serialize</code> module. This will
+save the type full name in a <code>__type</code> field so Fable will know which type to construct
+when deserializing:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="i">Fable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs1', 97)" onmouseover="showTip(event, 'fs1', 97)" class="i">Core</span>
+
+<span class="k">type</span> <span class="i">Tree</span> <span class="o">=</span>
+    | <span class="i">Leaf</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs15', 98)" onmouseover="showTip(event, 'fs15', 98)" class="i">int</span>
+    | <span class="i">Branch</span> <span class="k">of</span> <span class="i">Tree</span>[]
+    <span class="k">member</span> <span class="i">this</span><span class="o">.</span><span class="i">Sum</span>() <span class="o">=</span>
+        <span class="k">match</span> <span class="i">this</span> <span class="k">with</span>
+        | <span class="i">Leaf</span> <span class="i">i</span> <span class="k">-&gt;</span> <span class="i">i</span>
+        | <span class="i">Branch</span> <span class="i">trees</span> <span class="k">-&gt;</span>
+            <span class="i">trees</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs44', 99)" onmouseover="showTip(event, 'fs44', 99)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs45', 100)" onmouseover="showTip(event, 'fs45', 100)" class="i">map</span> (<span class="k">fun</span> <span class="i">x</span> <span class="k">-&gt;</span> <span class="i">x</span><span class="o">.</span><span class="i">Sum</span>()) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs44', 101)" onmouseover="showTip(event, 'fs44', 101)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs46', 102)" onmouseover="showTip(event, 'fs46', 102)" class="i">sum</span>
+
+<span class="k">let</span> <span class="i">tree</span> <span class="o">=</span>
+    <span class="i">Branch</span> [|<span class="i">Leaf</span> <span class="n">1</span>; <span class="i">Leaf</span> <span class="n">2</span>; <span class="i">Branch</span> [|<span class="i">Leaf</span> <span class="n">3</span>; <span class="i">Leaf</span> <span class="n">4</span>|]|]
+
+<span class="k">let</span> <span class="i">json</span> <span class="o">=</span> <span class="i">Serialize</span><span class="o">.</span><span class="i">toJson</span> <span class="i">tree</span>
+<span class="k">let</span> <span class="i">tree2</span> <span class="o">=</span> <span class="i">Serialize</span><span class="o">.</span><span class="i">ofJson</span><span class="o">&lt;</span><span class="i">Tree</span><span class="o">&gt;</span> <span class="i">json</span>
+
+<span class="k">let</span> <span class="i">typeTest</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs47', 103)" onmouseover="showTip(event, 'fs47', 103)" class="i">box</span> <span class="i">tree2</span> <span class="o">:?</span> <span class="i">Tree</span>    <span class="c">// Type is kept</span>
+<span class="k">let</span> <span class="i">sum</span> <span class="o">=</span> <span class="i">tree2</span><span class="o">.</span><span class="i">Sum</span>()   <span class="c">// Prototype members can be accessed</span>
+</code></pre></td>
+</tr>
+</table>
+<blockquote>
+<p><code>Serialize.ofJson</code> works with records, unions and types with
+an argumentless primary constructor.
+This will work when exchanging objects with a server, if the
+server includes the type full name in a <code>__type</code> field and the
+client code knows the type definiton.</p>
+</blockquote>
+<h2><a name="Publishing-a-Fable-package" class="anchor" href="#Publishing-a-Fable-package">Publishing a Fable package</a></h2>
+<p>See <a href="https://www.npmjs.com/package/fable-helpers-sample">fable-helpers-sample</a> to know how to publish a Fable package.</p>
 
 
 <div class="tip" id="fs1">namespace Microsoft.FSharp.Core</div>
@@ -696,6 +759,10 @@ as in the above example.</p>
 <div class="tip" id="fs41">val unbox : value:obj -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.unbox</div>
 <div class="tip" id="fs42">type &#39;T list = List&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</div>
 <div class="tip" id="fs43">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs44">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs45">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; source:seq&lt;&#39;T&gt; -&gt; seq&lt;&#39;U&gt;<br /><br />Full name: Microsoft.FSharp.Collections.Seq.map</div>
+<div class="tip" id="fs46">val sum : source:seq&lt;&#39;T&gt; -&gt; &#39;T (requires member ( + ) and member get_Zero)<br /><br />Full name: Microsoft.FSharp.Collections.Seq.sum</div>
+<div class="tip" id="fs47">val box : value:&#39;T -&gt; obj<br /><br />Full name: Microsoft.FSharp.Core.Operators.box</div>
 
     </div>
     <div class="col-md-1 col-lg-2"></div>

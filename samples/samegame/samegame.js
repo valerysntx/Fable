@@ -72,6 +72,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             return Position;
         }();
 
+        _fableCore.Util.setInterfaces(Position.prototype, [], "Samegame.SameGameTypes.Position");
+
         var Color = $exports.Color = function Color() {
             _classCallCheck(this, Color);
 
@@ -82,6 +84,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
                 this.Fields[i - 1] = arguments[i];
             }
         };
+
+        _fableCore.Util.setInterfaces(Color.prototype, [], "Samegame.SameGameTypes.Color");
 
         var CellState = $exports.CellState = function CellState() {
             _classCallCheck(this, CellState);
@@ -94,6 +98,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             }
         };
 
+        _fableCore.Util.setInterfaces(CellState.prototype, [], "Samegame.SameGameTypes.CellState");
+
         var Cell = $exports.Cell = function Cell($arg0, $arg1) {
             _classCallCheck(this, Cell);
 
@@ -101,12 +107,16 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             this.State = $arg1;
         };
 
+        _fableCore.Util.setInterfaces(Cell.prototype, [], "Samegame.SameGameTypes.Cell");
+
         var Group = $exports.Group = function Group($arg0, $arg1) {
             _classCallCheck(this, Group);
 
             this.Color = $arg0;
             this.Positions = $arg1;
         };
+
+        _fableCore.Util.setInterfaces(Group.prototype, [], "Samegame.SameGameTypes.Group");
 
         var Game = $exports.Game = function Game() {
             _classCallCheck(this, Game);
@@ -119,12 +129,16 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             }
         };
 
+        _fableCore.Util.setInterfaces(Game.prototype, [], "Samegame.SameGameTypes.Game");
+
         var GameState = $exports.GameState = function GameState($arg0, $arg1) {
             _classCallCheck(this, GameState);
 
             this.Board = $arg0;
             this.Score = $arg1;
         };
+
+        _fableCore.Util.setInterfaces(GameState.prototype, [], "Samegame.SameGameTypes.GameState");
 
         var GameConfig = $exports.GameConfig = function GameConfig($arg0, $arg1, $arg2) {
             _classCallCheck(this, GameConfig);
@@ -134,12 +148,16 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             this.StoneGenerator = $arg2;
         };
 
+        _fableCore.Util.setInterfaces(GameConfig.prototype, [], "Samegame.SameGameTypes.GameConfig");
+
         var SameGameApi = $exports.SameGameApi = function SameGameApi($arg0, $arg1) {
             _classCallCheck(this, SameGameApi);
 
             this.NewGame = $arg0;
             this.Play = $arg1;
         };
+
+        _fableCore.Util.setInterfaces(SameGameApi.prototype, [], "Samegame.SameGameTypes.SameGameApi");
 
         return $exports;
     }({});
@@ -368,11 +386,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
         var play = function (game_1) {
             return function (tupledArg) {
+                var $var5;
                 var x = tupledArg[0];
                 var y = tupledArg[1];
-                updateUi(game_1 != null ? function (g) {
+                updateUi(($var5 = game_1, $var5 != null ? function (g) {
                     return api.Play(g)(new SameGameTypes.Position(x, y));
-                }(game_1) : game_1);
+                }($var5) : $var5));
             };
         };
 

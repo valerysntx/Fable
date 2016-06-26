@@ -249,6 +249,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     return Ghost;
   }();
 
+  _fableCore.Util.setInterfaces(Ghost.prototype, [], "Pacman.Ghost");
+
   var createGhosts = exports.createGhosts = function (context) {
     return Array.from(_fableCore.Seq.map(function (tupledArg) {
       var data, _arg1, v, y, x;
@@ -327,8 +329,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
           }));
         }));
       }));
-    })), ghost.IsReturning ? (xs = Array.from(_fableCore.Seq.sortBy(function (tuple) {
-      return tuple[1];
+    })), ghost.IsReturning ? (xs = Array.from(_fableCore.Seq.sortWith(function (x, y) {
+      return _fableCore.Util.compareTo(function (tuple) {
+        return tuple[1];
+      }(x), function (tuple) {
+        return tuple[1];
+      }(y));
     }, directions)), patternInput_2 = xs[0], v = patternInput_2[0], n = patternInput_2[1], n === 0 ? ghost.IsReturning = false : null, v) : (xs = Array.from(_fableCore.Seq.map(function (tuple) {
       return tuple[0];
     }, directions)).filter(function ($var1) {
@@ -486,8 +492,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       var canGoForward = (matchValue = v.contents, $target4 = function () {
         return false;
       }, matchValue[0] === -1 ? matchValue[1] === 0 ? canGoLeft(x.contents, y.contents) : $target4() : matchValue[0] === 0 ? matchValue[1] === -1 ? canGoUp(x.contents, y.contents) : matchValue[1] === 1 ? canGoDown(x.contents, y.contents) : $target4() : matchValue[0] === 1 ? matchValue[1] === 0 ? canGoRight(x.contents, y.contents) : $target4() : $target4());
-      var availableDirections = Array.from(_fableCore.Seq.sortBy(function (v_) {
-        return _fableCore.Util.compareTo(v_, v.contents) === 0;
+      var availableDirections = Array.from(_fableCore.Seq.sortWith(function (x, y) {
+        return _fableCore.Util.compareTo(function (v_) {
+          return _fableCore.Util.compareTo(v_, v.contents) === 0;
+        }(x), function (v_) {
+          return _fableCore.Util.compareTo(v_, v.contents) === 0;
+        }(y));
       }, Array.from(_fableCore.Seq.map(function (tuple) {
         return tuple[1];
       }, inputs.filter(function (tuple) {

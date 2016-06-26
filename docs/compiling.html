@@ -152,7 +152,7 @@ installed with <code>fable --help</code> and the latest version available in npm
 <tr class="odd">
 <td><p><code>--refs</code></p></td>
 <td></td>
-<td><p>Specify project references in <code>Project=js/import/path</code> format (see below).</p></td>
+<td><p>Specify dll or project references in <code>Reference=js/import/path</code> format (see below).</p></td>
 </tr>
 <tr class="even">
 <td><p><code>--msbuild</code></p></td>
@@ -208,22 +208,36 @@ installed with <code>fable --help</code> and the latest version available in npm
 </table>
 
 <h2><a name="Project-references" class="anchor" href="#Project-references">Project references</a></h2>
-<p>You can use <code>--refs</code> argument to link referenced projects with the JS import path that must be used, using the following format: <code>[Project name without extension]=[JS import path]</code>.</p>
-<p>Example:</p>
+<p>You can use <code>--refs</code> argument to link referenced dll or projects with the JS import path that must be used,
+using the following format: <code>[Reference name without extension]=[JS import path]</code>.</p>
+<h3><a name="Example-project-reference" class="anchor" href="#Example-project-reference">Example: project reference</a></h3>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="shell">fable src/lib/MyLib.fsproj --outDir out/lib
+fable src/main/MyProject.fsproj --refs MyLib=../lib
+</code></pre></td></tr></table>
+<h3><a name="Example-dll-refence" class="anchor" href="#Example-dll-refence">Example: dll refence</a></h3>
+<p>We assume we have an npm package with the following structure:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip"><code lang="shell">fable src/lib/MyLib.fsproj --outDir out/lib
-fable src/another/MyNs.AnotherProject.fsproj
-  --outDir out/another
-fable src/main/MyProject.fsproj
-  --outDir out/main
-  --refs MyLib=../lib MyNs.AnotherProject=../another
+<td class="snippet"><pre class="fssnip"><code lang="text">my-lib/
+    js/MyLib.js
+    bin/MyLib.dll
 </code></pre></td></tr></table>
+<p>If we are referencing <code>node_modules/bin/MyLib.dll</code> in our project,
+we can tell Fable to replace the refence with the JS code using the
+argument below (note if we are using node or a bundler like Webpack
+we can omit <code>./node_modules/</code> in the JS import path).</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="shell">fable src/main/MyProject.fsproj --refs MyLib=my-lib/js
+</code></pre></td></tr></table>
+<blockquote>
+<p>See <a href="https://www.npmjs.com/package/fable-helpers-sample">fable-helpers-sample</a> to know how to publish a Fable package.</p>
+</blockquote>
 <h2><a name="fableconfig-json" class="anchor" href="#fableconfig-json">fableconfig.json</a></h2>
 <p>Rather than passing all the options to the CLI, it may be more convenient to put them
 in JSON format in a file named <code>fableconfig.json</code> and let the compiler read them for you.

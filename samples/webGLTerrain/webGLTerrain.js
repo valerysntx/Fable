@@ -27,8 +27,8 @@ define(["exports", "three"], function (exports, _three) {
 
     var worldWidth = exports.worldWidth = 256;
     var worldDepth = exports.worldDepth = 256;
-    var worldHalfWidth = exports.worldHalfWidth = worldWidth / 2;
-    var worldHalfDepth = exports.worldHalfDepth = worldDepth / 2;
+    var worldHalfWidth = exports.worldHalfWidth = ~ ~(worldWidth / 2);
+    var worldHalfDepth = exports.worldHalfDepth = ~ ~(worldDepth / 2);
     var clock = exports.clock = new _three.Clock();
 
     var generateHeight = exports.generateHeight = function (width, height) {
