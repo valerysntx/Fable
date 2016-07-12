@@ -31,8 +31,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var update = $exports.update = function (e, pressed) {
-      var keyCode, op;
-      return keyCode = Math.floor(e.keyCode), op = pressed ? function (value) {
+      var keyCode = Math.floor(e.keyCode);
+      var op = pressed ? function (value) {
         return function (set) {
           return new Set(set).add(value);
         };
@@ -40,7 +40,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         return function (set) {
           return _fableCore.Set.remove(value, set);
         };
-      }, keysPressed = op(keyCode)(keysPressed), null;
+      };
+      keysPressed = op(keyCode)(keysPressed);
+      return null;
     };
 
     var init = $exports.init = function () {
@@ -110,18 +112,33 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var direct = exports.direct = function (dx, dy, blob) {
-    var vx;
-    return vx = blob.vx + dx / 4, new Blob(blob.X, blob.Y, vx, blob.vy, blob.Radius, blob.color);
+    var vx = blob.vx + dx / 4;
+    return new Blob(blob.X, blob.Y, vx, blob.vy, blob.Radius, blob.color);
   };
 
   var gravity = exports.gravity = function (blob) {
-    var vy;
-    return blob.Y > 0 ? (vy = blob.vy - 0.1, new Blob(blob.X, blob.Y, blob.vx, vy, blob.Radius, blob.color)) : blob;
+    return blob.Y > 0 ? function () {
+      var vy = blob.vy - 0.1;
+      return new Blob(blob.X, blob.Y, blob.vx, vy, blob.Radius, blob.color);
+    }() : blob;
   };
 
   var bounce = exports.bounce = function (blob) {
-    var n, X, vx;
-    return n = width, blob.X < 0 ? (X = -blob.X, vx = -blob.vx, new Blob(X, blob.Y, vx, blob.vy, blob.Radius, blob.color)) : blob.X > n ? (X = n - (blob.X - n), vx = -blob.vx, new Blob(X, blob.Y, vx, blob.vy, blob.Radius, blob.color)) : blob;
+    var n = width;
+
+    if (blob.X < 0) {
+      var X = -blob.X;
+      var vx = -blob.vx;
+      return new Blob(X, blob.Y, vx, blob.vy, blob.Radius, blob.color);
+    } else {
+      if (blob.X > n) {
+        var X = n - (blob.X - n);
+        var vx = -blob.vx;
+        return new Blob(X, blob.Y, vx, blob.vy, blob.Radius, blob.color);
+      } else {
+        return blob;
+      }
+    }
   };
 
   var move = exports.move = function (blob) {
@@ -129,13 +146,15 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var step = exports.step = function (dir_0, dir_1, blob) {
-    var dir;
-    return dir = [dir_0, dir_1], bounce(move(direct(dir[0], dir[1], blob)));
+    var dir = [dir_0, dir_1];
+    return bounce(move(direct(dir[0], dir[1], blob)));
   };
 
   var collide = exports.collide = function (a, b) {
-    var dx, dy, dist;
-    return dx = (a.X - b.X) * (a.X - b.X), dy = (a.Y - b.Y) * (a.Y - b.Y), dist = Math.sqrt(dx + dy), dist < Math.abs(a.Radius - b.Radius);
+    var dx = (a.X - b.X) * (a.X - b.X);
+    var dy = (a.Y - b.Y) * (a.Y - b.Y);
+    var dist = Math.sqrt(dx + dy);
+    return dist < Math.abs(a.Radius - b.Radius);
   };
 
   var absorb = exports.absorb = function (blob, drops) {
@@ -148,8 +167,10 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   var shrink = exports.shrink = "white";
 
   var newDrop = exports.newDrop = function (color) {
-    var X, Y, Radius;
-    return X = Math.random() * width * 0.8 + width * 0.1, Y = 600, Radius = 10, new Blob(X, Y, 0, 0, Radius, color);
+    var X = Math.random() * width * 0.8 + width * 0.1;
+    var Y = 600;
+    var Radius = 10;
+    return new Blob(X, Y, 0, 0, Radius, color);
   };
 
   var newGrow = exports.newGrow = function () {
@@ -161,24 +182,33 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var updateDrops = exports.updateDrops = function (drops, countdown) {
-    var drop;
-    return countdown > 0 ? [drops, countdown - 1] : Math.floor(Math.random() * 8) === 0 ? (drop = Math.floor(Math.random() * 3) === 0 ? newGrow() : newShrink(), [_fableCore.List.ofArray([drop], drops), 8]) : [drops, countdown];
+    return countdown > 0 ? [drops, countdown - 1] : Math.floor(Math.random() * 8) === 0 ? function () {
+      var drop = Math.floor(Math.random() * 3) === 0 ? newGrow() : newShrink();
+      return [_fableCore.List.ofArray([drop], drops), 8];
+    }() : [drops, countdown];
   };
 
   var countDrops = exports.countDrops = function (drops) {
-    var count;
-    return count = function (color) {
+    var count = function (color) {
       return _fableCore.List.filter(function (drop) {
         return drop.color === color;
       }, drops).length;
-    }, [count(grow), count(shrink)];
+    };
+
+    return [count(grow), count(shrink)];
   };
 
   var game = exports.game = function () {
     return function (builder_) {
       return builder_.delay(function (unitVar) {
-        var blob, X, Y, Radius;
-        return blob = (X = 300, Y = 0, Radius = 50, new Blob(X, Y, 0, 0, Radius, "black")), builder_.returnFrom(update(blob, _fableCore.List.ofArray([newGrow()]), 0));
+        var blob = function () {
+          var X = 300;
+          var Y = 0;
+          var Radius = 50;
+          return new Blob(X, Y, 0, 0, Radius, "black");
+        }();
+
+        return builder_.returnFrom(update(blob, _fableCore.List.ofArray([newGrow()]), 0));
       });
     }(_fableCore.Async);
   };
@@ -186,7 +216,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   var completed = exports.completed = function () {
     return function (builder_) {
       return builder_.delay(function (unitVar) {
-        return drawText("COMPLETED", 320, 300), builder_.bind(_fableCore.Async.sleep(10000), function (_arg1) {
+        drawText("COMPLETED", 320, 300);
+        return builder_.bind(_fableCore.Async.sleep(10000), function (_arg1) {
           return builder_.returnFrom(game());
         });
       });
@@ -196,27 +227,56 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   var update = exports.update = function (blob, drops, countdown) {
     return function (builder_) {
       return builder_.delay(function (unitVar) {
-        var patternInput, drops_1, countdown_1, patternInput_1, beforeShrink, beforeGrow, drops_2, patternInput_2, afterShrink, afterGrow, drops_3, radius, radius_1, radius_2, blob_1, blob_2;
-        return patternInput = updateDrops(drops, countdown), drops_1 = patternInput[0], countdown_1 = patternInput[1], patternInput_1 = countDrops(drops_1), beforeShrink = patternInput_1[1], beforeGrow = patternInput_1[0], drops_2 = function (drops_2) {
+        var patternInput = updateDrops(drops, countdown);
+        var drops_1 = patternInput[0];
+        var countdown_1 = patternInput[1];
+        var patternInput_1 = countDrops(drops_1);
+        var beforeShrink = patternInput_1[1];
+        var beforeGrow = patternInput_1[0];
+
+        var drops_2 = function (drops_2) {
           return absorb(blob, drops_2);
         }(_fableCore.List.map(function ($var1) {
           return move(gravity($var1));
-        }, drops_1)), patternInput_2 = countDrops(drops_2), afterShrink = patternInput_2[1], afterGrow = patternInput_2[0], drops_3 = _fableCore.List.filter(function (blob_1) {
+        }, drops_1));
+
+        var patternInput_2 = countDrops(drops_2);
+        var afterShrink = patternInput_2[1];
+        var afterGrow = patternInput_2[0];
+
+        var drops_3 = _fableCore.List.filter(function (blob_1) {
           return blob_1.Y > 0;
-        }, drops_2), radius = blob.Radius + (beforeGrow - afterGrow) * 4, radius_1 = radius - (beforeShrink - afterShrink) * 4, radius_2 = 5 > radius_1 ? 5 : radius_1, blob_1 = new Blob(blob.X, blob.Y, blob.vx, blob.vy, radius_2, blob.color), blob_2 = function () {
-          return function () {
-            var tupledArg, arg00_, arg01_;
-            return tupledArg = Keyboard.arrows(), arg00_ = tupledArg[0], arg01_ = tupledArg[1], function (blob_2) {
-              return step(arg00_, arg01_, blob_2);
-            };
-          }();
-        }()(blob_1), drawBg(ctx, canvas), builder_.combine(builder_.for(drops_3, function (_arg2) {
-          var drop;
-          return drop = _arg2, drawBlob(ctx, canvas, drop), builder_.zero();
+        }, drops_2);
+
+        var radius = blob.Radius + (beforeGrow - afterGrow) * 4;
+        var radius_1 = radius - (beforeShrink - afterShrink) * 4;
+        var radius_2 = 5 > radius_1 ? 5 : radius_1;
+        var blob_1 = new Blob(blob.X, blob.Y, blob.vx, blob.vy, radius_2, blob.color);
+
+        var blob_2 = function () {
+          var tupledArg = Keyboard.arrows();
+          var arg00_ = tupledArg[0];
+          var arg01_ = tupledArg[1];
+          return function (blob_2) {
+            return step(arg00_, arg01_, blob_2);
+          };
+        }()(blob_1);
+
+        drawBg(ctx, canvas);
+        return builder_.combine(builder_.for(drops_3, function (_arg2) {
+          var drop = _arg2;
+          drawBlob(ctx, canvas, drop);
+          return builder_.zero();
         }), builder_.delay(function (unitVar_1) {
-          return drawBlob(ctx, canvas, blob_2), blob_2.Radius > 150 ? builder_.returnFrom(completed()) : builder_.bind(_fableCore.Async.sleep(Math.floor(1000 / 60)), function (_arg3) {
-            return builder_.returnFrom(update(blob_2, drops_3, countdown_1));
-          });
+          drawBlob(ctx, canvas, blob_2);
+
+          if (blob_2.Radius > 150) {
+            return builder_.returnFrom(completed());
+          } else {
+            return builder_.bind(_fableCore.Async.sleep(Math.floor(1000 / 60)), function (_arg3) {
+              return builder_.returnFrom(update(blob_2, drops_3, countdown_1));
+            });
+          }
         }));
       });
     }(_fableCore.Async);

@@ -195,11 +195,6 @@ installed with <code>fable --help</code> and the latest version available in npm
 <td><p>Shortcut for <code>--target production</code>.</p></td>
 </tr>
 <tr class="even">
-<td><p><code>--code</code></p></td>
-<td></td>
-<td><p>Pass a string of code directly to Fable.</p></td>
-</tr>
-<tr class="odd">
 <td><p><code>--help</code></p></td>
 <td><p><code>-h</code></p></td>
 <td><p>Display usage guide.</p></td>
@@ -438,6 +433,13 @@ as they're necessary to prevent name conflicts in the same file:</p>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="js">$import<span class="n">0</span>.MyModule<span class="n">1</span>.myProperty <span class="o">!</span><span class="o">=</span><span class="o">=</span> $import<span class="n">0</span>.MyModule<span class="n">2</span>.myProperty
 </code></pre></td></tr></table>
+<blockquote>
+<p>Note: When referencing a module or type from another file, Fable will automatically create
+the imports for the specific members you need. This allows <a href="http://www.2ality.com/2015/12/webpack-tree-shaking.html">tree shaking</a>
+but it also means using a <code>#load</code> directive in a script file just for the side effects
+(for example, to run some code on the other file) won't work. Functions on the other
+file must be called explicitly.</p>
+</blockquote>
 <h2><a name="Debugging" class="anchor" href="#Debugging">Debugging</a></h2>
 <p>You can debug the generated JS code normally. Also, if you pass the <code>sourceMaps</code>
 option to the compiler, it'll be possible to debug the F# code (with some limitations).

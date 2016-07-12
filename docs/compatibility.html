@@ -89,7 +89,9 @@ that don't have a big impact on developers' expectations.
 </ul>
 <h2><a name="Primitives" class="anchor" href="#Primitives">Primitives</a></h2>
 <p><code>string</code> and <code>char</code> compile to JS "string" while <code>bool</code> becomes "boolean".
-All numeric primitives compile to JS "number" (but see <em>Arrays</em> below).</p>
+All numeric primitives compile to JS "number" (but see <em>Arrays</em> below).
+<code>System.Guid</code> also compiles directly to "string" (<code>Guid.Parse</code> performs
+no validation at the moment).</p>
 <h2><a name="Arrays" class="anchor" href="#Arrays">Arrays</a></h2>
 <p><code>ResizeArray</code> (alias for <code>System.Generic.Collection.List</code>) and non-numeric
 arrays are compiled to native JS arrays. Numeric arrays are compiled to
@@ -195,10 +197,6 @@ be erased from the generated JS code.</p>
 <p>A single-thread version of <code>MailboxProcessor</code> is included. At the moment,
 only methods <code>Start</code>, <code>Receive</code>, <code>Post</code> and <code>PostAndAsyncReply</code> are implemented
 (<code>cancellationToken</code> or <code>timeout</code> optional arguments are not supported).</p>
-<h2><a name="Quotations" class="anchor" href="#Quotations">Quotations</a></h2>
-<p>Experimental support for quotations has been added. Currently they compile to a JS object
-compliant with <a href="https://github.com/babel/babel/blob/master/doc/ast/spec.md">Babel AST specs</a>.
-No splicing nor <code>Quotation.Expr</code> method/property is supported at the moment.</p>
 <p>You can check the <a href="https://github.com/fsprojects/Fable/tree/master/src/tests">tests</a> when in doubt. If there's a test for something,
 it's supported :)</p>
 

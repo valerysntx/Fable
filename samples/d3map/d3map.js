@@ -50,55 +50,87 @@ define(["exports", "d3", "topojson", "fable-core", "queue"], function (exports, 
   var title = exports.title = $import1.select(".country-name");
 
   var dataLoaded = exports.dataLoaded = function (world, names) {
-    var globe, landFeature, borders, countries, draw, render, transition;
-    return globe = {
+    var globe = {
       type: "Sphere"
-    }, landFeature = _topojson2.default.feature(world, world.objects.land), borders = _topojson2.default.mesh(world, world.objects.countries, function (delegateArg0, delegateArg1) {
+    };
+
+    var landFeature = _topojson2.default.feature(world, world.objects.land);
+
+    var borders = _topojson2.default.mesh(world, world.objects.countries, function (delegateArg0, delegateArg1) {
       return function (x) {
         return function (y) {
           return x !== y;
         };
       }(delegateArg0)(delegateArg1);
-    }), countries = Array.from(_fableCore.Seq.sortWith(function (a, b) {
+    });
+
+    var countries = Array.from(_fableCore.Seq.sortWith(function (a, b) {
       return _fableCore.Util.compareTo(a.name.toString(), b.name.toString());
     }, _topojson2.default.feature(world, world.objects.countries).features.filter(function (d) {
       return _fableCore.Seq.exists(function (n) {
-        return d.id.toString() === n.id.toString() ? (d.name = n.name, true) : false;
+        return d.id.toString() === n.id.toString() ? function () {
+          d.name = n.name;
+          return true;
+        }() : false;
       }, names);
-    }))), draw = function (color) {
+    })));
+
+    var draw = function (color) {
       return function (width_1) {
         return function (line) {
           return function (fill) {
-            fill ? ctx.fillStyle = color : ctx.strokeStyle = color;
+            if (fill) {
+              ctx.fillStyle = color;
+            } else {
+              ctx.strokeStyle = color;
+            }
+
             ctx.lineWidth = width_1;
             ctx.beginPath();
             path(line, null);
-            fill ? ctx.fill() : ctx.stroke();
+
+            if (fill) {
+              ctx.fill();
+            } else {
+              ctx.stroke();
+            }
           };
         };
       };
-    }, render = function (country) {
+    };
+
+    var render = function (country) {
       return function (angle) {
-        return projection.rotate(angle), ctx.clearRect(0, 0, width, height), draw("#ACA2AD")(0)(landFeature)(true), draw("#9E4078")(0)(country)(true), draw("#EAF1F7")(0.5)(borders)(false), draw("#726B72")(2)(globe)(false), null;
+        projection.rotate(angle);
+        ctx.clearRect(0, 0, width, height);
+        draw("#ACA2AD")(0)(landFeature)(true);
+        draw("#9E4078")(0)(country)(true);
+        draw("#EAF1F7")(0.5)(borders)(false);
+        draw("#726B72")(2)(globe)(false);
+        return null;
       };
-    }, transition = function (i) {
+    };
+
+    var transition = function (i) {
       return $import1.transition().duration(1250).each("start", function (delegateArg0, delegateArg1) {
         return function (_arg2) {
           return function (_arg1) {
-            var name;
-            return name = countries[i].name, title.text(name);
+            var name = countries[i].name;
+            return title.text(name);
           };
         }(delegateArg0)(delegateArg1);
       }).tween("rotate", function (delegateArg0) {
         return function (_arg3) {
-          return function () {
-            var patternInput_1, p2, p1, r;
-            return patternInput_1 = _d.geo.centroid(countries[i]), p2 = patternInput_1[1], p1 = patternInput_1[0], r = $import1.interpolate(projection.rotate(), [-p1, -p2]), function (delegateArg0) {
-              return function (t) {
-                return render(countries[i])(r(t));
-              }(delegateArg0);
-            };
-          }();
+          var patternInput_1 = _d.geo.centroid(countries[i]);
+
+          var p2 = patternInput_1[1];
+          var p1 = patternInput_1[0];
+          var r = $import1.interpolate(projection.rotate(), [-p1, -p2]);
+          return function (delegateArg0) {
+            return function (t) {
+              return render(countries[i])(r(t));
+            }(delegateArg0);
+          };
         }(delegateArg0);
       }).transition().each("end", function (delegateArg0, delegateArg1) {
         return function (_arg5) {
@@ -107,7 +139,9 @@ define(["exports", "d3", "topojson", "fable-core", "queue"], function (exports, 
           };
         }(delegateArg0)(delegateArg1);
       });
-    }, transition(0);
+    };
+
+    return transition(0);
   };
 
   (0, _queue2.default)().defer(function (delegateArg0, delegateArg1) {
@@ -120,9 +154,11 @@ define(["exports", "d3", "topojson", "fable-core", "queue"], function (exports, 
     return function (error) {
       return function (world) {
         return function (names) {
-          return error ? function () {
+          if (error) {
             throw error;
-          }() : null, dataLoaded(world, names);
+          }
+
+          return dataLoaded(world, names);
         };
       };
     }(delegateArg0)(delegateArg1)(delegateArg2);

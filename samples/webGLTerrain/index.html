@@ -100,7 +100,7 @@ global objects and other useful functions.</p></p>
 
   <div class="row">
     <div class="col-sm-12">
-      <div style="height:450px; width:800px; margin:20px auto 50px auto;">
+      <div class="app-container" style="height:450px; width:800px; margin:20px auto 50px auto;">
         
   <div id="container"><br /><br /><br /><br /><br />Generating world...
   <br>
@@ -115,7 +115,7 @@ global objects and other useful functions.</p></p>
       <script>
         requirejs.config({
           baseUrl: '.',
-          paths: { 'fable-core': '../scripts/fable-core.min',  }
+          paths: { 'fable-core': '/samples/scripts/fable-core.min',  }
         });
         requirejs(["webGLTerrain"]);
       </script>
@@ -614,7 +614,7 @@ but if we are in the tutorial we should live space for the explanations.</p>
 <div class="tip" id="fs15">Multiple items<br />type GlobalAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;new : unit -&gt; GlobalAttribute<br /><br />Full name: Fable.Core.GlobalAttribute<br /><br />--------------------<br />new : unit -&gt; GlobalAttribute</div>
 <div class="tip" id="fs16">val ImprovedNoise : unit -&gt; IPerlin<br /><br />Full name: WebGLTerrain.ImprovedNoise</div>
 <div class="tip" id="fs17">val failwith : message:string -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.failwith</div>
-<div class="tip" id="fs18">Multiple items<br />type EmitAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;new : macro:string -&gt; EmitAttribute<br /><br />Full name: Fable.Core.EmitAttribute<br /><br />--------------------<br />new : macro:string -&gt; EmitAttribute</div>
+<div class="tip" id="fs18">Multiple items<br />type EmitAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;private new : unit -&gt; EmitAttribute<br />&#160;&#160;new : macro:string -&gt; EmitAttribute<br />&#160;&#160;new : emitterType:Type * methodName:string -&gt; EmitAttribute<br /><br />Full name: Fable.Core.EmitAttribute<br /><br />--------------------<br />new : macro:string -&gt; EmitAttribute<br />new : emitterType:Type * methodName:string -&gt; EmitAttribute</div>
 <div class="tip" id="fs19">val FirstPersonControls : camera:Three.Camera * domElement:Browser.HTMLElement -&gt; IFirstPersonControls<br /><br />Full name: WebGLTerrain.FirstPersonControls</div>
 <div class="tip" id="fs20">val camera : Three.Camera</div>
 <div class="tip" id="fs21">module Three<br /><br />from Fable.Import</div>

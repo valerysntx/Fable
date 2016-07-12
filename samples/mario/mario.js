@@ -31,8 +31,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var update = $exports.update = function (e, pressed) {
-      var keyCode, op;
-      return keyCode = Math.floor(e.keyCode), op = pressed ? function (value) {
+      var keyCode = Math.floor(e.keyCode);
+      var op = pressed ? function (value) {
         return function (set) {
           return new Set(set).add(value);
         };
@@ -40,7 +40,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         return function (set) {
           return _fableCore.Set.remove(value, set);
         };
-      }, keysPressed = op(keyCode)(keysPressed), null;
+      };
+      keysPressed = op(keyCode)(keysPressed);
+      return null;
     };
 
     var arrows = $exports.arrows = function () {
@@ -86,9 +88,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var position = $exports.position = function (x, y, img) {
-      var copyOfStruct;
       img.style.left = x.toString() + "px";
-      img.style.top = (copyOfStruct = canvas.offsetTop + y, copyOfStruct.toString()) + "px";
+
+      img.style.top = function () {
+        var copyOfStruct = canvas.offsetTop + y;
+        return copyOfStruct.toString();
+      }() + "px";
     };
 
     var dimensions = $exports.dimensions = function () {
@@ -96,8 +101,13 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var image = $exports.image = function (src) {
-      var image;
-      return image = document.getElementsByTagName('img')[0], image.src.indexOf(src) === -1 ? image.src = src : null, image;
+      var image = document.getElementsByTagName('img')[0];
+
+      if (image.src.indexOf(src) === -1) {
+        image.src = src;
+      }
+
+      return image;
     };
 
     return $exports;
@@ -116,13 +126,17 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   _fableCore.Util.setInterfaces(Mario.prototype, [], "Mario.Mario");
 
   var jump = exports.jump = function (_arg1, y, m) {
-    var vy;
-    return (y > 0 ? m.y === 0 : false) ? (vy = 5, new Mario(m.x, m.y, m.vx, vy, m.dir)) : m;
+    return (y > 0 ? m.y === 0 : false) ? function () {
+      var vy = 5;
+      return new Mario(m.x, m.y, m.vx, vy, m.dir);
+    }() : m;
   };
 
   var gravity = exports.gravity = function (m) {
-    var vy;
-    return m.y > 0 ? (vy = m.vy - 0.1, new Mario(m.x, m.y, m.vx, vy, m.dir)) : m;
+    return m.y > 0 ? function () {
+      var vy = m.vy - 0.1;
+      return new Mario(m.x, m.y, m.vx, vy, m.dir);
+    }() : m;
   };
 
   var physics = exports.physics = function (m) {
@@ -130,48 +144,45 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var walk = exports.walk = function (x, _arg1, m) {
-    var dir, vx;
-    return dir = x < 0 ? "left" : x > 0 ? "right" : m.dir, vx = x, new Mario(m.x, m.y, vx, m.vy, dir);
+    var dir = x < 0 ? "left" : x > 0 ? "right" : m.dir;
+    var vx = x;
+    return new Mario(m.x, m.y, vx, m.vy, dir);
   };
 
   var step = exports.step = function (dir_0, dir_1, mario) {
-    var dir;
-    return dir = [dir_0, dir_1], jump(dir[0], dir[1], gravity(walk(dir[0], dir[1], physics(mario))));
+    var dir = [dir_0, dir_1];
+    return jump(dir[0], dir[1], gravity(walk(dir[0], dir[1], physics(mario))));
   };
 
   var render = exports.render = function (w, h, mario) {
     (function () {
-      return function () {
-        var color;
-        return color = Win.rgb(174, 238, 238), function (tupledArg) {
-          var arg10_ = tupledArg[0];
-          var arg11_ = tupledArg[1];
-          var arg12_ = tupledArg[2];
-          var arg13_ = tupledArg[3];
-          Win.filled(color, arg10_, arg11_, arg12_, arg13_);
-        };
-      }();
+      var color = Win.rgb(174, 238, 238);
+      return function (tupledArg) {
+        var arg10_ = tupledArg[0];
+        var arg11_ = tupledArg[1];
+        var arg12_ = tupledArg[2];
+        var arg13_ = tupledArg[3];
+        Win.filled(color, arg10_, arg11_, arg12_, arg13_);
+      };
     })()([0, 0, w, h]);
     (function () {
-      return function () {
-        var color;
-        return color = Win.rgb(74, 163, 41), function (tupledArg) {
-          var arg10_ = tupledArg[0];
-          var arg11_ = tupledArg[1];
-          var arg12_ = tupledArg[2];
-          var arg13_ = tupledArg[3];
-          Win.filled(color, arg10_, arg11_, arg12_, arg13_);
-        };
-      }();
+      var color = Win.rgb(74, 163, 41);
+      return function (tupledArg) {
+        var arg10_ = tupledArg[0];
+        var arg11_ = tupledArg[1];
+        var arg12_ = tupledArg[2];
+        var arg13_ = tupledArg[3];
+        Win.filled(color, arg10_, arg11_, arg12_, arg13_);
+      };
     })()([0, h - 50, w, 50]);
     var verb = mario.y > 0 ? "jump" : mario.vx !== 0 ? "walk" : "stand";
     (function () {
-      return function () {
-        var tupledArg, x, y;
-        return tupledArg = [w / 2 - 16 + mario.x, h - 50 - 31 - mario.y], x = tupledArg[0], y = tupledArg[1], function (img) {
-          Win.position(x, y, img);
-        };
-      }();
+      var tupledArg = [w / 2 - 16 + mario.x, h - 50 - 31 - mario.y];
+      var x = tupledArg[0];
+      var y = tupledArg[1];
+      return function (img) {
+        Win.position(x, y, img);
+      };
     })()(Win.image("images/mario" + verb + mario.dir + ".gif"));
   };
 
@@ -182,12 +193,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
   var update = exports.update = function (mario, unitVar1) {
     var mario_1 = function () {
-      return function () {
-        var tupledArg, arg00_, arg01_;
-        return tupledArg = Keyboard.arrows(), arg00_ = tupledArg[0], arg01_ = tupledArg[1], function (mario_1) {
-          return step(arg00_, arg01_, mario_1);
-        };
-      }();
+      var tupledArg = Keyboard.arrows();
+      var arg00_ = tupledArg[0];
+      var arg01_ = tupledArg[1];
+      return function (mario_1) {
+        return step(arg00_, arg01_, mario_1);
+      };
     }()(mario);
 
     render(w, h, mario_1);

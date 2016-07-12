@@ -58,14 +58,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             }, {
                 key: "Up",
                 get: function () {
-                    var Row;
-                    return Row = this.Row + 1, new Position(this.Col, Row);
+                    var Row = this.Row + 1;
+                    return new Position(this.Col, Row);
                 }
             }, {
                 key: "Down",
                 get: function () {
-                    var Row;
-                    return Row = this.Row - 1, new Position(this.Col, Row);
+                    var Row = this.Row - 1;
+                    return new Position(this.Col, Row);
                 }
             }]);
 
@@ -178,8 +178,13 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         };
 
         var getCellState = function (board, pos) {
-            var colCount;
-            return colCount = board.length, (((pos.Col < colCount ? pos.Col >= 0 : false) ? pos.Row < _fableCore.Seq.item(pos.Col, board).length : false) ? pos.Row >= 0 : false) ? _fableCore.Seq.item(pos.Row, _fableCore.Seq.item(pos.Col, board)) : new SameGameTypes.CellState("Empty");
+            var colCount = board.length;
+
+            if (((pos.Col < colCount ? pos.Col >= 0 : false) ? pos.Row < _fableCore.Seq.item(pos.Col, board).length : false) ? pos.Row >= 0 : false) {
+                return _fableCore.Seq.item(pos.Row, _fableCore.Seq.item(pos.Col, board));
+            } else {
+                return new SameGameTypes.CellState("Empty");
+            }
         };
 
         var findAdjacentWithSameColor = function (board, col, pos) {
@@ -195,12 +200,18 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         var hasValidMoves = function (board) {
             return _fableCore.Seq.exists(function (col) {
                 return _fableCore.Seq.exists(function (cell) {
-                    var matchValue, c;
-                    return matchValue = cell.State, matchValue.Case === "Stone" ? (c = matchValue.Fields[0], function ($var1) {
-                        return !($var1.tail == null);
-                    }(function (pos) {
-                        return findAdjacentWithSameColor(board, c, pos);
-                    }(cell.Position))) : false;
+                    var matchValue = cell.State;
+
+                    if (matchValue.Case === "Stone") {
+                        var c = matchValue.Fields[0];
+                        return function ($var1) {
+                            return !($var1.tail == null);
+                        }(function (pos) {
+                            return findAdjacentWithSameColor(board, c, pos);
+                        }(cell.Position));
+                    } else {
+                        return false;
+                    }
                 }, col);
             }, _fableCore.Seq.mapi(function (i, col) {
                 return _fableCore.Seq.mapi(function (j, cell) {
@@ -210,16 +221,20 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         };
 
         var numberOfStones = function (board) {
-            var numOfStonesInCol;
-            return numOfStonesInCol = function () {
-                var projection;
-                return projection = function (_arg1) {
-                    var c;
-                    return _arg1.Case === "Empty" ? 0 : (c = _arg1.Fields[0], 1);
-                }, function (list) {
+            var numOfStonesInCol = function () {
+                var projection = function (_arg1) {
+                    return _arg1.Case === "Empty" ? 0 : function () {
+                        var c = _arg1.Fields[0];
+                        return 1;
+                    }();
+                };
+
+                return function (list) {
                     return _fableCore.Seq.sumBy(projection, list);
                 };
-            }(), _fableCore.Seq.sum(function (list) {
+            }();
+
+            return _fableCore.Seq.sum(function (list) {
                 return _fableCore.List.map(numOfStonesInCol, list);
             }(board));
         };
@@ -231,30 +246,46 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         };
 
         var evaluateGameState = function (gameState) {
-            var Score, score;
-            return hasValidMoves(gameState.Board) ? new SameGameTypes.Game("InProgress", gameState) : isEmpty(gameState.Board) ? new SameGameTypes.Game("Finished", (Score = gameState.Score + bonus, new SameGameTypes.GameState(gameState.Board, Score))) : (score = gameState.Score + penalty(numberOfStones(gameState.Board)), new SameGameTypes.Game("Finished", new SameGameTypes.GameState(gameState.Board, score)));
+            return hasValidMoves(gameState.Board) ? new SameGameTypes.Game("InProgress", gameState) : isEmpty(gameState.Board) ? new SameGameTypes.Game("Finished", function () {
+                var Score = gameState.Score + bonus;
+                return new SameGameTypes.GameState(gameState.Board, Score);
+            }()) : function () {
+                var score = gameState.Score + penalty(numberOfStones(gameState.Board));
+                return new SameGameTypes.Game("Finished", new SameGameTypes.GameState(gameState.Board, score));
+            }();
         };
 
         var getGroup = function (board, position) {
-            var find;
-            return find = function (ps) {
+            var find = function (ps) {
                 return function (col) {
                     return function (group) {
                         return ps.tail != null ? function () {
-                            var xs, x, cells;
-                            return xs = ps.tail, x = ps.head, cells = _fableCore.List.filter(function (pos) {
+                            var xs = ps.tail;
+                            var x = ps.head;
+
+                            var cells = _fableCore.List.filter(function (pos) {
                                 return !_fableCore.Seq.exists(function (y) {
                                     return _fableCore.Util.compareTo(pos, y) === 0;
                                 }, _fableCore.List.append(xs, group));
                             }, function (pos) {
                                 return findAdjacentWithSameColor(board, col, pos);
-                            }(x)), find(_fableCore.List.append(cells, xs))(col)(_fableCore.List.ofArray([x], group));
+                            }(x));
+
+                            return find(_fableCore.List.append(cells, xs))(col)(_fableCore.List.ofArray([x], group));
                         }() : group;
                     };
                 };
-            }, function (_arg1) {
-                var c, positions;
-                return _arg1.Case === "Stone" ? (c = _arg1.Fields[0], positions = find(_fableCore.List.ofArray([position]))(c)(new _fableCore.List()), positions.length > 1 ? new SameGameTypes.Group(c, positions) : null) : null;
+            };
+
+            return function (_arg1) {
+                return _arg1.Case === "Stone" ? function () {
+                    var c = _arg1.Fields[0];
+                    var positions = find(_fableCore.List.ofArray([position]))(c)(new _fableCore.List());
+
+                    if (positions.length > 1) {
+                        return new SameGameTypes.Group(c, positions);
+                    }
+                }() : null;
             }(getCellState(board, position));
         };
 
@@ -271,8 +302,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
                 }, _fableCore.List.filter(function (cell) {
                     return function ($var4) {
                         return !_fableCore.Seq.exists(function () {
-                            var x;
-                            return x = cell.Position, function (y) {
+                            var x = cell.Position;
+                            return function (y) {
                                 return _fableCore.Util.compareTo(x, y) === 0;
                             };
                         }(), $var4);
@@ -285,16 +316,23 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
         var play = function (gameState, pos) {
             return function (_arg1) {
-                var g, newBoard;
-                return _arg1 != null ? (g = _arg1, newBoard = function (board) {
-                    return removeGroup(g, board);
-                }(gameState.Board), new SameGameTypes.GameState(newBoard, gameState.Score + calcScore(g.Positions.length))) : gameState;
+                return _arg1 != null ? function () {
+                    var g = _arg1;
+
+                    var newBoard = function (board) {
+                        return removeGroup(g, board);
+                    }(gameState.Board);
+
+                    return new SameGameTypes.GameState(newBoard, gameState.Score + calcScore(g.Positions.length));
+                }() : gameState;
             }(getGroup(gameState.Board, pos));
         };
 
         var playIfRunning = function (game, pos) {
-            var gameState;
-            return game.Case === "InProgress" ? (gameState = game.Fields[0], evaluateGameState(play(gameState, pos))) : game;
+            return game.Case === "InProgress" ? function () {
+                var gameState = game.Fields[0];
+                return evaluateGameState(play(gameState, pos));
+            }() : game;
         };
 
         var isValid = function (conf) {
@@ -302,18 +340,19 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         };
 
         var newGame = function (config) {
-            var createBoard;
-            return createBoard = function (config_1) {
-                return function (arg0) {
-                    return arg0;
-                }(evaluateGameState(function (board) {
+            var createBoard = function (config_1) {
+                return evaluateGameState(function (board) {
                     return new SameGameTypes.GameState(board, 0);
                 }(_fableCore.List.init(config_1.NumberOfColumns, function (_arg2) {
                     return _fableCore.List.init(config_1.NumberOfRows, function (_arg1) {
                         return config_1.StoneGenerator();
                     });
-                }))));
-            }, isValid(config) ? createBoard(config) : null;
+                })));
+            };
+
+            if (isValid(config)) {
+                return createBoard(config);
+            }
         };
 
         var api = $exports.api = new SameGameTypes.SameGameApi(function (config) {
@@ -329,37 +368,34 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var api = exports.api = SameGameDomain.api;
 
     var renderBoardToHtmlString = exports.renderBoardToHtmlString = function (board) {
-        var renderCell, makeBoard;
-        return renderCell = function (x) {
+        var renderCell = function (x) {
             return function (y) {
                 return function (col) {
                     return "<td class='sg-td'>" + function () {
-                        return function () {
-                            var clo1;
-                            return clo1 = _fableCore.String.fsFormat("<a href='javaScript:void(0);' id='cell-%d-%d'>")(function (x) {
-                                return x;
-                            }), function (arg10) {
-                                return function () {
-                                    var clo2;
-                                    return clo2 = clo1(arg10), function (arg20) {
-                                        return clo2(arg20);
-                                    };
-                                }();
+                        var clo1 = _fableCore.String.fsFormat("<a href='javaScript:void(0);' id='cell-%d-%d'>")(function (x) {
+                            return x;
+                        });
+
+                        return function (arg10) {
+                            var clo2 = clo1(arg10);
+                            return function (arg20) {
+                                return clo2(arg20);
                             };
-                        }();
+                        };
                     }()(x)(y) + function () {
-                        return function () {
-                            var clo1;
-                            return clo1 = _fableCore.String.fsFormat("<div class='sg-cell sg-color%d'>")(function (x) {
-                                return x;
-                            }), function (arg10) {
-                                return clo1(arg10);
-                            };
-                        }();
+                        var clo1 = _fableCore.String.fsFormat("<div class='sg-cell sg-color%d'>")(function (x) {
+                            return x;
+                        });
+
+                        return function (arg10) {
+                            return clo1(arg10);
+                        };
                     }()(col) + "</div></a></td>";
                 };
             };
-        }, makeBoard = function (board_1) {
+        };
+
+        var makeBoard = function (board_1) {
             return "<table class='sg-table horiz-centered'>" + _fableCore.String.concat("", _fableCore.Seq.toList(_fableCore.Seq.delay(function (unitVar) {
                 return _fableCore.Seq.map(function (y) {
                     return "<tr class='sg-tr'>" + _fableCore.String.concat("", _fableCore.List.map(function (x) {
@@ -367,10 +403,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
                     }, _fableCore.Seq.toList(_fableCore.Seq.range(0, board_1.length - 1)))) + "</tr>";
                 }, _fableCore.Seq.toList(_fableCore.Seq.rangeStep(_fableCore.Seq.item(0, board_1).length - 1, -1, 0)));
             }))) + "</table>";
-        }, makeBoard(_fableCore.List.map(function (col) {
+        };
+
+        return makeBoard(_fableCore.List.map(function (col) {
             return _fableCore.List.map(function (_arg1) {
-                var c;
-                return _arg1.Case === "Empty" ? 0 : (c = _arg1.Fields[0].Fields[0], c);
+                return _arg1.Case === "Empty" ? 0 : function () {
+                    var c = _arg1.Fields[0].Fields[0];
+                    return c;
+                }();
             }, col);
         }, board));
     };
@@ -380,18 +420,24 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var updateUi = exports.updateUi = function (game) {
-        var gs, board;
         var boardElement = getById("sg-board");
         var scoreElement = getById("sg-score");
 
         var play = function (game_1) {
             return function (tupledArg) {
-                var $var5;
                 var x = tupledArg[0];
                 var y = tupledArg[1];
-                updateUi(($var5 = game_1, $var5 != null ? function (g) {
-                    return api.Play(g)(new SameGameTypes.Position(x, y));
-                }($var5) : $var5));
+                updateUi(function () {
+                    var $var5 = game_1;
+
+                    if ($var5 != null) {
+                        return function (g) {
+                            return api.Play(g)(new SameGameTypes.Position(x, y));
+                        }($var5);
+                    } else {
+                        return $var5;
+                    }
+                }());
             };
         };
 
@@ -400,62 +446,69 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
                 _fableCore.Seq.iter(function (x) {
                     _fableCore.Seq.iter(function (y) {
                         var cellId = function () {
-                            return function () {
-                                var clo1;
-                                return clo1 = _fableCore.String.fsFormat("cell-%d-%d")(function (x) {
-                                    return x;
-                                }), function (arg10) {
-                                    return function () {
-                                        var clo2;
-                                        return clo2 = clo1(arg10), function (arg20) {
-                                            return clo2(arg20);
-                                        };
-                                    }();
+                            var clo1 = _fableCore.String.fsFormat("cell-%d-%d")(function (x) {
+                                return x;
+                            });
+
+                            return function (arg10) {
+                                var clo2 = clo1(arg10);
+                                return function (arg20) {
+                                    return clo2(arg20);
                                 };
-                            }();
+                            };
                         }()(x)(y);
 
                         var el = getById(cellId);
                         el.addEventListener('click', function (_arg1) {
-                            return play(game)([x, y]), null;
+                            play(game)([x, y]);
+                            return null;
                         }, null);
                     }, _fableCore.Seq.toList(_fableCore.Seq.range(0, maxRowIndex)));
                 }, _fableCore.Seq.toList(_fableCore.Seq.range(0, maxColIndex)));
             };
         };
 
-        game != null ? game.Case === "Finished" ? (gs = game.Fields[0], board = renderBoardToHtmlString(gs.Board), boardElement.innerHTML = board, scoreElement.innerText = "No more moves. " + function () {
-            return function () {
-                var clo1;
-                return clo1 = _fableCore.String.fsFormat("Your final score is %i point(s).")(function (x) {
-                    return x;
-                }), function (arg10) {
-                    return clo1(arg10);
-                };
-            }();
-        }()(gs.Score)) : (gs = game.Fields[0], board = renderBoardToHtmlString(gs.Board), boardElement.innerHTML = board, addListeners(gs.Board.length - 1)(_fableCore.Seq.item(0, gs.Board).length - 1), scoreElement.innerText = function () {
-            return function () {
-                var clo1;
-                return clo1 = _fableCore.String.fsFormat("%i point(s).")(function (x) {
-                    return x;
-                }), function (arg10) {
-                    return clo1(arg10);
-                };
-            }();
-        }()(gs.Score)) : boardElement.innerText = "Sorry, an error occurred while rendering the board.";
+        if (game != null) {
+            if (game.Case === "Finished") {
+                var gs = game.Fields[0];
+                var board = renderBoardToHtmlString(gs.Board);
+                boardElement.innerHTML = board;
+
+                scoreElement.innerText = "No more moves. " + function () {
+                    var clo1 = _fableCore.String.fsFormat("Your final score is %i point(s).")(function (x) {
+                        return x;
+                    });
+
+                    return function (arg10) {
+                        return clo1(arg10);
+                    };
+                }()(gs.Score);
+            } else {
+                var gs = game.Fields[0];
+                var board = renderBoardToHtmlString(gs.Board);
+                boardElement.innerHTML = board;
+                addListeners(gs.Board.length - 1)(_fableCore.Seq.item(0, gs.Board).length - 1);
+
+                scoreElement.innerText = function () {
+                    var clo1 = _fableCore.String.fsFormat("%i point(s).")(function (x) {
+                        return x;
+                    });
+
+                    return function (arg10) {
+                        return clo1(arg10);
+                    };
+                }()(gs.Score);
+            }
+        } else {
+            boardElement.innerText = "Sorry, an error occurred while rendering the board.";
+        }
     };
 
     var rndColorGtor = exports.rndColorGtor = function (i) {
-        return function () {
-            var rnd;
-            return rnd = {}, function (unitVar0) {
-                return function (arg0) {
-                    return new SameGameTypes.CellState("Stone", arg0);
-                }(function (arg0) {
-                    return new SameGameTypes.Color("Color", arg0);
-                }(Math.floor(Math.random() * (i - 0)) + 0 + 1));
-            };
-        }();
+        var rnd = {};
+        return function (unitVar0) {
+            return new SameGameTypes.CellState("Stone", new SameGameTypes.Color("Color", Math.floor(Math.random() * (i - 0)) + 0 + 1));
+        };
     };
 
     var defaultConfig = exports.defaultConfig = function (arr) {
@@ -463,7 +516,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     }(Int32Array.from(_fableCore.Seq.map(function (value) {
         return Number.parseInt(value);
     }, function (className) {
-        return _fableCore.String.split(className, "-");
+        return className.split("-");
     }(getById("sg-board").className))));
 
     var buttonNewGame = exports.buttonNewGame = getById("new-game");
@@ -483,30 +536,35 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var selectGameOnChange = exports.selectGameOnChange = function () {
-        var inputRecord, StoneGenerator;
-
         var presetGtor = function (gameNum) {
-            return function () {
-                var index, game;
-                return index = 0, game = _fableCore.Seq.item(gameNum, PresetGames.games), function (unitVar0) {
-                    return index = index + 1, function (arg0) {
-                        return new SameGameTypes.CellState("Stone", arg0);
-                    }(function (arg0) {
-                        return new SameGameTypes.Color("Color", arg0);
-                    }(_fableCore.Seq.item(index - 1, game)));
-                };
-            }();
+            var index = 0;
+
+            var game = _fableCore.Seq.item(gameNum, PresetGames.games);
+
+            return function (unitVar0) {
+                index = index + 1;
+                return new SameGameTypes.CellState("Stone", new SameGameTypes.Color("Color", _fableCore.Seq.item(index - 1, game)));
+            };
         };
 
         var gameIndex = Number.parseInt(selectGame.value);
-        gameIndex >= 0 ? updateUi(api.NewGame((inputRecord = config(), StoneGenerator = presetGtor(gameIndex), new SameGameTypes.GameConfig(inputRecord.NumberOfColumns, inputRecord.NumberOfRows, StoneGenerator)))) : null;
+
+        if (gameIndex >= 0) {
+            updateUi(api.NewGame(function () {
+                var inputRecord = config();
+                var StoneGenerator = presetGtor(gameIndex);
+                return new SameGameTypes.GameConfig(inputRecord.NumberOfColumns, inputRecord.NumberOfRows, StoneGenerator);
+            }()));
+        }
     };
 
     selectGame.addEventListener('change', function (_arg1) {
-        return selectGameOnChange(), null;
+        selectGameOnChange();
+        return null;
     }, null);
     buttonNewGame.addEventListener('click', function (_arg2) {
-        return newGameOnClick(), null;
+        newGameOnClick();
+        return null;
     }, null);
     updateUi(api.NewGame(defaultConfig));
 });

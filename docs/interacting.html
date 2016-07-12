@@ -706,12 +706,16 @@ when deserializing:</p>
 </tr>
 </table>
 <blockquote>
-<p><code>Serialize.ofJson</code> works with records, unions and types with
-an argumentless primary constructor.
-This will work when exchanging objects with a server, if the
+<p>This will work when exchanging objects with a server, if the
 server includes the type full name in a <code>__type</code> field and the
 client code knows the type definiton.</p>
 </blockquote>
+<p>At the moment, there are the following caveats:</p>
+<ul>
+<li>Only works with records, unions and types with an argumentless primary constructor.</li>
+<li>Doesn't work with lists, maps or sets.</li>
+<li>Arrays will always be deserialized as dynamic JS arrays, not typed arrays.</li>
+</ul>
 <h2><a name="Publishing-a-Fable-package" class="anchor" href="#Publishing-a-Fable-package">Publishing a Fable package</a></h2>
 <p>See <a href="https://www.npmjs.com/package/fable-helpers-sample">fable-helpers-sample</a> to know how to publish a Fable package.</p>
 

@@ -95,7 +95,7 @@ imported scripts, how to pass lambdas to JS code and the <code>?</code> operator
 
   <div class="row">
     <div class="col-sm-12">
-      <div style="height:500px; width:500px; margin:10px auto 10px auto;">
+      <div class="app-container" style="height:500px; width:500px; margin:10px auto 10px auto;">
         
   <p style="position:absolute;top:290px;color:black;font-size:16px;font-weight:700;width:500px;text-align:center;" class="country-name">Using D3 and TopoJSON</p>
   <canvas align="center" id="canvas" width="500" height="500"></canvas>
@@ -104,7 +104,7 @@ imported scripts, how to pass lambdas to JS code and the <code>?</code> operator
       <script>
         requirejs.config({
           baseUrl: '.',
-          paths: { 'fable-core': '../scripts/fable-core.min', 'd3':'https://d3js.org/d3.v3.min','queue': 'https://d3js.org/queue.v1.min','topojson': 'https://d3js.org/topojson.v1.min' }
+          paths: { 'fable-core': '/samples/scripts/fable-core.min', 'd3':'https://d3js.org/d3.v3.min','queue': 'https://d3js.org/queue.v1.min','topojson': 'https://d3js.org/topojson.v1.min' }
         });
         requirejs(["d3map"]);
       </script>

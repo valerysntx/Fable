@@ -5,7 +5,6 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     value: true
   });
   exports.game = exports.playLevel = exports.countDots = exports.Pacman = exports.Keyboard = exports.chooseDirection = exports.fillRight = exports.fillLeft = exports.fillDown = exports.fillUp = exports.fillValue = exports.route_home = exports.flood = exports.createGhosts = exports.Ghost = exports.wrap = exports.clearCell = exports.createBackground = exports.createBrush = exports.draw = exports.toTile = exports.tileChars = exports.tileColors = exports.canGoRight = exports.canGoLeft = exports.canGoDown = exports.canGoUp = exports.noWall = exports.isAligned = exports.horizontallyAligned = exports.verticallyAligned = exports.isWallAt = exports.tileAt = exports.isWall = exports.blank = exports.tileBits = exports.maze = exports.createImage = exports.Images = undefined;
-  var numbers, canFill, fill;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -59,12 +58,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   }({});
 
   var createImage = exports.createImage = function (data) {
-    var img;
-    return img = document.createElement('img'), img.src = data, img;
+    var img = document.createElement('img');
+    img.src = data;
+    return img;
   };
 
-  var maze = exports.maze = _fableCore.String.split("##/------------7/------------7##,##|............|!............|##,##|./__7./___7.|!./___7./__7.|##,##|o|  !.|   !.|!.|   !.|  !o|##,##|.L--J.L---J.LJ.L---J.L--J.|##,##|..........................|##,##|./__7./7./______7./7./__7.|##,##|.L--J.|!.L--7/--J.|!.L--J.|##,##|......|!....|!....|!......|##,##L____7.|L__7 |! /__J!./____J##,#######!.|/--J LJ L--7!.|#######,#######!.|!          |!.|#######,#######!.|! /__==__7 |!.|#######,-------J.LJ |      ! LJ.L-------,########.   | **** !   .########,_______7./7 |      ! /7./_______,#######!.|! L______J |!.|#######,#######!.|!          |!.|#######,#######!.|! /______7 |!.|#######,##/----J.LJ L--7/--J LJ.L----7##,##|............|!............|##,##|./__7./___7.|!./___7./__7.|##,##|.L-7!.L---J.LJ.L---J.|/-J.|##,##|o..|!.......<>.......|!..o|##,##L_7.|!./7./______7./7.|!./_J##,##/-J.LJ.|!.L--7/--J.|!.LJ.L-7##,##|......|!....|!....|!......|##,##|./____JL__7.|!./__JL____7.|##,##|.L--------J.LJ.L--------J.|##,##|..........................|##,##L--------------------------J##", ",");
-
+  var maze = exports.maze = "##/------------7/------------7##,##|............|!............|##,##|./__7./___7.|!./___7./__7.|##,##|o|  !.|   !.|!.|   !.|  !o|##,##|.L--J.L---J.LJ.L---J.L--J.|##,##|..........................|##,##|./__7./7./______7./7./__7.|##,##|.L--J.|!.L--7/--J.|!.L--J.|##,##|......|!....|!....|!......|##,##L____7.|L__7 |! /__J!./____J##,#######!.|/--J LJ L--7!.|#######,#######!.|!          |!.|#######,#######!.|! /__==__7 |!.|#######,-------J.LJ |      ! LJ.L-------,########.   | **** !   .########,_______7./7 |      ! /7./_______,#######!.|! L______J |!.|#######,#######!.|!          |!.|#######,#######!.|! /______7 |!.|#######,##/----J.LJ L--7/--J LJ.L----7##,##|............|!............|##,##|./__7./___7.|!./___7./__7.|##,##|.L-7!.L---J.LJ.L---J.|/-J.|##,##|o..|!.......<>.......|!..o|##,##L_7.|!./7./______7./7.|!./_J##,##/-J.LJ.|!.L--7/--J.|!.LJ.L-7##,##|......|!....|!....|!......|##,##|./____JL__7.|!./__JL____7.|##,##|.L--------J.LJ.L--------J.|##,##|..........................|##,##L--------------------------J##".split(",");
   var tileBits = exports.tileBits = [new Int32Array([0, 0, 0, 0, 3, 4, 8, 8]), new Int32Array([0, 0, 0, 0, 255, 0, 0, 0]), new Int32Array([0, 0, 0, 0, 192, 32, 16, 16]), new Int32Array([8, 8, 8, 8, 8, 8, 8, 8]), new Int32Array([16, 16, 16, 16, 16, 16, 16, 16]), new Int32Array([8, 8, 4, 3, 0, 0, 0, 0]), new Int32Array([0, 0, 0, 255, 0, 0, 0, 0]), new Int32Array([16, 16, 32, 192, 0, 0, 0, 0]), new Int32Array([0, 0, 0, 0, 255, 0, 0, 0]), new Int32Array([0, 0, 0, 24, 24, 0, 0, 0]), new Int32Array([0, 24, 60, 126, 126, 60, 24, 0])];
   var blank = exports.blank = new Int32Array([0, 0, 0, 0, 0, 0, 0, 0]);
 
@@ -93,8 +92,10 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var noWall = exports.noWall = function (x, y, ex, ey) {
-    var patternInput, by, bx;
-    return patternInput = [x + 6 + ex >> 3, y + 6 + ey >> 3], by = patternInput[1], bx = patternInput[0], !isWallAt(bx, by);
+    var patternInput = [x + 6 + ex >> 3, y + 6 + ey >> 3];
+    var by = patternInput[1];
+    var bx = patternInput[0];
+    return !isWallAt(bx, by);
   };
 
   var canGoUp = exports.canGoUp = function (x, y) {
@@ -117,8 +118,13 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   var tileChars = exports.tileChars = "/_7|!L-J=.o";
 
   var toTile = exports.toTile = function (c) {
-    var i;
-    return i = tileChars.indexOf(c), i === -1 ? [blank, "B"] : [tileBits[i], tileColors[i]];
+    var i = tileChars.indexOf(c);
+
+    if (i === -1) {
+      return [blank, "B"];
+    } else {
+      return [tileBits[i], tileColors[i]];
+    }
   };
 
   var draw = exports.draw = function (f, lines) {
@@ -128,50 +134,56 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       for (var x = 0; x <= width - 1; x++) {
         var bit = 1 << width - 1 - x;
         var pattern = line & bit;
-        pattern !== 0 ? f([x, y]) : null;
+
+        if (pattern !== 0) {
+          f([x, y]);
+        }
       }
     }, lines);
   };
 
   var createBrush = exports.createBrush = function (context, r, g, b, a) {
-    var id, d;
-    return id = context.createImageData(1, 1), d = id.data, d[0] = r, d[1] = g, d[2] = b, d[3] = a, id;
+    var id = context.createImageData(1, 1);
+    var d = id.data;
+    d[0] = r;
+    d[1] = g;
+    d[2] = b;
+    d[3] = a;
+    return id;
   };
 
   var createBackground = exports.createBackground = function () {
-    return function () {
-      var background = document.createElement('canvas');
-      background.width = 256;
-      background.height = 256;
-      var context = background.getContext('2d');
-      context.fillStyle = "rgb(0,0,0)";
-      context.fillRect(0, 0, 256, 256);
-      var blue = createBrush(context, 63, 63, 255, 255);
-      var yellow = createBrush(context, 255, 255, 0, 255);
-      var lines = maze;
+    var background = document.createElement('canvas');
+    background.width = 256;
+    background.height = 256;
+    var context = background.getContext('2d');
+    context.fillStyle = "rgb(0,0,0)";
+    context.fillRect(0, 0, 256, 256);
+    var blue = createBrush(context, 63, 63, 255, 255);
+    var yellow = createBrush(context, 255, 255, 0, 255);
+    var lines = maze;
 
-      for (var y = 0; y <= lines.length - 1; y++) {
-        var line = lines[y];
+    for (var y = 0; y <= lines.length - 1; y++) {
+      var line = lines[y];
 
-        for (var x = 0; x <= line.length - 1; x++) {
-          var c = line[x];
-          var patternInput = toTile(c);
-          var tile = patternInput[0];
-          var color = patternInput[1];
-          var brush = color === "Y" ? yellow : blue;
+      for (var x = 0; x <= line.length - 1; x++) {
+        var c = line[x];
+        var patternInput = toTile(c);
+        var tile = patternInput[0];
+        var color = patternInput[1];
+        var brush = color === "Y" ? yellow : blue;
 
-          var f = function (tupledArg) {
-            var x_ = tupledArg[0];
-            var y_ = tupledArg[1];
-            context.putImageData(brush, x * 8 + x_, y * 8 + y_);
-          };
+        var f = function (tupledArg) {
+          var x_ = tupledArg[0];
+          var y_ = tupledArg[1];
+          context.putImageData(brush, x * 8 + x_, y * 8 + y_);
+        };
 
-          draw(f, tile);
-        }
+        draw(f, tile);
       }
+    }
 
-      return background;
-    }();
+    return background;
   };
 
   var clearCell = exports.clearCell = function (background, x, y) {
@@ -181,8 +193,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var wrap = exports.wrap = function (x, y, dx, dy) {
-    var x_1;
-    return x_1 = (dx === -1 ? x === 0 : false) ? 30 * 8 : (dx === 1 ? x === 30 * 8 : false) ? 0 : x, [x_1 + dx, y + dy];
+    var x_1 = (dx === -1 ? x === 0 : false) ? 30 * 8 : (dx === 1 ? x === 30 * 8 : false) ? 0 : x;
+    return [x_1 + dx, y + dy];
   };
 
   var Ghost = exports.Ghost = function () {
@@ -252,52 +264,79 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   _fableCore.Util.setInterfaces(Ghost.prototype, [], "Pacman.Ghost");
 
   var createGhosts = exports.createGhosts = function (context) {
-    return Array.from(_fableCore.Seq.map(function (tupledArg) {
-      var data, _arg1, v, y, x;
-
-      return data = tupledArg[0], _arg1 = tupledArg[1], v = tupledArg[2], y = _arg1[1], x = _arg1[0], new Ghost(createImage(data), x * 8 - 7, y * 8 - 3, v);
-    }, [[Images.redd, [16, 11], [1, 0]], [Images.cyand, [14, 15], [1, 0]], [Images.pinkd, [16, 13], [0, -1]], [Images.oranged, [18, 15], [-1, 0]]]));
+    return [[Images.redd, [16, 11], [1, 0]], [Images.cyand, [14, 15], [1, 0]], [Images.pinkd, [16, 13], [0, -1]], [Images.oranged, [18, 15], [-1, 0]]].map(function (tupledArg) {
+      var data = tupledArg[0];
+      var _arg1 = tupledArg[1];
+      var v = tupledArg[2];
+      var y = _arg1[1];
+      var x = _arg1[0];
+      return new Ghost(createImage(data), x * 8 - 7, y * 8 - 3, v);
+    });
   };
 
   var flood = exports.flood = function (canFill, fill, x, y) {
-    return function () {
-      var f;
-      return f = function (n) {
-        return function (_arg1) {
-          var ps, ps_1;
-          _arg1.tail == null ? null : (ps = _arg1, ps_1 = _fableCore.List.filter(function (tupledArg) {
-            var x_1, y_1;
-            return x_1 = tupledArg[0], y_1 = tupledArg[1], canFill([x_1, y_1]);
-          }, ps), _fableCore.Seq.iter(function (tupledArg) {
+    var f = function (n) {
+      return function (_arg1) {
+        if (_arg1.tail == null) {} else {
+          var ps = _arg1;
+
+          var ps_1 = _fableCore.List.filter(function (tupledArg) {
+            var x_1 = tupledArg[0];
+            var y_1 = tupledArg[1];
+            return canFill([x_1, y_1]);
+          }, ps);
+
+          _fableCore.Seq.iter(function (tupledArg) {
             var x_1 = tupledArg[0];
             var y_1 = tupledArg[1];
             fill([x_1, y_1, n]);
-          }, ps_1), f(n + 1)(_fableCore.List.collect(function (tupledArg) {
-            var x_1, y_1;
-            return x_1 = tupledArg[0], y_1 = tupledArg[1], _fableCore.List.ofArray([[x_1 - 1, y_1], [x_1 + 1, y_1], [x_1, y_1 - 1], [x_1, y_1 + 1]]);
-          }, ps_1)));
-        };
-      }, f(0)(_fableCore.List.ofArray([[x, y]]));
-    }();
+          }, ps_1);
+
+          f(n + 1)(_fableCore.List.collect(function (tupledArg) {
+            var x_1 = tupledArg[0];
+            var y_1 = tupledArg[1];
+            return _fableCore.List.ofArray([[x_1 - 1, y_1], [x_1 + 1, y_1], [x_1, y_1 - 1], [x_1, y_1 + 1]]);
+          }, ps_1));
+        }
+      };
+    };
+
+    return f(0)(_fableCore.List.ofArray([[x, y]]));
   };
 
-  var route_home = exports.route_home = (numbers = Array.from(_fableCore.Seq.map(function (line) {
-    return Int32Array.from(_fableCore.Seq.map(function (c) {
-      return isWall(c) ? 999 : -1;
-    }, line.split("")));
-  }, maze)), canFill = function (tupledArg) {
-    var x, y;
-    return x = tupledArg[0], y = tupledArg[1], (((y >= 0 ? y < numbers.length - 1 : false) ? x >= 0 : false) ? x < numbers[y].length - 1 : false) ? numbers[y][x] === -1 : false;
-  }, fill = function (tupledArg) {
-    var x = tupledArg[0];
-    var y = tupledArg[1];
-    var n = tupledArg[2];
-    numbers[y][x] = n;
-  }, flood(canFill, fill, 16, 15), numbers);
+  var route_home = exports.route_home = function () {
+    var numbers = maze.map(function (line) {
+      return Int32Array.from(_fableCore.Seq.map(function (c) {
+        return isWall(c) ? 999 : -1;
+      }, line.split("")));
+    });
+
+    var canFill = function (tupledArg) {
+      var x = tupledArg[0];
+      var y = tupledArg[1];
+
+      if (((y >= 0 ? y < numbers.length - 1 : false) ? x >= 0 : false) ? x < numbers[y].length - 1 : false) {
+        return numbers[y][x] === -1;
+      } else {
+        return false;
+      }
+    };
+
+    var fill = function (tupledArg) {
+      var x = tupledArg[0];
+      var y = tupledArg[1];
+      var n = tupledArg[2];
+      numbers[y][x] = n;
+    };
+
+    flood(canFill, fill, 16, 15);
+    return numbers;
+  }();
 
   var fillValue = exports.fillValue = function (x, y, ex, ey) {
-    var bx, by;
-    return bx = Math.floor(Math.floor(~ ~((x + 6 + ex) / 8))), by = Math.floor(Math.floor(~ ~((y + 6 + ey) / 8))), route_home[by][bx];
+    var bx = Math.floor(Math.floor(~~((x + 6 + ex) / 8)));
+    var by = Math.floor(Math.floor(~~((y + 6 + ey) / 8)));
+    return route_home[by][bx];
   };
 
   var fillUp = exports.fillUp = function (x, y) {
@@ -317,11 +356,29 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   };
 
   var chooseDirection = exports.chooseDirection = function (ghost) {
-    var patternInput, y, x, patternInput_1, dy, dx, isBackwards, directions, xs, patternInput_2, v, n, i;
-    return patternInput = [ghost.X, ghost.Y], y = patternInput[1], x = patternInput[0], patternInput_1 = ghost.V, dy = patternInput_1[1], dx = patternInput_1[0], isBackwards = function (tupledArg) {
-      var a, b;
-      return a = tupledArg[0], b = tupledArg[1], (a !== 0 ? a === -dx : false) ? true : b !== 0 ? b === -dy : false;
-    }, directions = Array.from(_fableCore.Seq.delay(function (unitVar) {
+    var patternInput = [ghost.X, ghost.Y];
+    var y = patternInput[1];
+    var x = patternInput[0];
+    var patternInput_1 = ghost.V;
+    var dy = patternInput_1[1];
+    var dx = patternInput_1[0];
+
+    var isBackwards = function (tupledArg) {
+      var a = tupledArg[0];
+      var b = tupledArg[1];
+
+      if (a !== 0 ? a === -dx : false) {
+        return true;
+      } else {
+        if (b !== 0) {
+          return b === -dy;
+        } else {
+          return false;
+        }
+      }
+    };
+
+    var directions = Array.from(_fableCore.Seq.delay(function (unitVar) {
       return _fableCore.Seq.append(canGoLeft(x, y) ? _fableCore.Seq.singleton([[-1, 0], fillLeft(x, y)]) : _fableCore.Seq.empty(), _fableCore.Seq.delay(function (unitVar_1) {
         return _fableCore.Seq.append(canGoDown(x, y) ? _fableCore.Seq.singleton([[0, 1], fillDown(x, y)]) : _fableCore.Seq.empty(), _fableCore.Seq.delay(function (unitVar_2) {
           return _fableCore.Seq.append(canGoRight(x, y) ? _fableCore.Seq.singleton([[1, 0], fillRight(x, y)]) : _fableCore.Seq.empty(), _fableCore.Seq.delay(function (unitVar_3) {
@@ -329,19 +386,41 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
           }));
         }));
       }));
-    })), ghost.IsReturning ? (xs = Array.from(_fableCore.Seq.sortWith(function (x, y) {
-      return _fableCore.Util.compareTo(function (tuple) {
-        return tuple[1];
-      }(x), function (tuple) {
-        return tuple[1];
-      }(y));
-    }, directions)), patternInput_2 = xs[0], v = patternInput_2[0], n = patternInput_2[1], n === 0 ? ghost.IsReturning = false : null, v) : (xs = Array.from(_fableCore.Seq.map(function (tuple) {
-      return tuple[0];
-    }, directions)).filter(function ($var1) {
-      return function (value) {
-        return !value;
-      }(isBackwards($var1));
-    }), xs.length === 0 ? [0, 0] : (i = Math.random() * xs.length, xs[Math.floor(Math.floor(i))]));
+    }));
+
+    if (ghost.IsReturning) {
+      var xs = Array.from(_fableCore.Seq.sortWith(function (x, y) {
+        return _fableCore.Util.compareTo(function (tuple) {
+          return tuple[1];
+        }(x), function (tuple) {
+          return tuple[1];
+        }(y));
+      }, directions));
+      var patternInput_2 = xs[0];
+      var v = patternInput_2[0];
+      var n = patternInput_2[1];
+
+      if (n === 0) {
+        ghost.IsReturning = false;
+      }
+
+      return v;
+    } else {
+      var xs = directions.map(function (tuple) {
+        return tuple[0];
+      }).filter(function ($var1) {
+        return function (value) {
+          return !value;
+        }(isBackwards($var1));
+      });
+
+      if (xs.length === 0) {
+        return [0, 0];
+      } else {
+        var i = Math.random() * xs.length;
+        return xs[Math.floor(Math.floor(i))];
+      }
+    }
   };
 
   var Keyboard = exports.Keyboard = function ($exports) {
@@ -363,8 +442,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var update = $exports.update = function (e, pressed) {
-      var keyCode, op;
-      return keyCode = Math.floor(e.keyCode), op = pressed ? function (value) {
+      var keyCode = Math.floor(e.keyCode);
+      var op = pressed ? function (value) {
         return function (set) {
           return new Set(set).add(value);
         };
@@ -372,7 +451,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         return function (set) {
           return _fableCore.Set.remove(value, set);
         };
-      }, keysPressed = op(keyCode)(keysPressed), null;
+      };
+      keysPressed = op(keyCode)(keysPressed);
+      return null;
     };
 
     var init = $exports.init = function () {
@@ -405,10 +486,51 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var imageAt = $exports.imageAt = function (x, y, v) {
-      var patternInput_4, p2, p1, x_, y_, p, matchValue, $target4;
-      return patternInput_4 = (matchValue = v.contents, $target4 = function () {
-        return [lastp.contents, lastp.contents];
-      }, matchValue[0] === -1 ? matchValue[1] === 0 ? [pl1, pl2] : $target4() : matchValue[0] === 0 ? matchValue[1] === -1 ? [pu1, pu2] : matchValue[1] === 1 ? [pd1, pd2] : $target4() : matchValue[0] === 1 ? matchValue[1] === 0 ? [pr1, pr2] : $target4() : $target4()), p2 = patternInput_4[1], p1 = patternInput_4[0], x_ = Math.floor(Math.floor(x.contents / 6)), y_ = Math.floor(Math.floor(y.contents / 6)), p = (x_ + y_) % 2 === 0 ? p1 : p2, lastp.contents = p, p;
+      var patternInput_4 = function () {
+        var matchValue = v.contents;
+
+        var $target4 = function () {
+          return [lastp.contents, lastp.contents];
+        };
+
+        if (matchValue[0] === -1) {
+          if (matchValue[1] === 0) {
+            return [pl1, pl2];
+          } else {
+            return $target4();
+          }
+        } else {
+          if (matchValue[0] === 0) {
+            if (matchValue[1] === -1) {
+              return [pu1, pu2];
+            } else {
+              if (matchValue[1] === 1) {
+                return [pd1, pd2];
+              } else {
+                return $target4();
+              }
+            }
+          } else {
+            if (matchValue[0] === 1) {
+              if (matchValue[1] === 0) {
+                return [pr1, pr2];
+              } else {
+                return $target4();
+              }
+            } else {
+              return $target4();
+            }
+          }
+        }
+      }();
+
+      var p2 = patternInput_4[1];
+      var p1 = patternInput_4[0];
+      var x_ = Math.floor(Math.floor(x.contents / 6));
+      var y_ = Math.floor(Math.floor(y.contents / 6));
+      var p = (x_ + y_) % 2 === 0 ? p1 : p2;
+      lastp.contents = p;
+      return p;
     };
 
     return $exports;
@@ -435,11 +557,11 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var patternInput = [createImage(Images.blue), createImage(Images.eyed)];
     var eyed = patternInput[1];
     var blue = patternInput[0];
-    var pills = Array.from(_fableCore.Seq.map(function (line) {
-      return Array.from(_fableCore.Seq.map(function (c) {
+    var pills = maze.map(function (line) {
+      return line.split("").map(function (c) {
         return c;
-      }, line.split("")));
-    }, maze));
+      });
+    });
     var dotsLeft = {
       contents: countDots()
     };
@@ -479,7 +601,6 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var movePacman = function (unitVar0) {
-      var matchValue, $target4, tupledArg, tupledArg_1, x_1, y_1, dx, dy;
       var inputs = Array.from(_fableCore.Seq.delay(function (unitVar) {
         return _fableCore.Seq.append(Keyboard.isPressed(81) ? _fableCore.Seq.singleton([canGoUp(x.contents, y.contents), [0, -1]]) : _fableCore.Seq.empty(), _fableCore.Seq.delay(function (unitVar_1) {
           return _fableCore.Seq.append(Keyboard.isPressed(65) ? _fableCore.Seq.singleton([canGoDown(x.contents, y.contents), [0, 1]]) : _fableCore.Seq.empty(), _fableCore.Seq.delay(function (unitVar_2) {
@@ -489,22 +610,75 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
           }));
         }));
       }));
-      var canGoForward = (matchValue = v.contents, $target4 = function () {
-        return false;
-      }, matchValue[0] === -1 ? matchValue[1] === 0 ? canGoLeft(x.contents, y.contents) : $target4() : matchValue[0] === 0 ? matchValue[1] === -1 ? canGoUp(x.contents, y.contents) : matchValue[1] === 1 ? canGoDown(x.contents, y.contents) : $target4() : matchValue[0] === 1 ? matchValue[1] === 0 ? canGoRight(x.contents, y.contents) : $target4() : $target4());
+
+      var canGoForward = function () {
+        var matchValue = v.contents;
+
+        var $target4 = function () {
+          return false;
+        };
+
+        if (matchValue[0] === -1) {
+          if (matchValue[1] === 0) {
+            return canGoLeft(x.contents, y.contents);
+          } else {
+            return $target4();
+          }
+        } else {
+          if (matchValue[0] === 0) {
+            if (matchValue[1] === -1) {
+              return canGoUp(x.contents, y.contents);
+            } else {
+              if (matchValue[1] === 1) {
+                return canGoDown(x.contents, y.contents);
+              } else {
+                return $target4();
+              }
+            }
+          } else {
+            if (matchValue[0] === 1) {
+              if (matchValue[1] === 0) {
+                return canGoRight(x.contents, y.contents);
+              } else {
+                return $target4();
+              }
+            } else {
+              return $target4();
+            }
+          }
+        }
+      }();
+
       var availableDirections = Array.from(_fableCore.Seq.sortWith(function (x, y) {
         return _fableCore.Util.compareTo(function (v_) {
           return _fableCore.Util.compareTo(v_, v.contents) === 0;
         }(x), function (v_) {
           return _fableCore.Util.compareTo(v_, v.contents) === 0;
         }(y));
-      }, Array.from(_fableCore.Seq.map(function (tuple) {
-        return tuple[1];
       }, inputs.filter(function (tuple) {
         return tuple[0];
-      })))));
-      availableDirections.length > 0 ? v.contents = availableDirections[0] : (inputs.length === 0 ? true : !canGoForward) ? v.contents = [0, 0] : null;
-      var patternInput_2 = (tupledArg = [x.contents, y.contents], tupledArg_1 = v.contents, x_1 = tupledArg[0], y_1 = tupledArg[1], dx = tupledArg_1[0], dy = tupledArg_1[1], wrap(x_1, y_1, dx, dy));
+      }).map(function (tuple) {
+        return tuple[1];
+      })));
+
+      if (availableDirections.length > 0) {
+        v.contents = availableDirections[0];
+      } else {
+        if (inputs.length === 0 ? true : !canGoForward) {
+          v.contents = [0, 0];
+        }
+      }
+
+      var patternInput_2 = function () {
+        var tupledArg = [x.contents, y.contents];
+        var tupledArg_1 = v.contents;
+        var x_1 = tupledArg[0];
+        var y_1 = tupledArg[1];
+        var dx = tupledArg_1[0];
+        var dy = tupledArg_1[1];
+        return wrap(x_1, y_1, dx, dy);
+      }();
+
       var y_ = patternInput_2[1];
       var x_ = patternInput_2[0];
       x.contents = x_;
@@ -512,36 +686,98 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var eatPills = function (unitVar0) {
-      var tx = Math.floor(Math.floor(~ ~((x.contents + 6) / 8)));
-      var ty = Math.floor(Math.floor(~ ~((y.contents + 6) / 8)));
+      var tx = Math.floor(Math.floor(~~((x.contents + 6) / 8)));
+      var ty = Math.floor(Math.floor(~~((y.contents + 6) / 8)));
       var c = pills[ty][tx];
-      c === "." ? (pills[ty][tx] = " ", clearCell(background, tx, ty), score.contents = score.contents + 10, void dotsLeft.contents--, new Audio("./fx/Dot5.wav").play()) : null;
-      c === "o" ? (pills[ty][tx] = " ", clearCell(background, tx, ty), bonus.contents = 0, score.contents = score.contents + 50, powerCountdown.contents = 250, void dotsLeft.contents--, new Audio("./fx/Powerup.wav").play()) : null;
+
+      if (c === ".") {
+        pills[ty][tx] = " ";
+        clearCell(background, tx, ty);
+        score.contents = score.contents + 10;
+        void dotsLeft.contents--;
+        new Audio("./fx/Dot5.wav").play();
+      }
+
+      if (c === "o") {
+        pills[ty][tx] = " ";
+        clearCell(background, tx, ty);
+        bonus.contents = 0;
+        score.contents = score.contents + 50;
+        powerCountdown.contents = 250;
+        void dotsLeft.contents--;
+        new Audio("./fx/Powerup.wav").play();
+      }
     };
 
     var touchingGhosts = function (unitVar0) {
-      var patternInput_2, py, px;
-      return patternInput_2 = [x.contents, y.contents], py = patternInput_2[1], px = patternInput_2[0], ghosts.filter(function (ghost) {
-        var patternInput_3, y_1, x_1;
-        return patternInput_3 = [ghost.X, ghost.Y], y_1 = patternInput_3[1], x_1 = patternInput_3[0], ((px >= x_1 ? px < x_1 + 13 : false) ? true : x_1 < px + 13 ? x_1 >= px : false) ? (py >= y_1 ? py < y_1 + 13 : false) ? true : y_1 < py + 13 ? y_1 >= py : false : false;
+      var patternInput_2 = [x.contents, y.contents];
+      var py = patternInput_2[1];
+      var px = patternInput_2[0];
+      return ghosts.filter(function (ghost) {
+        var patternInput_3 = [ghost.X, ghost.Y];
+        var y_1 = patternInput_3[1];
+        var x_1 = patternInput_3[0];
+
+        if ((px >= x_1 ? px < x_1 + 13 : false) ? true : x_1 < px + 13 ? x_1 >= px : false) {
+          if (py >= y_1 ? py < y_1 + 13 : false) {
+            return true;
+          } else {
+            if (y_1 < py + 13) {
+              return y_1 >= py;
+            } else {
+              return false;
+            }
+          }
+        } else {
+          return false;
+        }
       });
     };
 
     var collisionDetection = function (unitVar0) {
       var touched = touchingGhosts();
-      touched.length > 0 ? powerCountdown.contents > 0 ? touched.forEach(function (ghost) {
-        var added, image;
-        !ghost.IsReturning ? (new Audio("./fx/EatGhost.wav").play(), ghost.IsReturning = true, added = Math.floor(Math.pow(2, bonus.contents)), score.contents = score.contents + added * 200, image = bonusImages[bonus.contents], bonuses.contents = _fableCore.List.ofArray([[100, [image, ghost.X, ghost.Y]]], bonuses.contents), bonus.contents = 3 < bonus.contents + 1 ? 3 : bonus.contents + 1) : null;
-      }) : (void energy.contents--, flashCountdown.contents === 0 ? new Audio("./fx/Hurt.wav").play() : null, flashCountdown.contents = 30) : null;
-      flashCountdown.contents > 0 ? void flashCountdown.contents-- : null;
+
+      if (touched.length > 0) {
+        if (powerCountdown.contents > 0) {
+          touched.forEach(function (ghost) {
+            if (!ghost.IsReturning) {
+              new Audio("./fx/EatGhost.wav").play();
+              ghost.IsReturning = true;
+              var added = Math.floor(Math.pow(2, bonus.contents));
+              score.contents = score.contents + added * 200;
+              var image = bonusImages[bonus.contents];
+              bonuses.contents = _fableCore.List.ofArray([[100, [image, ghost.X, ghost.Y]]], bonuses.contents);
+
+              if (3 < bonus.contents + 1) {
+                bonus.contents = 3;
+              } else {
+                bonus.contents = bonus.contents + 1;
+              }
+            }
+          });
+        } else {
+          void energy.contents--;
+
+          if (flashCountdown.contents === 0) {
+            new Audio("./fx/Hurt.wav").play();
+          }
+
+          flashCountdown.contents = 30;
+        }
+      }
+
+      if (flashCountdown.contents > 0) {
+        void flashCountdown.contents--;
+      }
     };
 
     var updateBonus = function (unitVar0) {
       var patternInput_2 = _fableCore.List.partition(function ($var2) {
         return 0 === $var2[0];
       }, _fableCore.List.map(function (tupledArg) {
-        var count, x_1;
-        return count = tupledArg[0], x_1 = tupledArg[1], [count - 1, x_1];
+        var count = tupledArg[0];
+        var x_1 = tupledArg[1];
+        return [count - 1, x_1];
       }, bonuses.contents));
 
       var removals = patternInput_2[0];
@@ -553,14 +789,21 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       moveGhosts();
       movePacman();
       eatPills();
-      powerCountdown.contents > 0 ? void powerCountdown.contents-- : null;
+
+      if (powerCountdown.contents > 0) {
+        void powerCountdown.contents--;
+      }
+
       collisionDetection();
       updateBonus();
     };
 
     var renderPacman = function (unitVar0) {
       var p = Pacman.imageAt(x, y, v);
-      (flashCountdown.contents >> 1) % 2 === 0 ? context.drawImage(p, x.contents, y.contents) : null;
+
+      if ((flashCountdown.contents >> 1) % 2 === 0) {
+        context.drawImage(p, x.contents, y.contents);
+      }
     };
 
     var renderEnergy = function (unitVar0) {
@@ -576,10 +819,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     var renderScore = function (unitVar0) {
-      var copyOfStruct;
       context.fillStyle = "white";
       context.font = "bold 8px";
-      context.fillText("Score " + (copyOfStruct = score.contents, copyOfStruct.toString()), 0, 255);
+      context.fillText("Score " + function () {
+        var copyOfStruct = score.contents;
+        return copyOfStruct.toString();
+      }(), 0, 255);
     };
 
     var renderBonus = function (unitVar0) {
@@ -605,7 +850,16 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var update = function (unitVar0) {
       logic();
       render();
-      dotsLeft.contents === 0 ? onLevelCompleted() : energy.contents <= 0 ? onGameOver() : window.setTimeout(update, 1000 / 60);
+
+      if (dotsLeft.contents === 0) {
+        onLevelCompleted();
+      } else {
+        if (energy.contents <= 0) {
+          onGameOver();
+        } else {
+          window.setTimeout(update, 1000 / 60);
+        }
+      }
     };
 
     update();
@@ -647,7 +901,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       drawText(["CLICK TO START", 88, 96]);
 
       canvas.onclick = function (e) {
-        return canvas.onclick = null, playLevel(levelCompleted, gameOver), true;
+        canvas.onclick = null;
+        playLevel(levelCompleted, gameOver);
+        return true;
       };
     };
 

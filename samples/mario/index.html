@@ -94,7 +94,7 @@ no boundaries!</p></p>
 
   <div class="row">
     <div class="col-sm-12">
-      <div style="height:384px; width:512px; margin:20px auto 20px auto; position:relative;">
+      <div class="app-container" style="height:384px; width:512px; margin:20px auto 20px auto; position:relative;">
         
     <div>
         <canvas id="canvas" width="512" height="384" style="position:absolute;"></canvas>
@@ -105,7 +105,7 @@ no boundaries!</p></p>
       <script>
         requirejs.config({
           baseUrl: '.',
-          paths: { 'fable-core': '../scripts/fable-core.min',  }
+          paths: { 'fable-core': '/samples/scripts/fable-core.min',  }
         });
         requirejs(["mario"]);
       </script>

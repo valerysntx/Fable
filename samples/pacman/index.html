@@ -95,7 +95,7 @@ and the <code>Q</code> and <code>A</code> keys for moving up and down. Make sure
 
   <div class="row">
     <div class="col-sm-12">
-      <div style="height:300px; width:300px; margin:20px auto 20px auto; position:relative;">
+      <div class="app-container" style="height:300px; width:300px; margin:20px auto 20px auto; position:relative;">
         
     <div style="text-align:center">
         <canvas style="margin-left:auto;margin-right:auto; width:300px;height:300px;" id="canvas" width="300" height="300"></canvas>
@@ -105,7 +105,7 @@ and the <code>Q</code> and <code>A</code> keys for moving up and down. Make sure
       <script>
         requirejs.config({
           baseUrl: '.',
-          paths: { 'fable-core': '../scripts/fable-core.min',  }
+          paths: { 'fable-core': '/samples/scripts/fable-core.min',  }
         });
         requirejs(["pacman"]);
       </script>
@@ -1346,7 +1346,7 @@ the starting state of the game (with "CLICK TO START" text) and start the game!<
 <div class="tip" id="fs2">namespace Fable.Core</div>
 <div class="tip" id="fs3">namespace Fable.Import</div>
 <div class="tip" id="fs4">module Browser<br /><br />from Fable.Import</div>
-<div class="tip" id="fs5">Multiple items<br />type EmitAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;new : macro:string -&gt; EmitAttribute<br /><br />Full name: Fable.Core.EmitAttribute<br /><br />--------------------<br />new : macro:string -&gt; EmitAttribute</div>
+<div class="tip" id="fs5">Multiple items<br />type EmitAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;private new : unit -&gt; EmitAttribute<br />&#160;&#160;new : macro:string -&gt; EmitAttribute<br />&#160;&#160;new : emitterType:Type * methodName:string -&gt; EmitAttribute<br /><br />Full name: Fable.Core.EmitAttribute<br /><br />--------------------<br />new : macro:string -&gt; EmitAttribute<br />new : emitterType:System.Type * methodName:string -&gt; EmitAttribute</div>
 <div class="tip" id="fs6">val random : unit -&gt; float<br /><br />Full name: Pacman.random</div>
 <div class="tip" id="fs7">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.float<br /><br />--------------------<br />type float = System.Double<br /><br />Full name: Microsoft.FSharp.Core.float<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float<br /><br />Full name: Microsoft.FSharp.Core.float&lt;_&gt;</div>
 <div class="tip" id="fs8">val failwith : message:string -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.failwith</div>
