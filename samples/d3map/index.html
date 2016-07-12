@@ -104,7 +104,7 @@ imported scripts, how to pass lambdas to JS code and the <code>?</code> operator
       <script>
         requirejs.config({
           baseUrl: '.',
-          paths: { 'fable-core': 'samples/scripts/fable-core.min', 'd3':'https://d3js.org/d3.v3.min','queue': 'https://d3js.org/queue.v1.min','topojson': 'https://d3js.org/topojson.v1.min' }
+          paths: { 'fable-core': '../scripts/fable-core.min', 'd3':'https://d3js.org/d3.v3.min','queue': 'https://d3js.org/queue.v1.min','topojson': 'https://d3js.org/topojson.v1.min' }
         });
         requirejs(["d3map"]);
       </script>
