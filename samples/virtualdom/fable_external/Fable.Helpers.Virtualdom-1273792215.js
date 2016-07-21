@@ -33,40 +33,40 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
 
             _fableCore.Util.setInterfaces(KeyboardEvent.prototype, [], "Fable.Helpers.Virtualdom.Html.Types.KeyboardEvent");
 
-            var EventHandlerBinding = $exports.EventHandlerBinding = function EventHandlerBinding() {
+            var EventHandlerBinding = $exports.EventHandlerBinding = function EventHandlerBinding(caseName, fieldsLength) {
                 _classCallCheck(this, EventHandlerBinding);
 
-                this.Case = arguments[0];
+                this.Case = caseName;
                 this.Fields = [];
 
-                for (var i = 1; i < arguments.length; i++) {
-                    this.Fields[i - 1] = arguments[i];
+                for (var i = 0; i < fieldsLength; i++) {
+                    this.Fields[i] = arguments[i + 2];
                 }
             };
 
             _fableCore.Util.setInterfaces(EventHandlerBinding.prototype, [], "Fable.Helpers.Virtualdom.Html.Types.EventHandlerBinding");
 
-            var Attribute = $exports.Attribute = function Attribute() {
+            var Attribute = $exports.Attribute = function Attribute(caseName, fieldsLength) {
                 _classCallCheck(this, Attribute);
 
-                this.Case = arguments[0];
+                this.Case = caseName;
                 this.Fields = [];
 
-                for (var i = 1; i < arguments.length; i++) {
-                    this.Fields[i - 1] = arguments[i];
+                for (var i = 0; i < fieldsLength; i++) {
+                    this.Fields[i] = arguments[i + 2];
                 }
             };
 
             _fableCore.Util.setInterfaces(Attribute.prototype, [], "Fable.Helpers.Virtualdom.Html.Types.Attribute");
 
-            var Node = $exports.Node = function Node() {
+            var Node = $exports.Node = function Node(caseName, fieldsLength) {
                 _classCallCheck(this, Node);
 
-                this.Case = arguments[0];
+                this.Case = caseName;
                 this.Fields = [];
 
-                for (var i = 1; i < arguments.length; i++) {
-                    this.Fields[i - 1] = arguments[i];
+                for (var i = 0; i < fieldsLength; i++) {
+                    this.Fields[i] = arguments[i + 2];
                 }
             };
 
@@ -89,7 +89,7 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
 
         var Svg = $exports.Svg = function ($exports) {
             var svgNS = $exports.svgNS = function () {
-                return new Types.Attribute("Property", ["namespace", "http://www.w3.org/2000/svg"]);
+                return new Types.Attribute("Property", 1, ["namespace", "http://www.w3.org/2000/svg"]);
             };
 
             return $exports;
@@ -109,67 +109,68 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
 
         _fableCore.Util.setInterfaces(AppState.prototype, [], "Fable.Helpers.Virtualdom.App.AppState");
 
-        var AppEvents = $exports.AppEvents = function AppEvents() {
+        var AppEvents = $exports.AppEvents = function AppEvents(caseName, fieldsLength) {
             _classCallCheck(this, AppEvents);
 
-            this.Case = arguments[0];
+            this.Case = caseName;
             this.Fields = [];
 
-            for (var i = 1; i < arguments.length; i++) {
-                this.Fields[i - 1] = arguments[i];
+            for (var i = 0; i < fieldsLength; i++) {
+                this.Fields[i] = arguments[i + 2];
             }
         };
 
         _fableCore.Util.setInterfaces(AppEvents.prototype, [], "Fable.Helpers.Virtualdom.App.AppEvents");
 
-        var RenderState = $exports.RenderState = function RenderState() {
+        var RenderState = $exports.RenderState = function RenderState(caseName, fieldsLength) {
             _classCallCheck(this, RenderState);
 
-            this.Case = arguments[0];
+            this.Case = caseName;
             this.Fields = [];
 
-            for (var i = 1; i < arguments.length; i++) {
-                this.Fields[i - 1] = arguments[i];
+            for (var i = 0; i < fieldsLength; i++) {
+                this.Fields[i] = arguments[i + 2];
             }
         };
 
         _fableCore.Util.setInterfaces(RenderState.prototype, [], "Fable.Helpers.Virtualdom.App.RenderState");
 
-        var App = $exports.App = function App($arg0, $arg1, $arg2, $arg3, $arg4, $arg5, $arg6) {
+        var App = $exports.App = function App($arg0, $arg1, $arg2, $arg3, $arg4, $arg5, $arg6, $arg7) {
             _classCallCheck(this, App);
 
             this.AppState = $arg0;
-            this.JsCalls = $arg1;
-            this.Node = $arg2;
-            this.CurrentTree = $arg3;
-            this.Subscribers = $arg4;
-            this.NodeSelector = $arg5;
-            this.RenderState = $arg6;
+            this.Init = $arg1;
+            this.JsCalls = $arg2;
+            this.Node = $arg3;
+            this.CurrentTree = $arg4;
+            this.Subscribers = $arg5;
+            this.NodeSelector = $arg6;
+            this.RenderState = $arg7;
         };
 
         _fableCore.Util.setInterfaces(App.prototype, [], "Fable.Helpers.Virtualdom.App.App");
 
-        var ScheduleMessage = $exports.ScheduleMessage = function ScheduleMessage() {
+        var ScheduleMessage = $exports.ScheduleMessage = function ScheduleMessage(caseName, fieldsLength) {
             _classCallCheck(this, ScheduleMessage);
 
-            this.Case = arguments[0];
+            this.Case = caseName;
             this.Fields = [];
 
-            for (var i = 1; i < arguments.length; i++) {
-                this.Fields[i - 1] = arguments[i];
+            for (var i = 0; i < fieldsLength; i++) {
+                this.Fields[i] = arguments[i + 2];
             }
         };
 
         _fableCore.Util.setInterfaces(ScheduleMessage.prototype, [], "Fable.Helpers.Virtualdom.App.ScheduleMessage");
 
-        var AppMessage = $exports.AppMessage = function AppMessage() {
+        var AppMessage = $exports.AppMessage = function AppMessage(caseName, fieldsLength) {
             _classCallCheck(this, AppMessage);
 
-            this.Case = arguments[0];
+            this.Case = caseName;
             this.Fields = [];
 
-            for (var i = 1; i < arguments.length; i++) {
-                this.Fields[i - 1] = arguments[i];
+            for (var i = 0; i < fieldsLength; i++) {
+                this.Fields[i] = arguments[i + 2];
             }
         };
 
@@ -187,12 +188,17 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
         _fableCore.Util.setInterfaces(Renderer.prototype, [], "Fable.Helpers.Virtualdom.App.Renderer");
 
         var createApp = $exports.createApp = function (appState) {
-            return new App(appState, new _fableCore.List(), null, null, new Map(), null, new RenderState("NoRequest"));
+            return new App(appState, null, new _fableCore.List(), null, null, new Map(), null, new RenderState("NoRequest", 0));
         };
 
         var withStartNode = $exports.withStartNode = function (selector, app) {
             var NodeSelector = selector;
-            return new App(app.AppState, app.JsCalls, app.Node, app.CurrentTree, app.Subscribers, NodeSelector, app.RenderState);
+            return new App(app.AppState, app.Init, app.JsCalls, app.Node, app.CurrentTree, app.Subscribers, NodeSelector, app.RenderState);
+        };
+
+        var withInit = $exports.withInit = function (init, app) {
+            var Init = init;
+            return new App(app.AppState, Init, app.JsCalls, app.Node, app.CurrentTree, app.Subscribers, app.NodeSelector, app.RenderState);
         };
 
         var withSubscriber = $exports.withSubscriber = function (subscriberId, subscriber, app) {
@@ -200,7 +206,7 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
                 return new Map(table).set(subscriberId, subscriber);
             }(app.Subscribers);
 
-            return new App(app.AppState, app.JsCalls, app.Node, app.CurrentTree, subsribers, app.NodeSelector, app.RenderState);
+            return new App(app.AppState, app.Init, app.JsCalls, app.Node, app.CurrentTree, subsribers, app.NodeSelector, app.RenderState);
         };
 
         var createScheduler = $exports.createScheduler = function () {
@@ -246,7 +252,7 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
             var scheduler = createScheduler();
             return _fableCore.MailboxProcessor.start(function (inbox) {
                 var post = function (message) {
-                    inbox.post(new AppMessage("Message", message));
+                    inbox.post(new AppMessage("Message", 1, message));
                 };
 
                 var notifySubscribers = function (subs) {
@@ -271,8 +277,9 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
 
                                         if (message.Case === "Message") {
                                             var msg = message.Fields[0];
-                                            notifySubscribers(state.Subscribers)(new AppEvents("ActionReceived", msg));
+                                            notifySubscribers(state.Subscribers)(new AppEvents("ActionReceived", 1, msg));
                                             var patternInput = state.AppState.Update(state.AppState.Model)(msg);
+                                            var msgs = patternInput[2];
                                             var model_ = patternInput[0];
                                             var jsCalls = patternInput[1];
 
@@ -280,14 +287,18 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
                                                 var matchValue_1 = state.RenderState;
 
                                                 if (matchValue_1.Case === "InProgress") {
-                                                    return new RenderState("InProgress");
+                                                    return new RenderState("InProgress", 0);
                                                 } else {
-                                                    scheduler.post(new ScheduleMessage("PingIn", 1000 / 60, function (unitVar0) {
-                                                        inbox.post(new AppMessage("Draw"));
+                                                    scheduler.post(new ScheduleMessage("PingIn", 2, 1000 / 60, function (unitVar0) {
+                                                        inbox.post(new AppMessage("Draw", 0));
                                                     }));
-                                                    return new RenderState("InProgress");
+                                                    return new RenderState("InProgress", 0);
                                                 }
                                             }();
+
+                                            _fableCore.Seq.iter(function (m) {
+                                                m(post);
+                                            }, msgs);
 
                                             return builder_.returnFrom(loop(function () {
                                                 var AppState_1 = function () {
@@ -295,7 +306,9 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
                                                     return new AppState(model_, inputRecord.View, inputRecord.Update);
                                                 }();
 
-                                                return new App(AppState_1, _fableCore.List.append(state.JsCalls, jsCalls), state.Node, state.CurrentTree, state.Subscribers, state.NodeSelector, renderState);
+                                                var JsCalls = _fableCore.List.append(state.JsCalls, jsCalls);
+
+                                                return new App(AppState_1, state.Init, JsCalls, state.Node, state.CurrentTree, state.Subscribers, state.NodeSelector, renderState);
                                             }()));
                                         } else {
                                             if (message.Case === "Draw") {
@@ -305,7 +318,7 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
                                                     throw "Shouldn't happen";
                                                     return builder_.zero();
                                                 } else {
-                                                    notifySubscribers(state.Subscribers)(new AppEvents("DrawStarted"));
+                                                    notifySubscribers(state.Subscribers)(new AppEvents("DrawStarted", 0));
                                                     var model = state.AppState.Model;
                                                     var jsCalls = state.JsCalls;
                                                     var tree = renderTree(state.AppState.View)(post)(model);
@@ -316,12 +329,12 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
                                                         i();
                                                     }, jsCalls);
 
-                                                    notifySubscribers(state.Subscribers)(new AppEvents("ModelChanged", model, state.AppState.Model));
+                                                    notifySubscribers(state.Subscribers)(new AppEvents("ModelChanged", 2, model, state.AppState.Model));
                                                     return builder_.returnFrom(loop(function () {
-                                                        var RenderState_1 = new RenderState("NoRequest");
+                                                        var RenderState_1 = new RenderState("NoRequest", 0);
                                                         var CurrentTree = tree;
                                                         var JsCalls = new _fableCore.List();
-                                                        return new App(state.AppState, JsCalls, state.Node, CurrentTree, state.Subscribers, state.NodeSelector, RenderState_1);
+                                                        return new App(state.AppState, state.Init, JsCalls, state.Node, CurrentTree, state.Subscribers, state.NodeSelector, RenderState_1);
                                                     }()));
                                                 }
                                             } else {
@@ -337,11 +350,23 @@ define(["exports", "fable-core", "virtual-dom"], function (exports, _fableCore, 
                                 var tree = renderTree(state.AppState.View)(post)(state.AppState.Model);
                                 var rootNode = renderer.CreateElement(tree);
                                 startElem.appendChild(rootNode);
-                                return builder_.returnFrom(loop(function () {
-                                    var CurrentTree = tree;
-                                    var Node = rootNode;
-                                    return new App(state.AppState, state.JsCalls, Node, CurrentTree, state.Subscribers, state.NodeSelector, state.RenderState);
-                                }()));
+                                return builder_.combine(function () {
+                                    var matchValue_1 = state.Init;
+
+                                    if (matchValue_1 != null) {
+                                        var init = matchValue_1;
+                                        init(post);
+                                        return builder_.zero();
+                                    } else {
+                                        return builder_.zero();
+                                    }
+                                }(), builder_.delay(function (unitVar_1) {
+                                    return builder_.returnFrom(loop(function () {
+                                        var CurrentTree = tree;
+                                        var Node = rootNode;
+                                        return new App(state.AppState, state.Init, state.JsCalls, Node, CurrentTree, state.Subscribers, state.NodeSelector, state.RenderState);
+                                    }()));
+                                }));
                             }
                         });
                     }(_fableCore.Async);

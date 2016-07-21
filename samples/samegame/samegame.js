@@ -74,27 +74,27 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
         _fableCore.Util.setInterfaces(Position.prototype, [], "Samegame.SameGameTypes.Position");
 
-        var Color = $exports.Color = function Color() {
+        var Color = $exports.Color = function Color(caseName, fieldsLength) {
             _classCallCheck(this, Color);
 
-            this.Case = arguments[0];
+            this.Case = caseName;
             this.Fields = [];
 
-            for (var i = 1; i < arguments.length; i++) {
-                this.Fields[i - 1] = arguments[i];
+            for (var i = 0; i < fieldsLength; i++) {
+                this.Fields[i] = arguments[i + 2];
             }
         };
 
         _fableCore.Util.setInterfaces(Color.prototype, [], "Samegame.SameGameTypes.Color");
 
-        var CellState = $exports.CellState = function CellState() {
+        var CellState = $exports.CellState = function CellState(caseName, fieldsLength) {
             _classCallCheck(this, CellState);
 
-            this.Case = arguments[0];
+            this.Case = caseName;
             this.Fields = [];
 
-            for (var i = 1; i < arguments.length; i++) {
-                this.Fields[i - 1] = arguments[i];
+            for (var i = 0; i < fieldsLength; i++) {
+                this.Fields[i] = arguments[i + 2];
             }
         };
 
@@ -118,14 +118,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
         _fableCore.Util.setInterfaces(Group.prototype, [], "Samegame.SameGameTypes.Group");
 
-        var Game = $exports.Game = function Game() {
+        var Game = $exports.Game = function Game(caseName, fieldsLength) {
             _classCallCheck(this, Game);
 
-            this.Case = arguments[0];
+            this.Case = caseName;
             this.Fields = [];
 
-            for (var i = 1; i < arguments.length; i++) {
-                this.Fields[i - 1] = arguments[i];
+            for (var i = 0; i < fieldsLength; i++) {
+                this.Fields[i] = arguments[i + 2];
             }
         };
 
@@ -183,7 +183,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             if (((pos.Col < colCount ? pos.Col >= 0 : false) ? pos.Row < _fableCore.Seq.item(pos.Col, board).length : false) ? pos.Row >= 0 : false) {
                 return _fableCore.Seq.item(pos.Row, _fableCore.Seq.item(pos.Col, board));
             } else {
-                return new SameGameTypes.CellState("Empty");
+                return new SameGameTypes.CellState("Empty", 0);
             }
         };
 
@@ -191,7 +191,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             return _fableCore.List.map(function (tuple) {
                 return tuple[1];
             }, _fableCore.List.filter(function (cell) {
-                return _fableCore.Util.compareTo(cell[0], new SameGameTypes.CellState("Stone", col)) === 0;
+                return _fableCore.Util.compareTo(cell[0], new SameGameTypes.CellState("Stone", 1, col)) === 0;
             }, _fableCore.List.map(function (p) {
                 return [getCellState(board, p), p];
             }, _fableCore.List.ofArray([pos.Up, pos.Right, pos.Down, pos.Left]))));
@@ -241,17 +241,17 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
         var isEmpty = function (board) {
             return _fableCore.Seq.forall(function ($var2) {
-                return _fableCore.Util.compareTo(new SameGameTypes.CellState("Empty"), $var2.head) === 0;
+                return _fableCore.Util.compareTo(new SameGameTypes.CellState("Empty", 0), $var2.head) === 0;
             }, board);
         };
 
         var evaluateGameState = function (gameState) {
-            return hasValidMoves(gameState.Board) ? new SameGameTypes.Game("InProgress", gameState) : isEmpty(gameState.Board) ? new SameGameTypes.Game("Finished", function () {
+            return hasValidMoves(gameState.Board) ? new SameGameTypes.Game("InProgress", 1, gameState) : isEmpty(gameState.Board) ? new SameGameTypes.Game("Finished", 1, function () {
                 var Score = gameState.Score + bonus;
                 return new SameGameTypes.GameState(gameState.Board, Score);
             }()) : function () {
                 var score = gameState.Score + penalty(numberOfStones(gameState.Board));
-                return new SameGameTypes.Game("Finished", new SameGameTypes.GameState(gameState.Board, score));
+                return new SameGameTypes.Game("Finished", 1, new SameGameTypes.GameState(gameState.Board, score));
             }();
         };
 
@@ -291,12 +291,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
         var removeGroup = function (group, board) {
             return function (cols) {
-                return _fableCore.List.append(cols, _fableCore.List.replicate(board.length - cols.length, _fableCore.List.replicate(_fableCore.Seq.item(0, board).length, new SameGameTypes.CellState("Empty"))));
+                return _fableCore.List.append(cols, _fableCore.List.replicate(board.length - cols.length, _fableCore.List.replicate(_fableCore.Seq.item(0, board).length, new SameGameTypes.CellState("Empty", 0))));
             }(_fableCore.List.filter(function ($var3) {
-                return _fableCore.Util.compareTo(new SameGameTypes.CellState("Empty"), $var3.head) !== 0;
+                return _fableCore.Util.compareTo(new SameGameTypes.CellState("Empty", 0), $var3.head) !== 0;
             }, _fableCore.List.mapi(function (i, col) {
                 return function (col_) {
-                    return _fableCore.List.append(col_, _fableCore.List.replicate(col.length - col_.length, new SameGameTypes.CellState("Empty")));
+                    return _fableCore.List.append(col_, _fableCore.List.replicate(col.length - col_.length, new SameGameTypes.CellState("Empty", 0)));
                 }(_fableCore.List.map(function (cell) {
                     return cell.State;
                 }, _fableCore.List.filter(function (cell) {
@@ -507,7 +507,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var rndColorGtor = exports.rndColorGtor = function (i) {
         var rnd = {};
         return function (unitVar0) {
-            return new SameGameTypes.CellState("Stone", new SameGameTypes.Color("Color", Math.floor(Math.random() * (i - 0)) + 0 + 1));
+            return new SameGameTypes.CellState("Stone", 1, new SameGameTypes.Color("Color", 1, Math.floor(Math.random() * (i - 0)) + 0 + 1));
         };
     };
 
@@ -543,7 +543,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
             return function (unitVar0) {
                 index = index + 1;
-                return new SameGameTypes.CellState("Stone", new SameGameTypes.Color("Color", _fableCore.Seq.item(index - 1, game)));
+                return new SameGameTypes.CellState("Stone", 1, new SameGameTypes.Color("Color", 1, _fableCore.Seq.item(index - 1, game)));
             };
         };
 

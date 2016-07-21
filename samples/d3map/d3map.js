@@ -112,32 +112,22 @@ define(["exports", "d3", "topojson", "fable-core", "queue"], function (exports, 
     };
 
     var transition = function (i) {
-      return $import1.transition().duration(1250).each("start", function (delegateArg0, delegateArg1) {
-        return function (_arg2) {
-          return function (_arg1) {
-            var name = countries[i].name;
-            return title.text(name);
-          };
-        }(delegateArg0)(delegateArg1);
-      }).tween("rotate", function (delegateArg0) {
-        return function (_arg3) {
-          var patternInput_1 = _d.geo.centroid(countries[i]);
+      return $import1.transition().duration(1250).each("start", function (_arg2, _arg1) {
+        var name = countries[i].name;
+        return title.text(name);
+      }).tween("rotate", function (_arg3) {
+        var patternInput_1 = _d.geo.centroid(countries[i]);
 
-          var p2 = patternInput_1[1];
-          var p1 = patternInput_1[0];
-          var r = $import1.interpolate(projection.rotate(), [-p1, -p2]);
-          return function (delegateArg0) {
-            return function (t) {
-              return render(countries[i])(r(t));
-            }(delegateArg0);
-          };
-        }(delegateArg0);
-      }).transition().each("end", function (delegateArg0, delegateArg1) {
-        return function (_arg5) {
-          return function (_arg4) {
-            return transition((i + 1) % countries.length);
-          };
-        }(delegateArg0)(delegateArg1);
+        var p2 = patternInput_1[1];
+        var p1 = patternInput_1[0];
+        var r = $import1.interpolate(projection.rotate(), [-p1, -p2]);
+        return function (delegateArg0) {
+          return function (t) {
+            return render(countries[i])(r(t));
+          }(delegateArg0);
+        };
+      }).transition().each("end", function (_arg5, _arg4) {
+        return transition((i + 1) % countries.length);
       });
     };
 

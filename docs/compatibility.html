@@ -90,6 +90,7 @@ that don't have a big impact on developers' expectations.
 <h2><a name="Primitives" class="anchor" href="#Primitives">Primitives</a></h2>
 <p><code>string</code> and <code>char</code> compile to JS "string" while <code>bool</code> becomes "boolean".
 All numeric primitives compile to JS "number" (but see <em>Arrays</em> below).
+There are no bound checks, but integer division will always produce an integer.
 <code>System.Guid</code> also compiles directly to "string" (<code>Guid.Parse</code> performs
 no validation at the moment).</p>
 <h2><a name="Arrays" class="anchor" href="#Arrays">Arrays</a></h2>
@@ -174,7 +175,9 @@ have a suffix attached (<code>_1</code>, <code>_2</code>...) in generated code a
 The behaviour is similar for secondary constructors.</p>
 <h2><a name="Custom-operators" class="anchor" href="#Custom-operators">Custom operators</a></h2>
 <p>Custom operators are possible, just note it won't be idiomatic to call
-them from JS if necessary (e.g., <code>Time.op_Addition(ts1, ts2)</code>).</p>
+them from JS if necessary (e.g., <code>Time.op_Addition(ts1, ts2)</code>).
+Also, custom operators in types have some limitations: the first argument
+must be the same as the type and they cannot be overloaded nor inlined.</p>
 <h2><a name="Inheritance" class="anchor" href="#Inheritance">Inheritance</a></h2>
 <p>Inheritance is possible and conforms to <a href="https://github.com/lukehoban/es6features#classes">ES2015 inheritance</a>.
 Just be careful to use the primary constructor of the base class,

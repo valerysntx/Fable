@@ -31,14 +31,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   }();
 
   var Complex = exports.Complex = function () {
-    function Complex() {
+    function Complex(caseName, fieldsLength) {
       _classCallCheck(this, Complex);
 
-      this.Case = arguments[0];
+      this.Case = caseName;
       this.Fields = [];
 
-      for (var i = 1; i < arguments.length; i++) {
-        this.Fields[i - 1] = arguments[i];
+      for (var i = 0; i < fieldsLength; i++) {
+        this.Fields[i] = arguments[i + 2];
       }
     }
 
@@ -70,7 +70,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         var i1 = _arg2.Fields[1];
         var r2 = _arg3.Fields[0];
         var i2 = _arg3.Fields[1];
-        return new Complex("Complex", r1 + r2, i1 + i2);
+        return new Complex("Complex", 2, r1 + r2, i1 + i2);
       }
     }]);
 
@@ -83,17 +83,17 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var Pow = $exports.Pow = function (_arg1, power) {
       var r = _arg1.Fields[0];
       var i = _arg1.Fields[1];
-      var num = Complex.Abs(new Complex("Complex", r, i));
+      var num = Complex.Abs(new Complex("Complex", 2, r, i));
       var num2 = Math.atan2(i, r);
       var num3 = power * num2;
       var num4 = Math.pow(num, power);
-      return new Complex("Complex", num4 * Math.cos(num3), num4 * Math.sin(num3));
+      return new Complex("Complex", 2, num4 * Math.cos(num3), num4 * Math.sin(num3));
     };
 
     return $exports;
   }({});
 
-  var c = exports.c = new Complex("Complex", -0.70176, -0.3842);
+  var c = exports.c = new Complex("Complex", 2, -0.70176, -0.3842);
 
   var iterate = exports.iterate = function (x, y) {
     var loop = function (current) {
@@ -104,7 +104,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       });
     };
 
-    return loop(new Complex("Complex", x, y));
+    return loop(new Complex("Complex", 2, x, y));
   };
 
   var countIterations = exports.countIterations = function (max, x, y) {
