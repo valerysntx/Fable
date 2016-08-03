@@ -124,9 +124,6 @@ making them compatible with <code>JSON.parse</code> or any other function accept
 <h2><a name="Unions" class="anchor" href="#Unions">Unions</a></h2>
 <p>Unions are also compiled as classes with the case name held in a <code>Case</code> property.
 Particular cases: Lists are a bit more optimized (they don't have a tag) and options are erased.</p>
-<blockquote>
-<p>Serialized unions can be read directly with Json.NET</p>
-</blockquote>
 <h2><a name="Enumerable" class="anchor" href="#Enumerable">Enumerable</a></h2>
 <p>All enumerables compile to <a href="http://babeljs.io/docs/learn-es2015/#iterators-for-of">ES2015 iterable interface</a>
 which means they're fully compatible with compliant JS code and native methods.
@@ -136,10 +133,10 @@ but you can use <code>seq</code>, <code>array</code> and <code>list</code> compr
 <p>All methods in F# <code>Seq</code> module have been implemented. There may be some still missing in <code>List</code>
 and <code>Array</code> modules, but in that case the compiler will default to the corresponding
 <code>Seq</code> function and build a new list or array from the response if necessary.</p>
-<h2><a name="Map-Set-and-Dictionary" class="anchor" href="#Map-Set-and-Dictionary">Map, Set and Dictionary</a></h2>
-<p>Maps and Sets fall back to the <a href="http://babeljs.io/docs/learn-es2015/#map-set-weak-map-weak-set">ES2015 corresponding classes</a>
-for performance. Adding and removing will create new objects. <code>System.Collections.Generic.Dictionary</code> compile to ES2015 <code>Map</code> too
-and allows mutable operations. Same for <code>System.Collections.Generic.HashSet</code>.</p>
+<h2><a name="Map-Set-Dictionary-and-HashSet" class="anchor" href="#Map-Set-Dictionary-and-HashSet">Map, Set, Dictionary and HashSet</a></h2>
+<p><code>System.Collections.Generic.Dictionary</code> compiles to ES2015 <code>Map</code>. Likewise <code>System.Collections.Generic.HashSet</code>
+compiles to JS native <code>Set</code>. F# <code>Map</code> and <code>Set</code> are implemented as persistent data structures. All instance and
+static methods from the corresponding modules are available.</p>
 <h2><a name="Async" class="anchor" href="#Async">Async</a></h2>
 <p><code>async</code> computation expressions work as expected. However, <code>RunSynchronously</code> is not available and,
 as JS is single-threaded, <code>Start</code> and <code>StartImmediate</code> will have the same effect (likewise, <code>Async.Parallel</code>
@@ -171,13 +168,11 @@ possible at runtime to do patterns like <a href="http://theburningmonk.com/2012/
 to extend union types.</p>
 <h2><a name="Overloads" class="anchor" href="#Overloads">Overloads</a></h2>
 <p>Overloads are allowed in class implementations (not for interfaces), but they'll
-have a suffix attached (<code>_1</code>, <code>_2</code>...) in generated code and are not recommended.
+have a suffix attached (<code>_0</code>, <code>_1</code>...) in generated code and are not recommended.
 The behaviour is similar for secondary constructors.</p>
 <h2><a name="Custom-operators" class="anchor" href="#Custom-operators">Custom operators</a></h2>
 <p>Custom operators are possible, just note it won't be idiomatic to call
-them from JS if necessary (e.g., <code>Time.op_Addition(ts1, ts2)</code>).
-Also, custom operators in types have some limitations: the first argument
-must be the same as the type and they cannot be overloaded nor inlined.</p>
+them from JS if necessary (e.g., <code>Time.op_Addition(ts1, ts2)</code>).</p>
 <h2><a name="Inheritance" class="anchor" href="#Inheritance">Inheritance</a></h2>
 <p>Inheritance is possible and conforms to <a href="https://github.com/lukehoban/es6features#classes">ES2015 inheritance</a>.
 Just be careful to use the primary constructor of the base class,

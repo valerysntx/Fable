@@ -4,7 +4,36 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.game = exports.playLevel = exports.countDots = exports.Pacman = exports.Keyboard = exports.chooseDirection = exports.fillRight = exports.fillLeft = exports.fillDown = exports.fillUp = exports.fillValue = exports.route_home = exports.flood = exports.createGhosts = exports.Ghost = exports.wrap = exports.clearCell = exports.createBackground = exports.createBrush = exports.draw = exports.toTile = exports.tileChars = exports.tileColors = exports.canGoRight = exports.canGoLeft = exports.canGoDown = exports.canGoUp = exports.noWall = exports.isAligned = exports.horizontallyAligned = exports.verticallyAligned = exports.isWallAt = exports.tileAt = exports.isWall = exports.blank = exports.tileBits = exports.maze = exports.createImage = exports.Images = undefined;
+  exports.Pacman = exports.Keyboard = exports.route_home = exports.Ghost = exports.tileChars = exports.tileColors = exports.blank = exports.tileBits = exports.maze = exports.Images = undefined;
+  exports.createImage = createImage;
+  exports.isWall = isWall;
+  exports.tileAt = tileAt;
+  exports.isWallAt = isWallAt;
+  exports.verticallyAligned = verticallyAligned;
+  exports.horizontallyAligned = horizontallyAligned;
+  exports.isAligned = isAligned;
+  exports.noWall = noWall;
+  exports.canGoUp = canGoUp;
+  exports.canGoDown = canGoDown;
+  exports.canGoLeft = canGoLeft;
+  exports.canGoRight = canGoRight;
+  exports.toTile = toTile;
+  exports.draw = draw;
+  exports.createBrush = createBrush;
+  exports.createBackground = createBackground;
+  exports.clearCell = clearCell;
+  exports.wrap = wrap;
+  exports.createGhosts = createGhosts;
+  exports.flood = flood;
+  exports.fillValue = fillValue;
+  exports.fillUp = fillUp;
+  exports.fillDown = fillDown;
+  exports.fillLeft = fillLeft;
+  exports.fillRight = fillRight;
+  exports.chooseDirection = chooseDirection;
+  exports.countDots = countDots;
+  exports.playLevel = playLevel;
+  exports.game = game;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -57,67 +86,67 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     return $exports;
   }({});
 
-  var createImage = exports.createImage = function (data) {
+  function createImage(data) {
     var img = document.createElement('img');
     img.src = data;
     return img;
-  };
+  }
 
   var maze = exports.maze = "##/------------7/------------7##,##|............|!............|##,##|./__7./___7.|!./___7./__7.|##,##|o|  !.|   !.|!.|   !.|  !o|##,##|.L--J.L---J.LJ.L---J.L--J.|##,##|..........................|##,##|./__7./7./______7./7./__7.|##,##|.L--J.|!.L--7/--J.|!.L--J.|##,##|......|!....|!....|!......|##,##L____7.|L__7 |! /__J!./____J##,#######!.|/--J LJ L--7!.|#######,#######!.|!          |!.|#######,#######!.|! /__==__7 |!.|#######,-------J.LJ |      ! LJ.L-------,########.   | **** !   .########,_______7./7 |      ! /7./_______,#######!.|! L______J |!.|#######,#######!.|!          |!.|#######,#######!.|! /______7 |!.|#######,##/----J.LJ L--7/--J LJ.L----7##,##|............|!............|##,##|./__7./___7.|!./___7./__7.|##,##|.L-7!.L---J.LJ.L---J.|/-J.|##,##|o..|!.......<>.......|!..o|##,##L_7.|!./7./______7./7.|!./_J##,##/-J.LJ.|!.L--7/--J.|!.LJ.L-7##,##|......|!....|!....|!......|##,##|./____JL__7.|!./__JL____7.|##,##|.L--------J.LJ.L--------J.|##,##|..........................|##,##L--------------------------J##".split(",");
   var tileBits = exports.tileBits = [new Int32Array([0, 0, 0, 0, 3, 4, 8, 8]), new Int32Array([0, 0, 0, 0, 255, 0, 0, 0]), new Int32Array([0, 0, 0, 0, 192, 32, 16, 16]), new Int32Array([8, 8, 8, 8, 8, 8, 8, 8]), new Int32Array([16, 16, 16, 16, 16, 16, 16, 16]), new Int32Array([8, 8, 4, 3, 0, 0, 0, 0]), new Int32Array([0, 0, 0, 255, 0, 0, 0, 0]), new Int32Array([16, 16, 32, 192, 0, 0, 0, 0]), new Int32Array([0, 0, 0, 0, 255, 0, 0, 0]), new Int32Array([0, 0, 0, 24, 24, 0, 0, 0]), new Int32Array([0, 24, 60, 126, 126, 60, 24, 0])];
   var blank = exports.blank = new Int32Array([0, 0, 0, 0, 0, 0, 0, 0]);
 
-  var isWall = exports.isWall = function (c) {
+  function isWall(c) {
     return "_|!/7LJ-".indexOf(c) !== -1;
-  };
+  }
 
-  var tileAt = exports.tileAt = function (x, y) {
+  function tileAt(x, y) {
     return (x < 0 ? true : x > 30) ? " " : maze[y][x];
-  };
+  }
 
-  var isWallAt = exports.isWallAt = function (x, y) {
+  function isWallAt(x, y) {
     return isWall(tileAt(x, y));
-  };
+  }
 
-  var verticallyAligned = exports.verticallyAligned = function (x, y) {
+  function verticallyAligned(x, y) {
     return x % 8 === 5;
-  };
+  }
 
-  var horizontallyAligned = exports.horizontallyAligned = function (x, y) {
+  function horizontallyAligned(x, y) {
     return y % 8 === 5;
-  };
+  }
 
-  var isAligned = exports.isAligned = function (n) {
+  function isAligned(n) {
     return n % 8 === 5;
-  };
+  }
 
-  var noWall = exports.noWall = function (x, y, ex, ey) {
+  function noWall(x, y, ex, ey) {
     var patternInput = [x + 6 + ex >> 3, y + 6 + ey >> 3];
     var by = patternInput[1];
     var bx = patternInput[0];
     return !isWallAt(bx, by);
-  };
+  }
 
-  var canGoUp = exports.canGoUp = function (x, y) {
+  function canGoUp(x, y) {
     return isAligned(x) ? noWall(x, y, 0, -4) : false;
-  };
+  }
 
-  var canGoDown = exports.canGoDown = function (x, y) {
+  function canGoDown(x, y) {
     return isAligned(x) ? noWall(x, y, 0, 5) : false;
-  };
+  }
 
-  var canGoLeft = exports.canGoLeft = function (x, y) {
+  function canGoLeft(x, y) {
     return isAligned(y) ? noWall(x, y, -4, 0) : false;
-  };
+  }
 
-  var canGoRight = exports.canGoRight = function (x, y) {
+  function canGoRight(x, y) {
     return isAligned(y) ? noWall(x, y, 5, 0) : false;
-  };
+  }
 
   var tileColors = exports.tileColors = "BBBBBBBBBYY";
   var tileChars = exports.tileChars = "/_7|!L-J=.o";
 
-  var toTile = exports.toTile = function (c) {
+  function toTile(c) {
     var i = tileChars.indexOf(c);
 
     if (i === -1) {
@@ -125,12 +154,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     } else {
       return [tileBits[i], tileColors[i]];
     }
-  };
+  }
 
-  var draw = exports.draw = function (f, lines) {
+  function draw(f, lines) {
     var width = 8;
 
-    _fableCore.Seq.iteri(function (y, line) {
+    _fableCore.Seq.iterateIndexed(function (y, line) {
       for (var x = 0; x <= width - 1; x++) {
         var bit = 1 << width - 1 - x;
         var pattern = line & bit;
@@ -140,9 +169,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         }
       }
     }, lines);
-  };
+  }
 
-  var createBrush = exports.createBrush = function (context, r, g, b, a) {
+  function createBrush(context, r, g, b, a) {
     var id = context.createImageData(1, 1);
     var d = id.data;
     d[0] = r;
@@ -150,9 +179,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     d[2] = b;
     d[3] = a;
     return id;
-  };
+  }
 
-  var createBackground = exports.createBackground = function () {
+  function createBackground() {
     var background = document.createElement('canvas');
     background.width = 256;
     background.height = 256;
@@ -184,18 +213,18 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     }
 
     return background;
-  };
+  }
 
-  var clearCell = exports.clearCell = function (background, x, y) {
+  function clearCell(background, x, y) {
     var context = background.getContext('2d');
     context.fillStyle = "rgb(0,0,0)";
     context.fillRect(x * 8, y * 8, 8, 8);
-  };
+  }
 
-  var wrap = exports.wrap = function (x, y, dx, dy) {
+  function wrap(x, y, dx, dy) {
     var x_1 = (dx === -1 ? x === 0 : false) ? 30 * 8 : (dx === 1 ? x === 30 * 8 : false) ? 0 : x;
     return [x_1 + dx, y + dy];
-  };
+  }
 
   var Ghost = exports.Ghost = function () {
     function Ghost(image, x, y, v) {
@@ -263,7 +292,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
   _fableCore.Util.setInterfaces(Ghost.prototype, [], "Pacman.Ghost");
 
-  var createGhosts = exports.createGhosts = function (context) {
+  function createGhosts(context) {
     return [[Images.redd, [16, 11], [1, 0]], [Images.cyand, [14, 15], [1, 0]], [Images.pinkd, [16, 13], [0, -1]], [Images.oranged, [18, 15], [-1, 0]]].map(function (tupledArg) {
       var data = tupledArg[0];
       var _arg1 = tupledArg[1];
@@ -272,9 +301,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       var x = _arg1[0];
       return new Ghost(createImage(data), x * 8 - 7, y * 8 - 3, v);
     });
-  };
+  }
 
-  var flood = exports.flood = function (canFill, fill, x, y) {
+  function flood(canFill, fill, x, y) {
     var f = function (n) {
       return function (_arg1) {
         if (_arg1.tail == null) {} else {
@@ -286,7 +315,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             return canFill([x_1, y_1]);
           }, ps);
 
-          _fableCore.Seq.iter(function (tupledArg) {
+          _fableCore.Seq.iterate(function (tupledArg) {
             var x_1 = tupledArg[0];
             var y_1 = tupledArg[1];
             fill([x_1, y_1, n]);
@@ -302,7 +331,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     return f(0)(_fableCore.List.ofArray([[x, y]]));
-  };
+  }
 
   var route_home = exports.route_home = function () {
     var numbers = maze.map(function (line) {
@@ -333,29 +362,29 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     return numbers;
   }();
 
-  var fillValue = exports.fillValue = function (x, y, ex, ey) {
+  function fillValue(x, y, ex, ey) {
     var bx = Math.floor(Math.floor(~~((x + 6 + ex) / 8)));
     var by = Math.floor(Math.floor(~~((y + 6 + ey) / 8)));
     return route_home[by][bx];
-  };
+  }
 
-  var fillUp = exports.fillUp = function (x, y) {
+  function fillUp(x, y) {
     return fillValue(x, y, 0, -4);
-  };
+  }
 
-  var fillDown = exports.fillDown = function (x, y) {
+  function fillDown(x, y) {
     return fillValue(x, y, 0, 5);
-  };
+  }
 
-  var fillLeft = exports.fillLeft = function (x, y) {
+  function fillLeft(x, y) {
     return fillValue(x, y, -4, 0);
-  };
+  }
 
-  var fillRight = exports.fillRight = function (x, y) {
+  function fillRight(x, y) {
     return fillValue(x, y, 5, 0);
-  };
+  }
 
-  var chooseDirection = exports.chooseDirection = function (ghost) {
+  function chooseDirection(ghost) {
     var patternInput = [ghost.X, ghost.Y];
     var y = patternInput[1];
     var x = patternInput[0];
@@ -390,7 +419,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
     if (ghost.IsReturning) {
       var xs = Array.from(_fableCore.Seq.sortWith(function (x, y) {
-        return _fableCore.Util.compareTo(function (tuple) {
+        return _fableCore.Util.compare(function (tuple) {
           return tuple[1];
         }(x), function (tuple) {
           return tuple[1];
@@ -421,7 +450,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         return xs[Math.floor(Math.floor(i))];
       }
     }
-  };
+  }
 
   var Keyboard = exports.Keyboard = function ($exports) {
     var keysPressed = (Object.defineProperty($exports, 'keysPressed', {
@@ -431,21 +460,25 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       set: function (x) {
         return keysPressed = x;
       }
-    }), new Set());
+    }), _fableCore.Set.create(null, new _fableCore.GenericComparer(function (x, y) {
+      return x < y ? -1 : x > y ? 1 : 0;
+    })));
 
-    var reset = $exports.reset = function () {
-      keysPressed = new Set();
+    var reset = $exports.reset = function reset() {
+      keysPressed = _fableCore.Set.create(null, new _fableCore.GenericComparer(function (x, y) {
+        return x < y ? -1 : x > y ? 1 : 0;
+      }));
     };
 
-    var isPressed = $exports.isPressed = function (keyCode) {
+    var isPressed = $exports.isPressed = function isPressed(keyCode) {
       return keysPressed.has(keyCode);
     };
 
-    var update = $exports.update = function (e, pressed) {
+    var update = $exports.update = function update(e, pressed) {
       var keyCode = Math.floor(e.keyCode);
       var op = pressed ? function (value) {
         return function (set) {
-          return new Set(set).add(value);
+          return _fableCore.Set.add(value, set);
         };
       } : function (value) {
         return function (set) {
@@ -456,7 +489,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       return null;
     };
 
-    var init = $exports.init = function () {
+    var init = $exports.init = function init() {
       window.addEventListener('keydown', function (e) {
         return update(e, true);
       }, null);
@@ -469,24 +502,24 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   }({});
 
   var Pacman = exports.Pacman = function ($exports) {
-    var patternInput = [createImage(Images.pu1), createImage(Images.pu2)];
-    var pu2 = $exports.pu2 = patternInput[1];
-    var pu1 = patternInput[0];
-    var patternInput_1 = [createImage(Images.pd1), createImage(Images.pd2)];
-    var pd2 = $exports.pd2 = patternInput_1[1];
-    var pd1 = patternInput_1[0];
-    var patternInput_2 = [createImage(Images.pl1), createImage(Images.pl2)];
-    var pl2 = $exports.pl2 = patternInput_2[1];
-    var pl1 = patternInput_2[0];
-    var patternInput_3 = [createImage(Images.pr1), createImage(Images.pr2)];
-    var pr2 = $exports.pr2 = patternInput_3[1];
-    var pr1 = patternInput_3[0];
+    var patternInput_396 = [createImage(Images.pu1), createImage(Images.pu2)];
+    var pu2 = $exports.pu2 = patternInput_396[1];
+    var pu1 = patternInput_396[0];
+    var patternInput_398_1 = [createImage(Images.pd1), createImage(Images.pd2)];
+    var pd2 = $exports.pd2 = patternInput_398_1[1];
+    var pd1 = patternInput_398_1[0];
+    var patternInput_400_2 = [createImage(Images.pl1), createImage(Images.pl2)];
+    var pl2 = $exports.pl2 = patternInput_400_2[1];
+    var pl1 = patternInput_400_2[0];
+    var patternInput_402_3 = [createImage(Images.pr1), createImage(Images.pr2)];
+    var pr2 = $exports.pr2 = patternInput_402_3[1];
+    var pr1 = patternInput_402_3[0];
     var lastp = {
       contents: pr1
     };
 
-    var imageAt = $exports.imageAt = function (x, y, v) {
-      var patternInput_4 = function () {
+    var imageAt = $exports.imageAt = function imageAt(x, y, v) {
+      var patternInput = function () {
         var matchValue = v.contents;
 
         var $target4 = function () {
@@ -524,8 +557,8 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         }
       }();
 
-      var p2 = patternInput_4[1];
-      var p1 = patternInput_4[0];
+      var p2 = patternInput[1];
+      var p1 = patternInput[0];
       var x_ = Math.floor(Math.floor(x.contents / 6));
       var y_ = Math.floor(Math.floor(y.contents / 6));
       var p = (x_ + y_) % 2 === 0 ? p1 : p2;
@@ -536,15 +569,15 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     return $exports;
   }({});
 
-  var countDots = exports.countDots = function () {
+  function countDots() {
     return _fableCore.Seq.sumBy(function (line) {
       return _fableCore.Seq.sumBy(function (_arg1) {
         return _arg1 === "." ? 1 : _arg1 === "o" ? 1 : 0;
       }, line.split(""));
     }, maze);
-  };
+  }
 
-  var playLevel = exports.playLevel = function (onLevelCompleted, onGameOver) {
+  function playLevel(onLevelCompleted, onGameOver) {
     var canvas = document.getElementsByTagName('canvas')[0];
     canvas.width = 256;
     canvas.height = 256;
@@ -650,10 +683,10 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       }();
 
       var availableDirections = Array.from(_fableCore.Seq.sortWith(function (x, y) {
-        return _fableCore.Util.compareTo(function (v_) {
-          return _fableCore.Util.compareTo(v_, v.contents) === 0;
+        return _fableCore.Util.compare(function (v_) {
+          return _fableCore.Util.equals(v_, v.contents);
         }(x), function (v_) {
-          return _fableCore.Util.compareTo(v_, v.contents) === 0;
+          return _fableCore.Util.equals(v_, v.contents);
         }(y));
       }, inputs.filter(function (tuple) {
         return tuple[0];
@@ -823,12 +856,12 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       context.font = "bold 8px";
       context.fillText("Score " + function () {
         var copyOfStruct = score.contents;
-        return copyOfStruct.toString();
+        return _fableCore.Util.toString(copyOfStruct);
       }(), 0, 255);
     };
 
     var renderBonus = function (unitVar0) {
-      _fableCore.Seq.iter(function (tupledArg) {
+      _fableCore.Seq.iterate(function (tupledArg) {
         var _arg1 = tupledArg[0];
         var _arg2 = tupledArg[1];
         var y_1 = _arg2[2];
@@ -863,9 +896,9 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     };
 
     update();
-  };
+  }
 
-  var game = exports.game = function () {
+  function game() {
     Keyboard.reset();
     var canvas = document.getElementsByTagName('canvas')[0];
     var context = canvas.getContext('2d');
@@ -911,7 +944,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     canvas_1.width = 256;
     canvas_1.height = 256;
     start();
-  };
+  }
 
   Keyboard.init();
   game();

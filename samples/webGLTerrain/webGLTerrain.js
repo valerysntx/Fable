@@ -4,9 +4,14 @@ define(["exports", "three"], function (exports, _three) {
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    exports.animate = exports.render = exports.camera = exports.controls = exports.renderer = exports.scene = exports.init = exports.generateTexture = exports.generateHeight = exports.clock = exports.worldHalfDepth = exports.worldHalfWidth = exports.worldDepth = exports.worldWidth = undefined;
+    exports.camera = exports.controls = exports.renderer = exports.scene = exports.clock = exports.worldHalfDepth = exports.worldHalfWidth = exports.worldDepth = exports.worldWidth = undefined;
+    exports.generateHeight = generateHeight;
+    exports.generateTexture = generateTexture;
+    exports.init = init;
+    exports.render = render;
+    exports.animate = animate;
 
-    var $import8 = _interopRequireWildcard(_three);
+    var three = _interopRequireWildcard(_three);
 
     function _interopRequireWildcard(obj) {
         if (obj && obj.__esModule) {
@@ -31,7 +36,7 @@ define(["exports", "three"], function (exports, _three) {
     var worldHalfDepth = exports.worldHalfDepth = ~~(worldDepth / 2);
     var clock = exports.clock = new _three.Clock();
 
-    var generateHeight = exports.generateHeight = function (width, height) {
+    function generateHeight(width, height) {
         var size = width * height;
         var data = new Float64Array(size);
         var perlin = ImprovedNoise();
@@ -50,9 +55,9 @@ define(["exports", "three"], function (exports, _three) {
         }
 
         return data;
-    };
+    }
 
-    var generateTexture = exports.generateTexture = function (data, width, height) {
+    function generateTexture(data, width, height) {
         var vector3 = new _three.Vector3(0, 0, 0);
         var sun = new _three.Vector3(1, 1, 1).normalize();
         var canvas = document.createElement('canvas');
@@ -102,9 +107,9 @@ define(["exports", "three"], function (exports, _three) {
 
         context_1.putImageData(image_1, 0, 0);
         return canvasScaled;
-    };
+    }
 
-    var init = exports.init = function () {
+    function init() {
         var getWidth = function (unitVar0) {
             return 800;
         };
@@ -142,7 +147,7 @@ define(["exports", "three"], function (exports, _three) {
         }
 
         var texCanvas = generateTexture(data, worldWidth, worldDepth);
-        var texture = new _three.Texture(texCanvas, $import8.UVMapping, $import8.ClampToEdgeWrapping, $import8.ClampToEdgeWrapping);
+        var texture = new _three.Texture(texCanvas, three.UVMapping, three.ClampToEdgeWrapping, three.ClampToEdgeWrapping);
         texture.needsUpdate = true;
         var matProps = {};
         matProps.map = texture;
@@ -161,25 +166,25 @@ define(["exports", "three"], function (exports, _three) {
             return onWindowResize(delegateArg0);
         }, false);
         return [renderer, scene, camera, controls];
-    };
+    }
 
-    var patternInput = init();
-    var scene = exports.scene = patternInput[1];
-    var renderer = exports.renderer = patternInput[0];
-    var controls = exports.controls = patternInput[3];
-    var camera = exports.camera = patternInput[2];
+    var patternInput_267 = init();
+    var scene = exports.scene = patternInput_267[1];
+    var renderer = exports.renderer = patternInput_267[0];
+    var controls = exports.controls = patternInput_267[3];
+    var camera = exports.camera = patternInput_267[2];
 
-    var render = exports.render = function () {
+    function render() {
         controls.update(clock.getDelta());
         renderer.render(scene, camera);
-    };
+    }
 
-    var animate = exports.animate = function (dt) {
+    function animate(dt) {
         window.requestAnimationFrame(function (delegateArg0) {
             animate(delegateArg0);
         });
         render();
-    };
+    }
 
     animate(0);
 });

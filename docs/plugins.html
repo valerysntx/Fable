@@ -80,7 +80,7 @@
     <div class="col-md-1 col-lg-2"></div>
     <div class="col-sm-12 col-md-10 col-lg-8">
       <p>Is it very easy to add features to Fable using plugins. The best example is the plugin
-to transform <a href="https://github.com/fsprojects/Fable/blob/master/src/plugins/Fable.Plugins.NUnit.fsx">NUnit tests into Mocha</a>. In order to understand the plugin
+to transform <a href="https://github.com/fsprojects/Fable/blob/master/src/plugins/nunit/Fable.Plugins.NUnit.fsx">NUnit tests into Mocha</a>. In order to understand the plugin
 system we'll review briefly how Fable works.</p>
 <h2><a name="Overview-of-Fable-s-Architecture" class="anchor" href="#Overview-of-Fable-s-Architecture">Overview of Fable's Architecture</a></h2>
 <p>Thanks to the <a href="http://fsharp.github.io/FSharp.Compiler.Service/">F# compiler</a>
@@ -188,14 +188,9 @@ the call we need to replace. <code>ApplyInfo</code> has the following definition
 </tr>
 </table>
 <p>We're going to focus on the first four fields: <code>ownerFullName</code> and <code>methodName</code>
-make it possible to identify the method. The owner's (the class or module owning
-the method) name corresponds to name displayed on the code and it's important to note
-that method name for replacements will always have <strong>a lower-case first letter</strong>.
-There's a couple of reasons for that, one is that many of these calls will be
-diverted to Fable's core library, where all methods start with lower-case to
-follow JavaScript standards.</p>
-<p>The next two fields expose the instance object (which maybe <code>None</code> if the method
-is static) and the arguments, already transformed into Fable expressions.</p>
+make it possible to identify the method. The next two fields expose the instance object
+(which maybe <code>None</code> if the method is static) and the arguments, already transformed
+into Fable expressions.</p>
 <p>With this information, let's identify calls to <code>System.Random</code>. This time we'll
 only try to replace two methods: the constructor and <code>Next</code>.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
@@ -212,7 +207,7 @@ only try to replace two methods: the constructor and <code>Next</code>.</p>
     | <span class="s">&quot;System.Random&quot;</span> <span class="k">-&gt;</span>
         <span class="k">match</span> <span class="i">info</span><span class="o">.</span><span class="i">methodName</span> <span class="k">with</span>
         | <span class="s">&quot;.ctor&quot;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs6', 11)" onmouseover="showTip(event, 'fs6', 11)" class="i">failwith</span> <span class="s">&quot;TODO&quot;</span>
-        | <span class="s">&quot;next&quot;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs6', 12)" onmouseover="showTip(event, 'fs6', 12)" class="i">failwith</span> <span class="s">&quot;TODO&quot;</span>
+        | <span class="s">&quot;Next&quot;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs6', 12)" onmouseover="showTip(event, 'fs6', 12)" class="i">failwith</span> <span class="s">&quot;TODO&quot;</span>
         | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs1', 13)" onmouseover="showTip(event, 'fs1', 13)" class="i">None</span>
     | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs1', 14)" onmouseover="showTip(event, 'fs1', 14)" class="i">None</span>
 </code></pre></td>
@@ -265,7 +260,7 @@ for the lower and upper limits of the range if they're not provided.</p>
 <span class="l">8: </span>
 <span class="l">9: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">| <span class="s">&quot;next&quot;</span> <span class="k">-&gt;</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">| <span class="s">&quot;Next&quot;</span> <span class="k">-&gt;</span>
     <span class="k">let</span> <span class="i">intConst</span> <span class="i">x</span> <span class="o">=</span>
         <span class="i">Fable</span><span class="o">.</span><span class="i">NumberConst</span> (<span class="i">U2</span><span class="o">.</span><span class="i">Case1</span> <span class="i">x</span>, <span class="i">Int32</span>) <span class="o">|&gt;</span> <span class="i">Fable</span><span class="o">.</span><span class="i">Value</span>
     <span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 21)" onmouseover="showTip(event, 'fs9', 21)" class="i">min</span>, <span onmouseout="hideTip(event, 'fs8', 22)" onmouseover="showTip(event, 'fs8', 22)" class="i">max</span> <span class="o">=</span>

@@ -4,7 +4,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.go = exports.render = exports.op_Dynamic = exports.setPixel = exports.height = exports.width = exports.h = exports.w = exports.palette = exports.op_MinusMinusGreater = exports.op_MinusMinus = exports.countIterations = exports.iterate = exports.c = exports.ComplexModule = exports.Complex = undefined;
+  exports.go = exports.height = exports.width = exports.h = exports.w = exports.palette = exports.c = exports.ComplexModule = exports.Complex = undefined;
+  exports.iterate = iterate;
+  exports.countIterations = countIterations;
+  exports.op_MinusMinus = op_MinusMinus;
+  exports.op_MinusMinusGreater = op_MinusMinusGreater;
+  exports.setPixel = setPixel;
+  exports.op_Dynamic = op_Dynamic;
+  exports.render = render;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -31,18 +38,24 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   }();
 
   var Complex = exports.Complex = function () {
-    function Complex(caseName, fieldsLength) {
+    function Complex(caseName, fields) {
       _classCallCheck(this, Complex);
 
       this.Case = caseName;
-      this.Fields = [];
-
-      for (var i = 0; i < fieldsLength; i++) {
-        this.Fields[i] = arguments[i + 2];
-      }
+      this.Fields = fields;
     }
 
-    _createClass(Complex, null, [{
+    _createClass(Complex, [{
+      key: "Equals",
+      value: function Equals(other) {
+        return _fableCore.Util.equalsUnions(this, other);
+      }
+    }, {
+      key: "CompareTo",
+      value: function CompareTo(other) {
+        return _fableCore.Util.compareUnions(this, other);
+      }
+    }], [{
       key: "Abs",
       value: function Abs(_arg1) {
         var r = _arg1.Fields[0];
@@ -70,32 +83,32 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         var i1 = _arg2.Fields[1];
         var r2 = _arg3.Fields[0];
         var i2 = _arg3.Fields[1];
-        return new Complex("Complex", 2, r1 + r2, i1 + i2);
+        return new Complex("Complex", [r1 + r2, i1 + i2]);
       }
     }]);
 
     return Complex;
   }();
 
-  _fableCore.Util.setInterfaces(Complex.prototype, [], "Hokusai.Complex");
+  _fableCore.Util.setInterfaces(Complex.prototype, ["FSharpUnion", "System.IEquatable", "System.IComparable"], "Hokusai.Complex");
 
   var ComplexModule = exports.ComplexModule = function ($exports) {
-    var Pow = $exports.Pow = function (_arg1, power) {
+    var Pow = $exports.Pow = function Pow(_arg1, power) {
       var r = _arg1.Fields[0];
       var i = _arg1.Fields[1];
-      var num = Complex.Abs(new Complex("Complex", 2, r, i));
+      var num = Complex.Abs(new Complex("Complex", [r, i]));
       var num2 = Math.atan2(i, r);
       var num3 = power * num2;
       var num4 = Math.pow(num, power);
-      return new Complex("Complex", 2, num4 * Math.cos(num3), num4 * Math.sin(num3));
+      return new Complex("Complex", [num4 * Math.cos(num3), num4 * Math.sin(num3)]);
     };
 
     return $exports;
   }({});
 
-  var c = exports.c = new Complex("Complex", 2, -0.70176, -0.3842);
+  var c = exports.c = new Complex("Complex", [-0.70176, -0.3842]);
 
-  var iterate = exports.iterate = function (x, y) {
+  function iterate(x, y) {
     var loop = function (current) {
       return _fableCore.Seq.delay(function (unitVar) {
         return _fableCore.Seq.append(_fableCore.Seq.singleton(current), _fableCore.Seq.delay(function (unitVar_1) {
@@ -104,20 +117,20 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       });
     };
 
-    return loop(new Complex("Complex", 2, x, y));
-  };
+    return loop(new Complex("Complex", [x, y]));
+  }
 
-  var countIterations = exports.countIterations = function (max, x, y) {
+  function countIterations(max, x, y) {
     return _fableCore.Seq.count(_fableCore.Seq.takeWhile(function (v) {
       return Complex.Abs(v) < 2;
     }, _fableCore.Seq.take(max - 1, iterate(x, y))));
-  };
+  }
 
-  var op_MinusMinus = exports.op_MinusMinus = function (clr, count) {
+  function op_MinusMinus(clr, count) {
     return [clr, count];
-  };
+  }
 
-  var op_MinusMinusGreater = exports.op_MinusMinusGreater = function (_arg1, count, r2, g2, b2) {
+  function op_MinusMinusGreater(_arg1, count, r2, g2, b2) {
     var r1 = _arg1[0];
     var g1 = _arg1[1];
     var b1 = _arg1[2];
@@ -134,7 +147,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         return [mid(r1)(r2), mid(g1)(g2), mid(b1)(b2)];
       }, _fableCore.Seq.range(0, count - 1));
     }));
-  };
+  }
 
   var palette = exports.palette = Array.from(_fableCore.Seq.delay(function (unitVar) {
     return _fableCore.Seq.append(function () {
@@ -217,27 +230,27 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   var width = exports.width = 400;
   var height = exports.height = 300;
 
-  var setPixel = exports.setPixel = function (img, x, y, width_1, r, g, b) {
+  function setPixel(img, x, y, width_1, r, g, b) {
     var index = (x + y * Math.floor(width_1)) * 4;
     img.data[index + 0] = r;
     img.data[index + 1] = g;
     img.data[index + 2] = b;
     img.data[index + 3] = 255;
-  };
+  }
 
-  var op_Dynamic = exports.op_Dynamic = function (doc, name) {
+  function op_Dynamic(doc, name) {
     return doc.getElementById(name);
-  };
+  }
 
-  var render = exports.render = function () {
+  function render() {
     return function (builder_) {
-      return builder_.delay(function (unitVar) {
+      return builder_.Delay(function (unitVar) {
         var canv = op_Dynamic(document, "canvas");
         var ctx = canv.getContext('2d');
         var img = ctx.createImageData(width, height);
-        return builder_.for(_fableCore.Seq.range(0, Math.floor(width) - 1), function (_arg1) {
+        return builder_.For(_fableCore.Seq.range(0, Math.floor(width) - 1), function (_arg1) {
           var x = _arg1;
-          return builder_.combine(builder_.for(_fableCore.Seq.range(0, Math.floor(height) - 1), function (_arg2) {
+          return builder_.Combine(builder_.For(_fableCore.Seq.range(0, Math.floor(height) - 1), function (_arg2) {
             var y = _arg2;
             var x_ = x / width * (w[1] - w[0]) + w[0];
             var y_ = y / height * (h[1] - h[0]) + h[0];
@@ -249,17 +262,17 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
               var b = tupledArg[2];
               setPixel(img, x, y, width, r, g, b);
             }
-            return builder_.zero();
-          }), builder_.delay(function (unitVar_1) {
-            return builder_.bind(_fableCore.Async.sleep(1), function (_arg3) {
+            return builder_.Zero();
+          }), builder_.Delay(function (unitVar_1) {
+            return builder_.Bind(_fableCore.Async.sleep(1), function (_arg3) {
               ctx.putImageData(img, 0, 0);
-              return builder_.zero();
+              return builder_.Zero();
             });
           }));
         });
       });
-    }(_fableCore.Async);
-  };
+    }(_fableCore.defaultAsyncBuilder);
+  }
 
   var go = exports.go = op_Dynamic(document, "go");
   go.addEventListener('click', function (_arg1) {

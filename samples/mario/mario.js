@@ -4,7 +4,15 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.mario = exports.update = exports.h = exports.w = exports.render = exports.step = exports.walk = exports.physics = exports.gravity = exports.jump = exports.Mario = exports.Win = exports.Keyboard = exports.max = undefined;
+  exports.mario = exports.h = exports.w = exports.Mario = exports.Win = exports.Keyboard = undefined;
+  exports.max = max;
+  exports.jump = jump;
+  exports.gravity = gravity;
+  exports.physics = physics;
+  exports.walk = walk;
+  exports.step = step;
+  exports.render = render;
+  exports.update = update;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -12,9 +20,27 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     }
   }
 
-  var max = exports.max = function (a, b) {
-    return a > b ? a : b;
-  };
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  function max(a, b) {
+    return _fableCore.Util.compare(a, b) > 0 ? a : b;
+  }
 
   var Keyboard = exports.Keyboard = function ($exports) {
     var keysPressed = (Object.defineProperty($exports, 'keysPressed', {
@@ -24,17 +50,19 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       set: function (x) {
         return keysPressed = x;
       }
-    }), new Set());
+    }), _fableCore.Set.create(null, new _fableCore.GenericComparer(function (x, y) {
+      return x < y ? -1 : x > y ? 1 : 0;
+    })));
 
-    var code = $exports.code = function (x) {
+    var code = $exports.code = function code(x) {
       return keysPressed.has(x) ? 1 : 0;
     };
 
-    var update = $exports.update = function (e, pressed) {
+    var update = $exports.update = function update(e, pressed) {
       var keyCode = Math.floor(e.keyCode);
       var op = pressed ? function (value) {
         return function (set) {
-          return new Set(set).add(value);
+          return _fableCore.Set.add(value, set);
         };
       } : function (value) {
         return function (set) {
@@ -45,11 +73,11 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       return null;
     };
 
-    var arrows = $exports.arrows = function () {
+    var arrows = $exports.arrows = function arrows() {
       return [code(39) - code(37), code(38) - code(40)];
     };
 
-    var init = $exports.init = function () {
+    var init = $exports.init = function init() {
       document.addEventListener('keydown', function (e) {
         return update(e, true);
       }, null);
@@ -65,15 +93,15 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var canvas = $exports.canvas = document.getElementsByTagName('canvas')[0];
     var context = $exports.context = canvas.getContext('2d');
 
-    var op_Dollar = $exports.op_Dollar = function (s, n) {
-      return s + n.toString();
+    var op_Dollar = $exports.op_Dollar = function op_Dollar(s, n) {
+      return s + _fableCore.Util.toString(n);
     };
 
-    var rgb = $exports.rgb = function (r, g, b) {
+    var rgb = $exports.rgb = function rgb(r, g, b) {
       return op_Dollar(op_Dollar(op_Dollar(op_Dollar(op_Dollar(op_Dollar("rgb(", r), ","), g), ","), b), ")");
     };
 
-    var filled = $exports.filled = function (color, rect_0, rect_1, rect_2, rect_3) {
+    var filled = $exports.filled = function filled(color, rect_0, rect_1, rect_2, rect_3) {
       var rect = [rect_0, rect_1, rect_2, rect_3];
       var ctx = context;
       ctx.fillStyle = color;
@@ -87,20 +115,20 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       })(rect);
     };
 
-    var position = $exports.position = function (x, y, img) {
-      img.style.left = x.toString() + "px";
+    var position = $exports.position = function position(x, y, img) {
+      img.style.left = _fableCore.Util.toString(x) + "px";
 
       img.style.top = function () {
         var copyOfStruct = canvas.offsetTop + y;
-        return copyOfStruct.toString();
+        return String(copyOfStruct);
       }() + "px";
     };
 
-    var dimensions = $exports.dimensions = function () {
+    var dimensions = $exports.dimensions = function dimensions() {
       return [canvas.width, canvas.height];
     };
 
-    var image = $exports.image = function (src) {
+    var image = $exports.image = function image(src) {
       var image = document.getElementsByTagName('img')[0];
 
       if (image.src.indexOf(src) === -1) {
@@ -113,48 +141,64 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     return $exports;
   }({});
 
-  var Mario = exports.Mario = function Mario($arg0, $arg1, $arg2, $arg3, $arg4) {
-    _classCallCheck(this, Mario);
+  var Mario = exports.Mario = function () {
+    function Mario(x, y, vx, vy, dir) {
+      _classCallCheck(this, Mario);
 
-    this.x = $arg0;
-    this.y = $arg1;
-    this.vx = $arg2;
-    this.vy = $arg3;
-    this.dir = $arg4;
-  };
+      this.x = x;
+      this.y = y;
+      this.vx = vx;
+      this.vy = vy;
+      this.dir = dir;
+    }
 
-  _fableCore.Util.setInterfaces(Mario.prototype, [], "Mario.Mario");
+    _createClass(Mario, [{
+      key: "Equals",
+      value: function Equals(other) {
+        return _fableCore.Util.equalsRecords(this, other);
+      }
+    }, {
+      key: "CompareTo",
+      value: function CompareTo(other) {
+        return _fableCore.Util.compareRecords(this, other);
+      }
+    }]);
 
-  var jump = exports.jump = function (_arg1, y, m) {
+    return Mario;
+  }();
+
+  _fableCore.Util.setInterfaces(Mario.prototype, ["FSharpRecord", "System.IEquatable", "System.IComparable"], "Mario.Mario");
+
+  function jump(_arg1, y, m) {
     return (y > 0 ? m.y === 0 : false) ? function () {
       var vy = 5;
       return new Mario(m.x, m.y, m.vx, vy, m.dir);
     }() : m;
-  };
+  }
 
-  var gravity = exports.gravity = function (m) {
+  function gravity(m) {
     return m.y > 0 ? function () {
       var vy = m.vy - 0.1;
       return new Mario(m.x, m.y, m.vx, vy, m.dir);
     }() : m;
-  };
+  }
 
-  var physics = exports.physics = function (m) {
+  function physics(m) {
     return new Mario(m.x + m.vx, max(0, m.y + m.vy), m.vx, m.vy, m.dir);
-  };
+  }
 
-  var walk = exports.walk = function (x, _arg1, m) {
+  function walk(x, _arg1, m) {
     var dir = x < 0 ? "left" : x > 0 ? "right" : m.dir;
     var vx = x;
     return new Mario(m.x, m.y, vx, m.vy, dir);
-  };
+  }
 
-  var step = exports.step = function (dir_0, dir_1, mario) {
+  function step(dir_0, dir_1, mario) {
     var dir = [dir_0, dir_1];
     return jump(dir[0], dir[1], gravity(walk(dir[0], dir[1], physics(mario))));
-  };
+  }
 
-  var render = exports.render = function (w, h, mario) {
+  function render(w, h, mario) {
     (function () {
       var color = Win.rgb(174, 238, 238);
       return function (tupledArg) {
@@ -184,14 +228,14 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         Win.position(x, y, img);
       };
     })()(Win.image("images/mario" + verb + mario.dir + ".gif"));
-  };
+  }
 
   Keyboard.init();
-  var patternInput = Win.dimensions();
-  var w = exports.w = patternInput[0];
-  var h = exports.h = patternInput[1];
+  var patternInput_169 = Win.dimensions();
+  var w = exports.w = patternInput_169[0];
+  var h = exports.h = patternInput_169[1];
 
-  var update = exports.update = function (mario, unitVar1) {
+  function update(mario, unitVar1) {
     var mario_1 = function () {
       var tupledArg = Keyboard.arrows();
       var arg00_ = tupledArg[0];
@@ -205,7 +249,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     window.setTimeout(function (arg10_) {
       update(mario_1, arg10_);
     }, 1000 / 60);
-  };
+  }
 
   var mario = exports.mario = new Mario(0, 0, 0, 0, "right");
   update(mario);
