@@ -4,7 +4,7 @@ define(["exports", "fable-core", "./html"], function (exports, _fableCore, _html
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.turtle = exports.width = exports.angle = exports.iters = exports.input = exports.cont = exports.defaultLength = exports.LSystem = exports.chaos = exports.LTurtle = exports.LogoCommand = exports.LineSegment = exports.Color = exports.Point = exports.$5B$5D$601$2Ejoin = exports.$5B$5D$601$2Epush = exports.List = undefined;
+  exports.turtle = exports.width = exports.angle = exports.iters = exports.input = exports.cont = exports.defaultLength = exports.LSystem = exports.chaos = exports.LTurtle = exports.LogoCommand = exports.LineSegment = exports.Color = exports.Point = exports.$5B$5D$601$2Ejoin = exports.$5B$5D$601$2Epush = undefined;
   exports.render = render;
   exports.randomColor = randomColor;
   exports.processTurtle = processTurtle;
@@ -37,24 +37,6 @@ define(["exports", "fable-core", "./html"], function (exports, _fableCore, _html
       return Constructor;
     };
   }();
-
-  var List = exports.List = function ($exports) {
-    var rev = $exports.rev = function rev(l) {
-      var loop = function (acc) {
-        return function (_arg1) {
-          return _arg1.tail != null ? function () {
-            var xs = _arg1.tail;
-            var x = _arg1.head;
-            return loop(_fableCore.List.ofArray([x], acc))(xs);
-          }() : acc;
-        };
-      };
-
-      return loop(new _fableCore.List())(l);
-    };
-
-    return $exports;
-  }({});
 
   function ___1_push(v) {
     return this.push(v);
@@ -169,11 +151,11 @@ define(["exports", "fable-core", "./html"], function (exports, _fableCore, _html
     var miny = patternInput_1[0];
     var maxy = patternInput_1[1];
 
-    var convx = function (x) {
+    var convx = function convx(x) {
       return (x - minx) / (maxx - minx) * 600;
     };
 
-    var convy = function (y) {
+    var convy = function convy(y) {
       return (y - miny) / (maxy - miny) * 600;
     };
 
@@ -253,13 +235,13 @@ define(["exports", "fable-core", "./html"], function (exports, _fableCore, _html
   }
 
   function processTurtle(turtle, program) {
-    var phono = function (stack) {
+    var phono = function phono(stack) {
       return function (output) {
         return function (turtle_1) {
           return function (_arg1) {
-            var $target4 = function () {
-              var $target3 = function () {
-                throw ["/Users/alfonsogarciacaronunez/Documents/Github/Fable/samples/browser/lsystem/lsystem.fsx", 118, 38];
+            var $target4 = function $target4() {
+              var $target3 = function $target3() {
+                throw ["/Users/alfonsogarciacaronunez/Documents/Github/Fable/samples/browser/lsystem/lsystem.fsx", 112, 38];
               };
 
               if (_arg1.tail != null) {
@@ -332,7 +314,7 @@ define(["exports", "fable-core", "./html"], function (exports, _fableCore, _html
       };
     };
 
-    return List.rev(phono(new _fableCore.List())(new _fableCore.List())(turtle)(program));
+    return _fableCore.List.reverse(phono(new _fableCore.List())(new _fableCore.List())(turtle)(program));
   }
 
   var LSystem = exports.LSystem = function LSystem(axiom, productions) {
@@ -345,7 +327,7 @@ define(["exports", "fable-core", "./html"], function (exports, _fableCore, _html
   _fableCore.Util.setInterfaces(LSystem.prototype, ["FSharpRecord"], "Lsystem.LSystem");
 
   function processLsystem(max, lsystem) {
-    var gen = function (current) {
+    var gen = function gen(current) {
       return function (iteration) {
         return iteration === max ? current : function () {
           var sb = [];

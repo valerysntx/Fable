@@ -38,9 +38,9 @@ define(["exports", "queue", "topojson", "d3", "fable-core"], function (exports, 
 
   var queue = exports.queue = _queue2.default;
   var topojson = exports.topojson = _topojson2.default;
-  var patternInput_73 = [500, 500];
-  var width = exports.width = patternInput_73[0];
-  var height = exports.height = patternInput_73[1];
+  var patternInput_52 = [500, 500];
+  var width = exports.width = patternInput_52[0];
+  var height = exports.height = patternInput_52[1];
   var canvas = exports.canvas = document.getElementsByTagName('canvas')[0];
   canvas.width = width;
   canvas.height = height;
@@ -57,12 +57,8 @@ define(["exports", "queue", "topojson", "d3", "fable-core"], function (exports, 
       type: "Sphere"
     };
     var landFeature = topojson.feature(world, world.objects.land);
-    var borders = topojson.mesh(world, world.objects.countries, function (delegateArg0, delegateArg1) {
-      return function (x) {
-        return function (y) {
-          return x !== y;
-        };
-      }(delegateArg0)(delegateArg1);
+    var borders = topojson.mesh(world, world.objects.countries, function (x, y) {
+      return x !== y;
     });
     var countries = Array.from(_fableCore.Seq.sortWith(function (a, b) {
       return _fableCore.Util.compare(_fableCore.Util.toString(a.name), _fableCore.Util.toString(b.name));
@@ -75,7 +71,7 @@ define(["exports", "queue", "topojson", "d3", "fable-core"], function (exports, 
       }, names);
     })));
 
-    var draw = function (color) {
+    var draw = function draw(color) {
       return function (width_1) {
         return function (line) {
           return function (fill) {
@@ -99,7 +95,7 @@ define(["exports", "queue", "topojson", "d3", "fable-core"], function (exports, 
       };
     };
 
-    var render = function (country) {
+    var render = function render(country) {
       return function (angle) {
         projection.rotate(angle);
         ctx.clearRect(0, 0, width, height);
@@ -111,7 +107,7 @@ define(["exports", "queue", "topojson", "d3", "fable-core"], function (exports, 
       };
     };
 
-    var transition = function (i) {
+    var transition = function transition(i) {
       return d3.transition().duration(1250).each("start", function (_arg2, _arg1) {
         var name = countries[i].name;
         return title.text(name);
@@ -121,10 +117,8 @@ define(["exports", "queue", "topojson", "d3", "fable-core"], function (exports, 
         var p2 = patternInput[1];
         var p1 = patternInput[0];
         var r = d3.interpolate(projection.rotate(), [-p1, -p2]);
-        return function (delegateArg0) {
-          return function (t) {
-            return render(countries[i])(r(t));
-          }(delegateArg0);
+        return function (t) {
+          return render(countries[i])(r(t));
         };
       }).transition().each("end", function (_arg5, _arg4) {
         return transition((i + 1) % countries.length);
@@ -134,24 +128,14 @@ define(["exports", "queue", "topojson", "d3", "fable-core"], function (exports, 
     return transition(0);
   }
 
-  queue().defer(function (delegateArg0, delegateArg1) {
-    return function (url) {
-      return function (callback) {
-        return d3.json(url, callback);
-      };
-    }(delegateArg0)(delegateArg1);
-  }, "data/world-110m.json").defer(d3.tsv, "data/world-country-names.tsv").await(function (delegateArg0, delegateArg1, delegateArg2) {
-    return function (error) {
-      return function (world) {
-        return function (names) {
-          if (error) {
-            throw error;
-          }
+  queue().defer(function (url, callback) {
+    return d3.json(url, callback);
+  }, "data/world-110m.json").defer(d3.tsv, "data/world-country-names.tsv").await(function (error, world, names) {
+    if (error) {
+      throw error;
+    }
 
-          return dataLoaded(world, names);
-        };
-      };
-    }(delegateArg0)(delegateArg1)(delegateArg2);
+    return dataLoaded(world, names);
   });
 });
 //# sourceMappingURL=d3map.js.map

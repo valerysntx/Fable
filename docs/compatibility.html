@@ -182,7 +182,8 @@ be able to access the base methods by casting the object.</p>
 <p>Anonymous lambdas will be curried by default. If you want to pass a callback with
 more than one argument to JS code, please wrap it in a delegate first (e.g.,
 <code>Func&lt;_,_,_&gt;(fun x y -&gt; x + y)</code>). If the signature of the method expects a
-delegate, this will be done automatically by the compiler.</p>
+delegate, this will be done automatically by the compiler. See <a href="http://fsprojects.github.io/Fable/docs/interacting.html#Calling-F-code-from-JavaScript">Calling F# code from JS</a>
+for more info.</p>
 <h2><a name="Event-and-Observable" class="anchor" href="#Event-and-Observable">Event and Observable</a></h2>
 <p>Both <a href="https://github.com/fsprojects/Fable/blob/master/src/tests/EventTests.fs">Event</a> and
 <a href="https://github.com/fsprojects/Fable/blob/master/src/tests/ObservableTests.fs">Observable</a> are supported.</p>

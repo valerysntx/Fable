@@ -127,7 +127,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
     _createClass(El, [{
       key: "NS",
-      get: function () {
+      get: function get() {
         return this.ns;
       }
     }], [{

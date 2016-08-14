@@ -546,49 +546,54 @@ methods yourself. For example:</p>
 </tr>
 </table>
 <h2><a name="Calling-F-code-from-JavaScript" class="anchor" href="#Calling-F-code-from-JavaScript">Calling F# code from JavaScript</a></h2>
-<p>The F# compiler compiles type and module members as usual for an OOP
-language like C#, no matter whether the arguments are curried or tupled.
-Thanks to this, they can be called "normally" from an external language
-like C# or JavaScript. For example:</p>
+<p>When interacting with JavaScript libraries, it's usual to send callbacks
+that will be called from JS code. For this to work properly with F# functions
+you must take a few things into consideration:</p>
+<ul>
+<li>In F# <strong>commas are always used for tuples</strong>:</li>
+</ul>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
-<span class="l">7: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">module</span> <span class="i">MyModule</span> <span class="o">=</span>
-    <span class="k">let</span> <span class="i">myCurriedFunction</span> <span class="i">a</span> <span class="i">b</span> <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
-    <span class="k">let</span> <span class="i">myTupledFunction</span>(<span class="i">a</span>, <span class="i">b</span>) <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
-
-<span class="k">type</span> <span class="i">MyType</span>() <span class="o">=</span>
-    <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">MyCurriedMethod</span> <span class="i">a</span> <span class="i">b</span> <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
-    <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">MyTupledMethod</span>(<span class="i">a</span>, <span class="i">b</span>) <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">fun</span> (<span class="i">x</span>, <span class="i">y</span>) <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>
+<span class="c">// JS: function (tupledArg) { return tupledArg[0] + tupledArg[1]; }</span>
 </code></pre></td>
 </tr>
 </table>
+<ul>
+<li>
+In F# <strong>function arguments are always curried</strong>, so lambdas with multiple
+arguments translate to single-argument functions returning another function.
+To make it a multi-argument function in JS, you must <strong>convert it to a delegate</strong>
+(like <code>System.Func&lt;_,_,_&gt;</code>):
+</li>
+</ul>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
 <span class="l">4: </span>
 <span class="l">5: </span>
-<span class="l">6: </span>
-<span class="l">7: </span>
-<span class="l">8: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="js"><span class="c">// From JS</span>
-<span class="k">var</span> lib <span class="o">=</span> require(<span class="s">"lib/myFSLib"</span>);
-console.log(lib.MyModule.myCurriedFunction(<span class="n">2</span>, <span class="n">2</span>));  <span class="c">// 4</span>
-console.log(lib.MyModule.myTupledFunction(<span class="n">2</span>, <span class="n">2</span>));   <span class="c">// 4</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>
+<span class="c">// JS: function (x) { return function (y) { return x + y; } }</span>
 
-<span class="k">var</span> x <span class="o">=</span> <span class="k">new</span> lib.MyType();
-console.log(x.MyCurriedMethod(<span class="n">2</span>, <span class="n">2</span>));               <span class="c">// 4</span>
-console.log(x.MyTupledMethod(<span class="n">2</span>, <span class="n">2</span>));                <span class="c">// 4</span>
-</code></pre></td></tr></table>
-<p>Things get a bit more complicated with anonymous lambdas, inner functions,
-partial applications or even just top level function references, as they do
-follow proper F# semantics. For example, check how the following code is compiled:</p>
+<span onmouseout="hideTip(event, 'fs20', 61)" onmouseover="showTip(event, 'fs20', 61)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 62)" onmouseover="showTip(event, 'fs21', 62)" class="i">Func</span><span class="o">&lt;</span>_,_,_<span class="o">&gt;</span>(<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>)
+<span class="c">// JS: function (x, y) { return x + y; }</span>
+</code></pre></td>
+</tr>
+</table>
+<ul>
+<li>
+Fable will <strong>automatically convert F# functions to delegates</strong> in some situations:
+<ul>
+<li>When passing an F# lambda to a method accepting a delegate.</li>
+<li>When using dynamic programming, with <code>?</code>, <code>$</code>, <code>createObj</code> or <code>createNew</code>.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Note: If you experience problems make the conversion explicit.</p>
+</blockquote>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -600,26 +605,18 @@ follow proper F# semantics. For example, check how the following code is compile
 <span class="l"> 9: </span>
 <span class="l">10: </span>
 <span class="l">11: </span>
-<span class="l">12: </span>
-<span class="l">13: </span>
-<span class="l">14: </span>
-<span class="l">15: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">topLevelFn1</span> <span class="i">a</span> <span class="i">b</span> <span class="i">c</span> <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span> <span class="o">+</span> <span class="i">c</span>
-<span class="k">let</span> <span class="i">topLevelFn2</span>(<span class="i">a</span>, <span class="i">b</span>, <span class="i">c</span>) <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span> <span class="o">+</span> <span class="i">c</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">ITest</span> <span class="o">=</span>
+    <span class="k">abstract</span> <span class="i">setCallback</span><span class="o">:</span> <span class="i">Func</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 63)" onmouseover="showTip(event, 'fs10', 63)" class="i">int</span>,<span onmouseout="hideTip(event, 'fs10', 64)" onmouseover="showTip(event, 'fs10', 64)" class="i">int</span>,<span onmouseout="hideTip(event, 'fs10', 65)" onmouseover="showTip(event, 'fs10', 65)" class="i">int</span><span class="o">&gt;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs14', 66)" onmouseover="showTip(event, 'fs14', 66)" class="i">unit</span>
 
-<span class="k">let</span> <span class="i">test</span>() <span class="o">=</span>
-    <span class="c">// Note we&#39;re now within a function&#39;s scope</span>
-    <span class="k">let</span> <span class="i">f1</span> <span class="i">a</span> <span class="i">b</span> <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
-    <span class="k">let</span> <span class="i">f2</span>(<span class="i">a</span>, <span class="i">b</span>) <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
-    <span class="k">let</span> <span class="i">f3</span> <span class="o">=</span> <span class="k">fun</span> <span class="i">a</span> <span class="i">b</span> <span class="k">-&gt;</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
-    <span class="k">let</span> <span class="i">f4</span> <span class="o">=</span> <span class="i">topLevelFn1</span> <span class="n">2</span>
-    <span class="k">let</span> <span class="i">f5</span> <span class="o">=</span> <span class="i">topLevelFn2</span>
-    <span class="i">f1</span> <span class="n">2</span> <span class="n">2</span>      <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 61)" onmouseover="showTip(event, 'fs20', 61)" class="i">ignore</span>
-    <span class="i">f2</span>(<span class="n">2</span>, <span class="n">2</span>)    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 62)" onmouseover="showTip(event, 'fs20', 62)" class="i">ignore</span>
-    <span class="i">f3</span> <span class="n">2</span> <span class="n">2</span>      <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 63)" onmouseover="showTip(event, 'fs20', 63)" class="i">ignore</span>
-    <span class="i">f4</span> <span class="n">2</span> <span class="n">2</span>      <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 64)" onmouseover="showTip(event, 'fs20', 64)" class="i">ignore</span>
-    <span class="i">f5</span>(<span class="n">2</span>, <span class="n">2</span>, <span class="n">2</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 65)" onmouseover="showTip(event, 'fs20', 65)" class="i">ignore</span>
+<span class="k">let</span> <span class="i">test</span>(<span class="i">o</span><span class="o">:</span> <span class="i">ITest</span>) <span class="o">=</span>
+    <span class="i">o</span><span class="o">.</span><span class="i">setCallback</span>(<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>)
+
+<span class="c">// function test(o) {</span>
+<span class="c">//   o.setCallback(function (x, y) {</span>
+<span class="c">//     return x + y;</span>
+<span class="c">//   });</span>
+<span class="c">// }</span>
 </code></pre></td>
 </tr>
 </table>
@@ -651,90 +648,54 @@ follow proper F# semantics. For example, check how the following code is compile
 <span class="l">26: </span>
 <span class="l">27: </span>
 <span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+<span class="l">32: </span>
+<span class="l">33: </span>
+<span class="l">34: </span>
+<span class="l">35: </span>
+<span class="l">36: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="js"><span class="k">function</span> test() {
-    <span class="k">var</span> f<span class="n">1</span> <span class="o">=</span> <span class="k">function</span> (a) {
-        <span class="k">return</span> <span class="k">function</span> (b) {
-            <span class="k">return</span> a <span class="o">+</span> b;
-        };
-    };
-    <span class="k">var</span> f<span class="n">2</span> <span class="o">=</span> <span class="k">function</span> (tupledArg) {
-        <span class="k">return</span> tupledArg[<span class="n">0</span>] <span class="o">+</span> tupledArg[<span class="n">1</span>];
-    };
-    <span class="k">var</span> f<span class="n">3</span> <span class="o">=</span> <span class="k">function</span> (a) {
-        <span class="k">return</span> <span class="k">function</span> (b) {
-            <span class="k">return</span> a <span class="o">+</span> b;
-        };
-    };
-    <span class="k">var</span> f<span class="n">4</span> <span class="o">=</span> <span class="k">function</span> (b) {
-        <span class="k">return</span> <span class="k">function</span> (c) {
-            <span class="k">return</span> topLevelFn<span class="n">1</span>(<span class="n">2</span>, b, c);
-        };
-    };
-    <span class="k">var</span> f<span class="n">5</span> <span class="o">=</span> <span class="k">function</span> (tupledArg) {
-        <span class="k">return</span> topLevelFn<span class="n">2</span>(tupledArg[<span class="n">0</span>], tupledArg[<span class="n">1</span>], tupledArg[<span class="n">2</span>]);
-    };
-    f<span class="n">1</span>(<span class="n">2</span>)(<span class="n">2</span>);    <span class="c">// Double application</span>
-    f<span class="n">2</span>([<span class="n">2</span>, <span class="n">2</span>]);  <span class="c">// Tupled arg</span>
-    f<span class="n">3</span>(<span class="n">2</span>)(<span class="n">2</span>);    <span class="c">// Inner functions and anonymous lambdas are the same</span>
-    f<span class="n">4</span>(<span class="n">2</span>)(<span class="n">2</span>);    <span class="c">// Partial application</span>
-    f<span class="n">5</span>([<span class="n">2</span>,<span class="n">2</span>,<span class="n">2</span>]); <span class="c">// Top level functions get wrapped when referenced</span>
-}
-</code></pre></td></tr></table>
-<p>This means you need to be careful when passing a lambda with more than
-one argument to JS, as they will probably not be called correctly. To prevent
-this you must convert the lambda to a delegate (<code>System.Func&lt;...&gt;</code>), the same
-way you would do when interacting with C#.</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">f1</span> <span class="i">a</span> <span class="i">b</span> <span class="o">=</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">myMeth</span> <span class="i">x</span> <span class="i">y</span> <span class="o">=</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>
 
-<span class="i">jsObj</span><span class="o">?</span><span class="i">callback1</span> <span class="o">&lt;-</span> <span class="i">f1</span> <span class="c">// produces curried version, probably not what you want</span>
-<span class="i">jsObj</span><span class="o">?</span><span class="i">callback2</span> <span class="o">&lt;-</span> <span class="i">Func</span><span class="o">&lt;</span>_,_,_<span class="o">&gt;</span> <span class="i">f1</span> <span class="c">// creates a delegate instead</span>
+<span class="k">let</span> <span class="i">test</span>(<span class="i">o</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs12', 67)" onmouseover="showTip(event, 'fs12', 67)" class="i">obj</span>) <span class="o">=</span>
+    <span class="i">o</span><span class="o">?</span><span class="i">foo</span>(<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 68)" onmouseover="showTip(event, 'fs22', 68)" class="i">ignore</span>
+    <span class="i">o</span><span class="o">?</span><span class="i">bar</span> <span class="o">&lt;-</span> <span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">+</span> <span class="i">y</span>
+
+    <span class="c">// Direct application with ($) operator</span>
+    <span class="i">o</span> <span class="o">$</span> (<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">*</span> <span class="i">y</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 69)" onmouseover="showTip(event, 'fs22', 69)" class="i">ignore</span>
+
+    <span class="i">createObj</span> [
+        <span class="s">&quot;bar&quot;</span> <span class="o">==&gt;</span> <span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="i">z</span> <span class="k">-&gt;</span> <span class="i">x</span> <span class="o">*</span> <span class="i">y</span> <span class="o">*</span> <span class="i">z</span>
+        <span class="s">&quot;bar2&quot;</span> <span class="o">==&gt;</span> <span class="i">myMeth</span>
+    ]
+
+<span class="c">// function test(o) {</span>
+<span class="c">//   o.foo(function (x, y) {</span>
+<span class="c">//     return x + y;</span>
+<span class="c">//   });</span>
+
+<span class="c">//   o.bar = function (x, y) {</span>
+<span class="c">//     return x + y;</span>
+<span class="c">//   };</span>
+
+<span class="c">//   o(function (x, y) {</span>
+<span class="c">//     return x * y;</span>
+<span class="c">//   });</span>
+
+<span class="c">//   return {</span>
+<span class="c">//     bar: function bar(x, y, z) {</span>
+<span class="c">//       return x * y * z;</span>
+<span class="c">//     },</span>
+<span class="c">//     bar2: function bar2(x, y) {</span>
+<span class="c">//       return myMeth(x, y);</span>
+<span class="c">//     }</span>
+<span class="c">//   };</span>
+<span class="c">// }</span>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
-<span class="l">7: </span>
-<span class="l">8: </span>
-<span class="l">9: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="javascript">jsObj.callback<span class="n">1</span> <span class="o">=</span> <span class="k">function</span> (a) {
-    <span class="k">return</span> <span class="k">function</span> (b) {
-        <span class="k">return</span> f<span class="n">1</span>(a, b);
-    };
-};
-
-jsObj.callback<span class="n">2</span> <span class="o">=</span> <span class="k">function</span> (delegateArg<span class="n">0</span>, delegateArg<span class="n">1</span>) {
-    <span class="k">return</span> f<span class="n">1</span>(delegateArg<span class="n">0</span>, delegateArg<span class="n">1</span>);
-};
-</code></pre></td></tr></table>
-<p>If the signature of the method you're calling accepts a delegate instead
-of a F# lambda, the conversion is done automatically for you.</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">IForeign</span> <span class="o">=</span>
-    <span class="k">abstract</span> <span class="i">myMethod</span><span class="o">:</span> <span class="i">Func</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 66)" onmouseover="showTip(event, 'fs10', 66)" class="i">int</span>, <span onmouseout="hideTip(event, 'fs10', 67)" onmouseover="showTip(event, 'fs10', 67)" class="i">int</span><span class="o">&gt;</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs14', 68)" onmouseover="showTip(event, 'fs14', 68)" class="i">unit</span>
-
-<span class="i">foreignObj</span><span class="o">.</span><span class="i">myMethod</span>(<span class="k">fun</span> <span class="i">a</span> <span class="i">b</span> <span class="k">-&gt;</span> <span class="i">a</span> <span class="o">+</span> <span class="i">b</span>)
-</code></pre></td>
-</tr>
-</table>
-<blockquote>
-<p>Note: If you still experience problems make the conversion explicit
-as in the above example.</p>
-</blockquote>
 <h2><a name="JSON-serialization" class="anchor" href="#JSON-serialization">JSON serialization</a></h2>
 <p>It's possible to use <code>JSON.stringify</code> and <code>JSON.parse</code> to serialize objects back
 and forth, particularly with record and union types. Records will serialize as plain
@@ -765,16 +726,16 @@ when deserializing:</p>
 <span class="l">18: </span>
 <span class="l">19: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="i">Fable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs1', 69)" onmouseover="showTip(event, 'fs1', 69)" class="i">Core</span><span class="o">.</span><span class="i">JsInterop</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="i">Fable</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs1', 70)" onmouseover="showTip(event, 'fs1', 70)" class="i">Core</span><span class="o">.</span><span class="i">JsInterop</span>
 
 <span class="k">type</span> <span class="i">Tree</span> <span class="o">=</span>
-    | <span class="i">Leaf</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs10', 70)" onmouseover="showTip(event, 'fs10', 70)" class="i">int</span>
+    | <span class="i">Leaf</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs10', 71)" onmouseover="showTip(event, 'fs10', 71)" class="i">int</span>
     | <span class="i">Branch</span> <span class="k">of</span> <span class="i">Tree</span>[]
     <span class="k">member</span> <span class="i">this</span><span class="o">.</span><span class="i">Sum</span>() <span class="o">=</span>
         <span class="k">match</span> <span class="i">this</span> <span class="k">with</span>
         | <span class="i">Leaf</span> <span class="i">i</span> <span class="k">-&gt;</span> <span class="i">i</span>
         | <span class="i">Branch</span> <span class="i">trees</span> <span class="k">-&gt;</span>
-            <span class="i">trees</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs21', 71)" onmouseover="showTip(event, 'fs21', 71)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 72)" onmouseover="showTip(event, 'fs22', 72)" class="i">map</span> (<span class="k">fun</span> <span class="i">x</span> <span class="k">-&gt;</span> <span class="i">x</span><span class="o">.</span><span class="i">Sum</span>()) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs21', 73)" onmouseover="showTip(event, 'fs21', 73)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 74)" onmouseover="showTip(event, 'fs23', 74)" class="i">sum</span>
+            <span class="i">trees</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 72)" onmouseover="showTip(event, 'fs23', 72)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 73)" onmouseover="showTip(event, 'fs24', 73)" class="i">map</span> (<span class="k">fun</span> <span class="i">x</span> <span class="k">-&gt;</span> <span class="i">x</span><span class="o">.</span><span class="i">Sum</span>()) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 74)" onmouseover="showTip(event, 'fs23', 74)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 75)" onmouseover="showTip(event, 'fs25', 75)" class="i">sum</span>
 
 <span class="k">let</span> <span class="i">tree</span> <span class="o">=</span>
     <span class="i">Branch</span> [|<span class="i">Leaf</span> <span class="n">1</span>; <span class="i">Leaf</span> <span class="n">2</span>; <span class="i">Branch</span> [|<span class="i">Leaf</span> <span class="n">3</span>; <span class="i">Leaf</span> <span class="n">4</span>|]|]
@@ -782,7 +743,7 @@ when deserializing:</p>
 <span class="k">let</span> <span class="i">json</span> <span class="o">=</span> <span class="i">toJson</span> <span class="i">tree</span>
 <span class="k">let</span> <span class="i">tree2</span> <span class="o">=</span> <span class="i">ofJson</span><span class="o">&lt;</span><span class="i">Tree</span><span class="o">&gt;</span> <span class="i">json</span>
 
-<span class="k">let</span> <span class="i">typeTest</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 75)" onmouseover="showTip(event, 'fs24', 75)" class="i">box</span> <span class="i">tree2</span> <span class="o">:?</span> <span class="i">Tree</span>    <span class="c">// Type is kept</span>
+<span class="k">let</span> <span class="i">typeTest</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 76)" onmouseover="showTip(event, 'fs26', 76)" class="i">box</span> <span class="i">tree2</span> <span class="o">:?</span> <span class="i">Tree</span>    <span class="c">// Type is kept</span>
 <span class="k">let</span> <span class="i">sum</span> <span class="o">=</span> <span class="i">tree2</span><span class="o">.</span><span class="i">Sum</span>()   <span class="c">// Prototype members can be accessed</span>
 </code></pre></td>
 </tr>
@@ -800,7 +761,7 @@ this by simply using the <code>TypeNameHandling.All</code> setting.</p>
 <span class="l">5: </span>
 <span class="l">6: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">R</span> <span class="o">=</span> { <span class="i">i</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 76)" onmouseover="showTip(event, 'fs10', 76)" class="i">int</span>; <span class="i">s</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs11', 77)" onmouseover="showTip(event, 'fs11', 77)" class="i">string</span> }
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">R</span> <span class="o">=</span> { <span class="i">i</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 77)" onmouseover="showTip(event, 'fs10', 77)" class="i">int</span>; <span class="i">s</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs11', 78)" onmouseover="showTip(event, 'fs11', 78)" class="i">string</span> }
 
 <span class="k">let</span> <span class="i">x</span> <span class="o">=</span> { <span class="i">i</span><span class="o">=</span><span class="n">1</span>; <span class="i">s</span><span class="o">=</span><span class="s">&quot;1&quot;</span> }
 <span class="k">let</span> <span class="i">json</span> <span class="o">=</span> <span class="i">JsonConvert</span><span class="o">.</span><span class="i">SerializeObject</span>(<span class="i">x</span>, <span class="i">JsonSerializerSettings</span>(<span class="i">TypeNameHandling</span><span class="o">=</span><span class="i">TypeNameHandling</span><span class="o">.</span><span class="i">All</span>))
@@ -822,6 +783,10 @@ have a public setter for correct deserialization (<code>[&lt;CLIMutable&gt;]</co
 Fable doesn't include the same type information as Json.NET (generic arguments and assembly
 name are missing), so you need to specify the target type for proper deserialization on
 the server side.
+</li>
+<li>
+<code>DateTime</code> will always be serialized in UTC format and any string matching the <a href="https://www.w3.org/TR/NOTE-datetime">DateTime ISO Format</a>
+will be deserialized as a string.
 </li>
 <li>
 At the time of writing, Json.NET doesn't serialize type info for F# unions even when
@@ -851,11 +816,13 @@ using the <code>TypeNameHandling.All</code> setting (reported as a bug).
 <div class="tip" id="fs17">Multiple items<br />type CompiledNameAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;new : compiledName:string -&gt; CompiledNameAttribute<br />&#160;&#160;member CompiledName : string<br /><br />Full name: Microsoft.FSharp.Core.CompiledNameAttribute<br /><br />--------------------<br />new : compiledName:string -&gt; CompiledNameAttribute</div>
 <div class="tip" id="fs18">val unbox : value:obj -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.unbox</div>
 <div class="tip" id="fs19">type &#39;T list = List&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</div>
-<div class="tip" id="fs20">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
-<div class="tip" id="fs21">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
-<div class="tip" id="fs22">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; source:seq&lt;&#39;T&gt; -&gt; seq&lt;&#39;U&gt;<br /><br />Full name: Microsoft.FSharp.Collections.Seq.map</div>
-<div class="tip" id="fs23">val sum : source:seq&lt;&#39;T&gt; -&gt; &#39;T (requires member ( + ) and member get_Zero)<br /><br />Full name: Microsoft.FSharp.Collections.Seq.sum</div>
-<div class="tip" id="fs24">val box : value:&#39;T -&gt; obj<br /><br />Full name: Microsoft.FSharp.Core.Operators.box</div>
+<div class="tip" id="fs20">namespace System</div>
+<div class="tip" id="fs21">Multiple items<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;T14,&#39;T15,&#39;T16,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 * &#39;T14 * &#39;T15 * &#39;T16 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;T14,&#39;T15,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 * &#39;T14 * &#39;T15 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;T14,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 * &#39;T14 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;T13,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 * &#39;T13 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;T12,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 * &#39;T12 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;T11,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 * &#39;T11 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;T10,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 * &#39;T10 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;T9,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 * &#39;T9 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;T8,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 * &#39;T8 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;T7,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 * &#39;T7 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;T6,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 * &#39;T6 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;T5,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 * &#39;T5 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;T4,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 * &#39;T4 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;T3,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 * &#39;T3 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T1,&#39;T2,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T1 * &#39;T2 -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;T,&#39;TResult&gt; =<br />&#160;&#160;delegate of &#39;T -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_,_&gt;<br /><br />--------------------<br />type Func&lt;&#39;TResult&gt; =<br />&#160;&#160;delegate of unit -&gt; &#39;TResult<br /><br />Full name: System.Func&lt;_&gt;</div>
+<div class="tip" id="fs22">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs23">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs24">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; source:seq&lt;&#39;T&gt; -&gt; seq&lt;&#39;U&gt;<br /><br />Full name: Microsoft.FSharp.Collections.Seq.map</div>
+<div class="tip" id="fs25">val sum : source:seq&lt;&#39;T&gt; -&gt; &#39;T (requires member ( + ) and member get_Zero)<br /><br />Full name: Microsoft.FSharp.Collections.Seq.sum</div>
+<div class="tip" id="fs26">val box : value:&#39;T -&gt; obj<br /><br />Full name: Microsoft.FSharp.Core.Operators.box</div>
 
     </div>
     <div class="col-md-1 col-lg-2"></div>

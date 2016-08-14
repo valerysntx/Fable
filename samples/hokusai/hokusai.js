@@ -109,7 +109,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   var c = exports.c = new Complex("Complex", [-0.70176, -0.3842]);
 
   function iterate(x, y) {
-    var loop = function (current) {
+    var loop = function loop(current) {
       return _fableCore.Seq.delay(function (unitVar) {
         return _fableCore.Seq.append(_fableCore.Seq.singleton(current), _fableCore.Seq.delay(function (unitVar_1) {
           return loop(Complex.op_Addition(ComplexModule.Pow(current, 2), c));
@@ -138,7 +138,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
       return _fableCore.Seq.map(function (c_1) {
         var k = c_1 / count;
 
-        var mid = function (v1) {
+        var mid = function mid(v1) {
           return function (v2) {
             return v1 + (v2 - v1) * k;
           };

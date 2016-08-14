@@ -51,10 +51,10 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
   var Keyboard = exports.Keyboard = function ($exports) {
     var keysPressed = (Object.defineProperty($exports, 'keysPressed', {
-      get: function () {
+      get: function get() {
         return keysPressed;
       },
-      set: function (x) {
+      set: function set(x) {
         return keysPressed = x;
       }
     }), _fableCore.Set.create(null, new _fableCore.GenericComparer(function (x, y) {
@@ -244,7 +244,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
   }
 
   function countDrops(drops) {
-    var count = function (color) {
+    var count = function count(color) {
       return _fableCore.List.filter(function (drop) {
         return drop.color === color;
       }, drops).length;

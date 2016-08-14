@@ -64,23 +64,23 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
                 }
             }, {
                 key: "Left",
-                get: function () {
+                get: function get() {
                     return new Position(this.Col - 1, this.Row);
                 }
             }, {
                 key: "Right",
-                get: function () {
+                get: function get() {
                     return new Position(this.Col + 1, this.Row);
                 }
             }, {
                 key: "Up",
-                get: function () {
+                get: function get() {
                     var Row = this.Row + 1;
                     return new Position(this.Col, Row);
                 }
             }, {
                 key: "Down",
-                get: function () {
+                get: function get() {
                     var Row = this.Row - 1;
                     return new Position(this.Col, Row);
                 }
@@ -323,7 +323,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
 
         var numberOfStones = function numberOfStones(board) {
             var numOfStonesInCol = function () {
-                var projection = function (_arg1) {
+                var projection = function projection(_arg1) {
                     return _arg1.Case === "Empty" ? 0 : function () {
                         var c = _arg1.Fields[0];
                         return 1;
@@ -357,7 +357,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         };
 
         var getGroup = function getGroup(board, position) {
-            var find = function (ps) {
+            var find = function find(ps) {
                 return function (col) {
                     return function (group) {
                         return ps.tail != null ? function () {
@@ -441,7 +441,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         };
 
         var newGame = function newGame(config) {
-            var createBoard = function (config_1) {
+            var createBoard = function createBoard(config_1) {
                 return evaluateGameState(function (board) {
                     return new SameGameTypes.GameState(board, 0);
                 }(_fableCore.List.initialize(config_1.NumberOfColumns, function (_arg2) {
@@ -469,7 +469,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     var api = exports.api = SameGameDomain.api;
 
     function renderBoardToHtmlString(board) {
-        var renderCell = function (x) {
+        var renderCell = function renderCell(x) {
             return function (y) {
                 return function (col) {
                     return "<td class='sg-td'>" + _fableCore.String.fsFormat("<a href='javaScript:void(0);' id='cell-%d-%d'>")(function (x) {
@@ -481,10 +481,10 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             };
         };
 
-        var makeBoard = function (board_1) {
-            return "<table class='sg-table horiz-centered'>" + _fableCore.String.concat("", _fableCore.Seq.toList(_fableCore.Seq.delay(function (unitVar) {
+        var makeBoard = function makeBoard(board_1) {
+            return "<table class='sg-table horiz-centered'>" + _fableCore.String.join("", _fableCore.Seq.toList(_fableCore.Seq.delay(function (unitVar) {
                 return _fableCore.Seq.map(function (y) {
-                    return "<tr class='sg-tr'>" + _fableCore.String.concat("", _fableCore.List.map(function (x) {
+                    return "<tr class='sg-tr'>" + _fableCore.String.join("", _fableCore.List.map(function (x) {
                         return renderCell(x)(y)(_fableCore.Seq.item(y, _fableCore.Seq.item(x, board_1)));
                     }, _fableCore.Seq.toList(_fableCore.Seq.range(0, board_1.length - 1)))) + "</tr>";
                 }, _fableCore.Seq.toList(_fableCore.Seq.rangeStep(_fableCore.Seq.item(0, board_1).length - 1, -1, 0)));
@@ -509,7 +509,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
         var boardElement = getById("sg-board");
         var scoreElement = getById("sg-score");
 
-        var play = function (game_1) {
+        var play = function play(game_1) {
             return function (tupledArg) {
                 var x = tupledArg[0];
                 var y = tupledArg[1];
@@ -527,7 +527,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
             };
         };
 
-        var addListeners = function (maxColIndex) {
+        var addListeners = function addListeners(maxColIndex) {
             return function (maxRowIndex) {
                 _fableCore.Seq.iterate(function (x) {
                     _fableCore.Seq.iterate(function (y) {
@@ -599,7 +599,7 @@ define(["exports", "fable-core"], function (exports, _fableCore) {
     }
 
     function selectGameOnChange() {
-        var presetGtor = function (gameNum) {
+        var presetGtor = function presetGtor(gameNum) {
             var index = 0;
 
             var game = _fableCore.Seq.item(gameNum, PresetGames.games);

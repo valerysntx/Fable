@@ -110,11 +110,11 @@ define(["exports", "three"], function (exports, _three) {
     }
 
     function init() {
-        var getWidth = function (unitVar0) {
+        var getWidth = function getWidth(unitVar0) {
             return 800;
         };
 
-        var getHeight = function (unitVar0) {
+        var getHeight = function getHeight(unitVar0) {
             return 450;
         };
 
@@ -154,7 +154,7 @@ define(["exports", "three"], function (exports, _three) {
         var mesh = new _three.Mesh(geometry, new _three.MeshBasicMaterial(matProps));
         scene.add(mesh);
 
-        var onWindowResize = function (e) {
+        var onWindowResize = function onWindowResize(e) {
             camera.aspect = getWidth() / getHeight();
             camera.updateProjectionMatrix();
             renderer.setSize(getWidth(), getHeight());
